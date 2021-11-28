@@ -1,4 +1,7 @@
-//
-// Created by artem on 21.11.2021.
-//
+#include "GameServer.h"
 
+int main(){
+    Server::GameServer gs;
+    gs.run();
+    return 0;
+}

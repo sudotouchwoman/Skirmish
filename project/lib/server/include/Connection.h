@@ -1,5 +1,7 @@
 #pragma once
 
+#include "GameLoop.h"
+
 #include <boost/asio.hpp>
 #include <boost/array.hpp>
 #include <boost/noncopyable.hpp>
@@ -14,11 +16,10 @@ namespace Server {
           private boost::noncopyable {
     public:
         /// Construct a connection with the given io_context.
-        explicit Connection(boost::asio::io_context &io_context,
-                            Router<Response(*)(const Request &request)> &requestRouter);
+        explicit Connection(boost::asio::io_context &io_context);
 
         /// Get the socket associated with the connection.
-        boost::asio::ip::tcp::socket &socket();
+        boost::asio::ip::udp::socket &socket();
 
         /// Start the first asynchronous operation for the connection.
         void start();
@@ -36,18 +37,12 @@ namespace Server {
         boost::asio::strand<boost::asio::io_context::executor_type> strand_;
 
         /// Socket for the connection.
-        boost::asio::ip::tcp::socket socket_;
-
-        /// The handler used to process the incoming request.
-        Router<Response(*)(const Request &request)> &requestRouter_;
+        boost::asio::ip::udp::socket socket_;
 
         /// Buffer for incoming data.
         boost::array<char, 8192> buffer_;
 
-        /// The incoming request.
-        Request request_;
-
-        /// The response to be sent back to the client.
-        Response response_;
+        /// Game loop object
+        Server::GameLoop &game_loop_;
     };
 } // namespace server3

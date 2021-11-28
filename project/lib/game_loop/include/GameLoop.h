@@ -1,14 +1,24 @@
 #pragma once
 
+// main game parameters
+const int game_frequency = 10; // miliseconds
+
+// main game parameters
+
+
+#include "GlobalEnvironment.h"
+#include "plug.h"
+
 namespace Server {
     class GameLoop {
     public:
-        void Run();
+        GameLoop(GlobalEnvironment *);
+        void run();
     private:
-        GlobalEnvironment GE;
-        void ResolveCollisions();
-        void BroadcastSnapshot();
-        void SendSnapshot();
-        void ReadHandler();
+        GlobalEnvironment *ge;
+        PhisicsManager pm;
+        CollisionManager cm;
+
+        bool gameEnd();
     };
 }
