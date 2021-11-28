@@ -11,22 +11,6 @@ public:
     std::vector<Collision> makePhisics(GlobalEnvironment &) {};
 };
 
-class GameObject {
-
-};
-
-class Player : public GameObject {
-
-};
-
-class Bullet : public GameObject {
-
-};
-
-class Terrain : public GameObject {
-
-};
-
 class Collision {
 public:
     size_t getCollisionType() { return collision_type; }
