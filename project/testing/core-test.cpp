@@ -46,7 +46,6 @@ void test_vec2(std::istream & in, std::ostream & out) {
     out << "core::vec2 test passed, OK\n";
 }
 
-
 int main(int argc, char *argv[]) {
     test_dot2(std::cin, std::cout);
     test_vec2(std::cin, std::cout);

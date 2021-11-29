@@ -1,17 +1,24 @@
-// _LIB_MATH_INC_CORE_HPP
+// _LIB_CORE_INC_CORE_HPP
 #pragma once  
 #include <cmath>
-#include <array>
 
+// core namespace contains
+// helper classes, the geometric primitives
+// 3D and 2D versions were implemented, however,
+// the 3D versions are considered odd
+// and are not likely to be utilized
+// I will continue thinking on the architecture and
+// build more complex entities on top of these
 namespace core
 {
     class dot3;
     class vec3;
-    
+
     class dot2;
     class vec2;
 };  // namespace core
 
+// pretty self-explanatory
 class core::dot3 {
     double _x = 0.0;
     double _y = 0.0;
@@ -43,6 +50,8 @@ core::dot3 core::dot3::operator-(const dot3 & other) {
     return tmp;
 }
 
+// 3-dimensional vector, basically just wraps 2 3D dots
+// maybe addition of angle attribute is a good idea
 class core::vec3 {
     dot3 _src;
     dot3 _dst;
@@ -53,8 +62,6 @@ public:
     vec3 & operator-=(const vec3 & other) { _src -= other._src; _dst -= other._dst; return *this; }
     vec3 operator+(const vec3 &);
     vec3 operator-(const vec3 &);
-    // rotate() yet not implemented
-    // considered redundant
 };
 
 core::vec3 core::vec3::operator+(const vec3 & other) {
@@ -103,6 +110,12 @@ core::dot2 core::dot2::operator-(const dot2 & other) {
     return tmp;
 }
 
+// 2D vector
+// the angle attribute still sounds like a good idea
+// however, this one can be easily obtained from
+// the dots via, well, class method or smth
+// keeping it up to date after each transformation can
+// be odd
 class core::vec2 {
     dot2 _src;
     dot2 _dst;
@@ -154,4 +167,4 @@ void core::vec2::inverse() {
     std::swap(_src, _dst);
 }
 
-// _LIB_MATH_INC_CORE_HPP
+// _LIB_CORE_INC_CORE_HPP
