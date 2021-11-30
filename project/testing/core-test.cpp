@@ -21,7 +21,7 @@ void test_vec2(std::istream & in, std::ostream & out) {
         assert(c.y == a.y);
 
         auto d = a - a;
-        assert(d.x != b.x);
+        assert(d.x == b.x);
         assert(d.y == b.y);
 
         a += a;
