@@ -6,5 +6,13 @@ set(CMAKE_CXX_STANDARD_REQUIRED)
 
 set(PROJECT_FOLDER ${CMAKE_CURRENT_SOURCE_DIR})
 
+option(TESTS_ENABLED "GTest modular testing enabled" ON)
+
+if(TESTS_ENABLED)
+    add_subdirectory(googletest)
+    enable_testing()
+    add_subdirectory(testing)
+endif()
+
+
 add_subdirectory(lib)
-add_subdirectory(testing)

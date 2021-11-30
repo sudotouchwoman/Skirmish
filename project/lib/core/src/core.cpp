@@ -38,10 +38,10 @@ namespace core {
 
     void vec2::rotate(const double theta) {
         const double rad_theta = degrees_to_rad(theta);
-        const double x_ = x * cos(rad_theta) - y * sin(rad_theta);
-        const double y_ = x * sin(rad_theta) + y * cos(rad_theta);
-        x = x_;
-        y = y_;
+        const double x_ = x * std::cos(rad_theta) - y * std::sin(rad_theta);
+        const double y_ = x * std::sin(rad_theta) + y * std::cos(rad_theta);
+        x = std::round(x_);
+        y = std::round(y_);
     }
 
     double vec2::len_squared() const {
@@ -54,16 +54,24 @@ namespace core {
 
     vec2 vec2::normalized() const {
         const double length = len();
-        return vec2(x / length, y / length);
+        return vec2(std::round(x / length), std::round(y / length));
     }
 
     double vec2::distance_to_squared(const vec2 & other) const {
-        const double dx = x*x + other.x*other.x;
-        const double dy = y*y + other.y*other.y;
+        const double dx = (x - other.x)*(x - other.x);
+        const double dy = (y - other.y)*(y - other.y);
         return dx + dy;
     }
 
     double vec2::distance_to(const vec2 & other) const {
         return sqrt(distance_to_squared(other));
+    }
+
+    bool vec2::operator==(const vec2 & other) const {
+        return allclose(x, other.x) and allclose(y, other.y);
+    }
+
+    bool vec2::operator!=(const vec2 & other) const {
+        return not (*this == other);
     }
 }

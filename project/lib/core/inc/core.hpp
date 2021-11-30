@@ -7,7 +7,7 @@
 // build more complex entities on top of these
 namespace core
 {
-    const double PI = 3.14159265;
+    const double PI = 3.141592653589793238462643383;
     double degrees_to_rad(const double theta);
     bool allclose(const double a, const double b);
     struct vec2;
@@ -32,6 +32,8 @@ public:
     double len_squared() const;
     double len() const;
     vec2 normalized() const;
+    bool operator==(const vec2 &) const;
+    bool operator!=(const vec2 &) const;
 };
 
 // _LIB_CORE_INC_CORE_HPP

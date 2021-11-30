@@ -25,6 +25,13 @@ namespace core {
     AABB::AABB(const vec2 & center, const double w, const double h) :
     center(center), width(w), height(h) {}
 
+    AABB::AABB(
+        const double center_x,
+        double center_y,
+        const double w,
+        const double h) :
+        AABB(vec2(center_x, center_y), w, h) {}
+
     bool AABB::LiesInside(const vec2 & dot) const {
         const bool a = (_getRight() >= dot.x);
         const bool b = (_getLeft() <= dot.x);
@@ -92,6 +99,9 @@ namespace core {
     Circle::Circle(const vec2 & center, const double R) :
     center(center), R(R) {}
 
+    Circle::Circle(const double center_x, const double center_y, const double R) :
+    Circle(vec2(center_x, center_y), R) {}
+
     bool Circle::LiesInside(const vec2 & dot) const {
         return center.distance_to_squared(dot) <= R*R;
     }
@@ -113,6 +123,9 @@ namespace core {
     }
 
     Point::Point(const vec2 & center) : center(center) {}
+
+    Point::Point(const double center_x, const double center_y) :
+    Point(vec2(center_x, center_y)) {}
 
     bool Point::LiesInside(const vec2 & dot) const {
         const bool same_x = allclose(center.x, dot.x);
