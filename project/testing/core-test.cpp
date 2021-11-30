@@ -2,7 +2,7 @@
 #include <sstream>
 #include <cassert>
 
-#include "entity.hpp"
+#include "shapes.hpp"
 
 using core::allclose;
 
