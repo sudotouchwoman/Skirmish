@@ -1,2 +1,5 @@
-add_library(core INTERFACE)
-target_include_directories(core INTERFACE inc/core.hpp)
+add_library(core SHARED
+    src/core.cpp
+    src/entity.cpp)
+
+target_include_directories(core PUBLIC inc/)
