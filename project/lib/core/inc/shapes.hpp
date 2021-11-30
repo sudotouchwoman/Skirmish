@@ -29,12 +29,15 @@ enum shape {
 // in 3D space, but we will stick to 2D space)
 class core::IShape {
 public:
+    virtual ~IShape() = default;
     virtual shape Type() = 0;
     virtual bool LiesInside(const vec2 &) const = 0;
-    virtual bool IntersectsWith(const AABB &) const = 0;
-    virtual bool IntersectsWith(const Circle &) const = 0;
-    virtual bool IntersectsWith(const Point &) const = 0;
     virtual const vec2 & GetCenter() const = 0;
+
+    virtual bool IntersectsWithAABB(const AABB &) const = 0;
+    virtual bool IntersectsWithCircle(const Circle &) const = 0;
+    virtual bool IntersectsWithPoint(const Point &) const = 0;
+    virtual bool IntersectsWith(const IShape &) const = 0;
 protected:
     virtual double _getRight() const = 0;
     virtual double _getLeft() const = 0;
@@ -63,9 +66,11 @@ public:
     shape Type() override { return shape::AABB_shape; }
 
     bool LiesInside(const core::vec2 &) const override;
-    bool IntersectsWith(const AABB &) const override;
-    bool IntersectsWith(const Circle &) const override;
-    bool IntersectsWith(const Point &) const override;
+
+    bool IntersectsWithAABB(const AABB &) const override;
+    bool IntersectsWithCircle(const Circle &) const override;
+    bool IntersectsWithPoint(const Point &) const override;
+    bool IntersectsWith(const IShape &) const override;
 
     const vec2 & GetCenter() const override { return center; }
 
@@ -93,9 +98,11 @@ public:
     shape Type() override { return shape::Circle_shape; }
 
     bool LiesInside(const vec2 &) const override;
-    bool IntersectsWith(const AABB &) const override;
-    bool IntersectsWith(const Circle &) const override;
-    bool IntersectsWith(const Point &) const override;
+
+    bool IntersectsWithAABB(const AABB &) const override;
+    bool IntersectsWithCircle(const Circle &) const override;
+    bool IntersectsWithPoint(const Point &) const override;
+    bool IntersectsWith(const IShape &) const override;
 
     double GetRadius() const { return R; }
     const vec2 & GetCenter() const override { return center; }
@@ -119,9 +126,11 @@ public:
     shape Type() override { return shape::Point_shape; }
 
     bool LiesInside(const vec2 &) const override;
-    bool IntersectsWith(const AABB &) const override;
-    bool IntersectsWith(const Circle &) const override;
-    bool IntersectsWith(const Point &) const override;
+
+    bool IntersectsWithAABB(const AABB &) const override;
+    bool IntersectsWithCircle(const Circle &) const override;
+    bool IntersectsWithPoint(const Point &) const override;
+    bool IntersectsWith(const IShape &) const override;
 
     const vec2 & GetCenter() const override { return center; }
 };

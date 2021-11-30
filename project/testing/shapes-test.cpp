@@ -1,7 +1,13 @@
+#include <vector>
+#include <memory>
+#include <algorithm>
+
 #include "gtest/gtest.h"
 #include "shapes.hpp"
 
 using namespace core;
+
+typedef std::unique_ptr<IShape> IShapeUPtr;
 
 TEST(CoreShapeTest, construction) {
     AABB a;
@@ -31,8 +37,8 @@ TEST(CoreShapeTest, construction) {
     AABB aabb(4.0, 2.0, 4.0, 3.0);
     auto aabb_center = aabb.GetCenter();
 
-    EXPECT_NE(aabb_center, a);
-    EXPECT_NE(aabb_center, c);
+    EXPECT_NE(aabb_center, a_center);
+    EXPECT_NE(aabb_center, c_center);
 
     EXPECT_DOUBLE_EQ(aabb_center.x, 4.0);
     EXPECT_DOUBLE_EQ(aabb_center.y, 2.0);
@@ -84,6 +90,47 @@ TEST(CoreShapeTest, intersections) {
 
     EXPECT_FALSE(p.IntersectsWith(a));
     EXPECT_FALSE(a.IntersectsWith(p));
+}
+
+TEST(CoreShapeTest, polymorphism) {
+    std::vector<IShapeUPtr> shapes;
+    shapes.push_back(std::make_unique<AABB>(0.0, 2.0, 4.0, 3.0));
+    shapes.push_back(std::make_unique<Circle>(0.0, 1.5, 1.0));
+    shapes.push_back(std::make_unique<Point>(3.0, 3.0));
+
+    auto any_intersections = [&shapes]() {
+        return std::any_of(
+            shapes.begin(),
+            shapes.end(),
+            [&shapes](const IShapeUPtr & p) {
+                return std::any_of(
+                    shapes.begin(),
+                    shapes.end(),
+                    [&shapes, &p](const IShapeUPtr & m) {
+                        if (m == p) return false;
+                        return p->IntersectsWith(*m.get());
+                    });
+                });
+    }();
+
+    EXPECT_TRUE(any_intersections);
+
+    auto all_intersections = [&shapes]() {
+        return std::all_of(
+            shapes.begin(),
+            shapes.end(),
+            [&shapes](const IShapeUPtr & p) {
+                return std::all_of(
+                    shapes.begin(),
+                    shapes.end(),
+                    [&shapes, &p](const IShapeUPtr & m) {
+                        if (m == p) return false;
+                        return p->IntersectsWith(*m.get());
+                    });
+                });
+    }();
+
+    EXPECT_FALSE(all_intersections);
 }
 
 int main(int argc, char* argv[]) {

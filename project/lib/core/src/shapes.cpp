@@ -41,7 +41,7 @@ namespace core {
         return a and b and c and d;
     }
 
-    bool AABB::IntersectsWith(const AABB & other) const {
+    bool AABB::IntersectsWithAABB(const AABB & other) const {
         if (&other == this) return true;
 
         const bool isLefter = _getLeft() >= other._getRight();
@@ -54,7 +54,7 @@ namespace core {
         );
     }
 
-    bool AABB::IntersectsWith(const Circle & other) const {
+    bool AABB::IntersectsWithCircle(const Circle & other) const {
         const double R = other.GetRadius();
         const vec2 & other_center = other.GetCenter();
 
@@ -76,8 +76,12 @@ namespace core {
             );
     }
 
-    bool AABB::IntersectsWith(const Point & other) const {
-        return other.IntersectsWith(*this);
+    bool AABB::IntersectsWith(const IShape & other) const {
+        return other.IntersectsWithAABB(*this);
+    }
+
+    bool AABB::IntersectsWithPoint(const Point & other) const {
+        return other.IntersectsWithAABB(*this);
     }
 
     vec2 AABB::TopLeft() const {
@@ -106,11 +110,11 @@ namespace core {
         return center.distance_to_squared(dot) <= R*R;
     }
 
-    bool Circle::IntersectsWith(const AABB & other) const {
-        return other.IntersectsWith(*this);
+    bool Circle::IntersectsWithAABB(const AABB & other) const {
+        return other.IntersectsWithCircle(*this);
     }
 
-    bool Circle::IntersectsWith(const Circle & other) const {
+    bool Circle::IntersectsWithCircle(const Circle & other) const {
         const double R_sum = R + other.R;
         const double squared_centers_distance = 
             center.distance_to_squared(other.center);
@@ -118,8 +122,12 @@ namespace core {
         return squared_centers_distance <= R_sum*R_sum;
     }
 
-    bool Circle::IntersectsWith(const Point & other) const {
-        return other.IntersectsWith(*this);
+    bool Circle::IntersectsWithPoint(const Point & other) const {
+        return other.IntersectsWithCircle(*this);
+    }
+
+    bool Circle::IntersectsWith(const IShape & other) const {
+        return other.IntersectsWithCircle(*this);
     }
 
     Point::Point(const vec2 & center) : center(center) {}
@@ -133,15 +141,19 @@ namespace core {
         return same_x and same_y;
     }
 
-    bool Point::IntersectsWith(const Point & other) const {
+    bool Point::IntersectsWithPoint(const Point & other) const {
         return LiesInside(other.center);
     }
 
-    bool Point::IntersectsWith(const AABB & other) const {
+    bool Point::IntersectsWithAABB(const AABB & other) const {
         return other.LiesInside(center);
     }
 
-    bool Point::IntersectsWith(const Circle & other) const {
+    bool Point::IntersectsWithCircle(const Circle & other) const {
         return other.LiesInside(center);
+    }
+
+    bool Point::IntersectsWith(const IShape & other) const {
+        return other.IntersectsWithPoint(*this);
     }
 }
