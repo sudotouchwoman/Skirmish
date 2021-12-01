@@ -1,6 +1,6 @@
 #pragma once
 
-#include <boost/json/src.hpp>
+#include <boost/json.hpp>
 
 using namespace boost::json;
 
@@ -34,6 +34,9 @@ namespace GameEntities {
         Player & operator=(const Player &other);
         Player(Player &&other) = delete;
         Player & operator=(Player &&other) = delete;
+        int getType(){};
+        int getHP(){};
+        int Render(){};
     private:
         int hp;
         int type;
