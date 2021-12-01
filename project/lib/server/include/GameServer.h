@@ -1,7 +1,8 @@
 #pragma once
 
-//#include "GameLoop.h"
+#include "GameLoop.h"
 #include "ConnectionServer.h"
+#include "GlobalEnvironment.h"
 
 #include <boost/asio.hpp>
 #include <string>
@@ -19,8 +20,7 @@ namespace Server {
         void initializeGE();
         std::string requestHandler(std::string);
 
-//        GlobalEnvironment ge;
-//        Snapshot snapshot;
+        GameEntities::GlobalEnvironment _ge;
     };
 
 } // namespace Server

@@ -4,18 +4,19 @@
 
 using Server::GameLoop;
 
-bool gameEnd() {
+bool GameLoop::gameEnd() {
     return false;
 }
 
-GameLoop::GameLoop(GlobalEnvironment * ge_) : ge(ge_){};
+GameLoop::GameLoop(GameEntities::GlobalEnvironment * ge) : _ge(ge){};
 
 void GameLoop::run() {
     while (!gameEnd()) {
         std::this_thread::sleep_for(std::chrono::microseconds(game_frequency));
-        ge->getAccess();
-        std::vector<Collision> collisions = pm.makePhisics(ge);
-        cm.resolveCollisions(collisions, ge);
-        ge->finishAccess();
+        _ge->getAccess();
+//        std::vector<Collision> collisions = pm.makePhisics(_ge->getModifyGameObjects());
+//        cm.resolveCollisions(collisions, _ge);
+        _ge->finishAccess();
+        _ge->generateSnapshot();
     }
 }

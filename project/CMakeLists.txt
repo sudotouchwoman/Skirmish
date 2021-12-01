@@ -1,4 +1,5 @@
 add_subdirectory(lib)
-#add_subdirectory(src)
+add_subdirectory(src)
+
 add_executable(aboba main.cpp)
-target_link_libraries(aboba server)
+target_link_libraries(aboba game_objects)

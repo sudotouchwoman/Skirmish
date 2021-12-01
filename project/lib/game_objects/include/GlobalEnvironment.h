@@ -5,22 +5,28 @@
 #include <vector>
 #include <mutex>
 
-class GlobalEnvironment{
-public:
-    GlobalEnvironment() = default;
-    ~GlobalEnvironment() = default;
-    GlobalEnvironment(GlobalEnvironment &&);
-    GlobalEnvironment(const GlobalEnvironment &);
-    GlobalEnvironment & operator=(const GlobalEnvironment &);
-    GlobalEnvironment & operator=(GlobalEnvironment &&);
+namespace GameEntities{
+    class GlobalEnvironment{
+    public:
+        GlobalEnvironment() = default;
+        ~GlobalEnvironment() = default;
+        GlobalEnvironment(GlobalEnvironment &&) = delete;
+        GlobalEnvironment(const GlobalEnvironment &) = delete;
+        GlobalEnvironment & operator=(const GlobalEnvironment &) = delete;
+        GlobalEnvironment & operator=(GlobalEnvironment &&) = delete;
 
-    void updateEnvironment();
-    int getAccess();
-    int finishAccess();
-    std::vector<GameEntities::GameObject> &getModifyGameObjects() { return _game_objects; };
+        void updateEnvironment();
+        int getAccess();
+        int finishAccess();
+        std::vector<std::shared_ptr<GameEntities::GameObject>> &getModifyGameObjects();
 
-private:
-    std::mutex _mutex;
-    std::string _snapshot;
-    std::vector<GameEntities::GameObject> _game_objects;
-};
+        int generateSnapshot();
+        const std::string &getSnapshot();
+        int setSnapshot(std::string &&);
+        int getObjectsFromSnapshot();
+    private:
+        std::mutex _mutex;
+        std::string _snapshot;
+        std::vector<std::shared_ptr<GameEntities::GameObject>> _game_objects;
+    };
+}

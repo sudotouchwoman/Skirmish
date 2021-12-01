@@ -8,22 +8,22 @@ class Collision;
 
 class PhisicsManager {
 public:
-    std::vector<Collision> makePhisics(GlobalEnvironment &) {};
+    std::vector<Collision> makePhisics(GameEntities::GlobalEnvironment &) {};
 };
 
 class Collision {
 public:
     size_t getCollisionType() { return collision_type; }
-    GameObject &getMainCollisiant() { return main; }
+    GameEntities::GameObject &getMainCollisiant() { return main; }
 private:
-    GameObject &main;  // main object, wich need to be processed by server
-    GameObject &second;
+    GameEntities::GameObject &main;  // main object, wich need to be processed by server
+    GameEntities::GameObject &second;
     size_t collision_type;
 };
 
 class CollisionManager {
 public:
-    void resolveCollisions(const std::vector <Collision> & collisions, GlobalEnvironment & environment) {
+    void resolveCollisions(const std::vector <Collision> & collisions, GameEntities::GlobalEnvironment & environment) {
         for (auto collision : collisions){
             size_t type = collision.getCollisionType();
             switch (type){
@@ -39,10 +39,10 @@ private:
 class Snapshot{
 public:
     Snapshot() = default;
-    void generateSnapshot(const GlobalEnvironment & ge);
+    void generateSnapshot(const GameEntities::GlobalEnvironment & ge);
     Snapshot(std::string);
     operator std::string();
-    GlobalEnvironment & generateGlobalEnvironmentFromSnapshot();
+    GameEntities::GlobalEnvironment & generateGlobalEnvironmentFromSnapshot();
 private:
     std::string _snapshot;
 };

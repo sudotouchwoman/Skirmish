@@ -1,21 +1,19 @@
 #pragma once
 
-// main game parameters
-const int game_frequency = 10; // miliseconds
-
-// main game parameters
-
-
 #include "GlobalEnvironment.h"
 #include "plug.h"
+
+// main game parameters
+const int game_frequency = 10; // miliseconds
+// main game parameters
 
 namespace Server {
     class GameLoop {
     public:
-        GameLoop(GlobalEnvironment *);
+        GameLoop(GameEntities::GlobalEnvironment *);
         void run();
     private:
-        GlobalEnvironment *ge;
+        GameEntities::GlobalEnvironment *_ge;
         PhisicsManager pm;
         CollisionManager cm;
 

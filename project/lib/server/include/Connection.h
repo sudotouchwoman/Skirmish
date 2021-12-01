@@ -43,6 +43,6 @@ namespace Server {
         boost::array<char, 8192> buffer_;
 
         /// Game loop object
-        Server::GameLoop &game_loop_;
+        Server::Serializer &game_loop_;
     };
 } // namespace server3
