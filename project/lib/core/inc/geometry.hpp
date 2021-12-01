@@ -22,15 +22,20 @@ struct core::vec2 {
 public:
     vec2() = default;
     vec2(const double x, const double y) : x(x), y(y) {}
+
     vec2 & operator+=(const vec2 & other) { x += other.x; y += other.y; return *this; }
     vec2 & operator-=(const vec2 & other) { x -= other.x; y -= other.y; return *this; }
     vec2 operator+(const vec2 &);
     vec2 operator-(const vec2 &);
+    vec2 operator*(const double);
+
     void rotate(const double theta);
+
     double distance_to_squared(const vec2 & other) const;
     double distance_to(const vec2 & other) const;
     double len_squared() const;
     double len() const;
+
     vec2 normalized() const;
     bool operator==(const vec2 &) const;
     bool operator!=(const vec2 &) const;

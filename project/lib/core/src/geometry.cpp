@@ -37,6 +37,13 @@ namespace core {
         return tmp;
     }
 
+    vec2 vec2::operator*(const double a) {
+        vec2 tmp;
+        tmp.x = a * x;
+        tmp.y = a * y;
+        return tmp;
+    }
+
     void vec2::rotate(const double theta) {
         const double rad_theta = degrees_to_rad(theta);
         const double x_ = x * std::cos(rad_theta) - y * std::sin(rad_theta);
