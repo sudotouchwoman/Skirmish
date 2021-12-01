@@ -1,6 +1,6 @@
 set(SOURCES src/GlobalEnvironment.cpp src/GameObjects.cpp)
 
 add_library(game_objects ${SOURCES})
-#target_link_libraries(game_objects)
+target_link_libraries(game_objects PRIVATE Boost::json)
 target_include_directories(game_objects PUBLIC include)
 target_include_directories(game_objects PUBLIC ${Boost_INCLUDE_DIRS})

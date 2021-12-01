@@ -6,5 +6,4 @@ add_subdirectory(lib)
 add_subdirectory(src)
 
 add_executable(main main.cpp)
-target_link_libraries(main PRIVATE Boost::json game_objects)
-target_include_directories(main PRIVATE ${Boost_INCLUDE_DIRS})
+target_link_libraries(main PRIVATE server)

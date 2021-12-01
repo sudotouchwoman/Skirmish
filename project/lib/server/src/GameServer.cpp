@@ -24,9 +24,13 @@ void GameServer::run() {
 }
 
 void GameServer::initializeGE() {
-    /// initialising
+    std::vector<std::shared_ptr<GameEntities::GameObject>> &go = _ge.getModifyGameObjects();
+    go.push_back(std::make_shared<GameEntities::Player>());
+    go.push_back(std::make_shared<GameEntities::Player>());
+    go.push_back(std::make_shared<GameEntities::Player>());
+    go.push_back(std::make_shared<GameEntities::Player>());
 }
 
 std::string GameServer::requestHandler(std::string){
-    return "aobao";
+    return _ge.getSnapshot();
 }
