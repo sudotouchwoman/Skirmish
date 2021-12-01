@@ -1,10 +1,13 @@
-#include "shapes.hpp"
 #include <memory>
 #include <array>
 #include <algorithm>
 
+#include "shapes.hpp"
+
 namespace core {
     using IShapeUPtr = std::unique_ptr<IShape>;
+
+    core::IShape::~IShape() {}
 
     double AABB::_getLeft() const {
         return center.x - width / 2;

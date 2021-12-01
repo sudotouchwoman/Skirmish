@@ -98,8 +98,7 @@ TEST(CoreShapeTest, polymorphism) {
     shapes.push_back(std::make_unique<Circle>(0.0, 1.5, 1.0));
     shapes.push_back(std::make_unique<Point>(3.0, 3.0));
 
-    auto any_intersections = [&shapes]() {
-        return std::any_of(
+    auto any_intersects = std::any_of(
             shapes.begin(),
             shapes.end(),
             [&shapes](const IShapeUPtr & p) {
@@ -111,12 +110,10 @@ TEST(CoreShapeTest, polymorphism) {
                         return p->IntersectsWith(*m.get());
                     });
                 });
-    }();
 
-    EXPECT_TRUE(any_intersections);
+    EXPECT_TRUE(any_intersects);
 
-    auto all_intersections = [&shapes]() {
-        return std::all_of(
+    auto all_intersect = std::all_of(
             shapes.begin(),
             shapes.end(),
             [&shapes](const IShapeUPtr & p) {
@@ -128,9 +125,8 @@ TEST(CoreShapeTest, polymorphism) {
                         return p->IntersectsWith(*m.get());
                     });
                 });
-    }();
 
-    EXPECT_FALSE(all_intersections);
+    EXPECT_FALSE(all_intersect);
 }
 
 int main(int argc, char* argv[]) {

@@ -1,7 +1,8 @@
-#include "core.hpp"
 #include <cmath>
 #include <limits>
 #include <algorithm>
+
+#include "core.hpp"
 
 namespace core {
     double degrees_to_rad(const double theta) {

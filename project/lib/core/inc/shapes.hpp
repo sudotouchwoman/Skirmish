@@ -1,6 +1,6 @@
 // _LIB_CORE_INC_SHAPES_HPP
 #pragma once
-#include "core.hpp"
+#include "geometry.hpp"
 
 // this header expands the core namespace with
 // shape classes. All shapes implement IShape
@@ -29,8 +29,7 @@ enum shape {
 // in 3D space, but we will stick to 2D space)
 class core::IShape {
 public:
-    virtual ~IShape() = default;
-    virtual shape Type() = 0;
+    virtual ~IShape() = 0;
     virtual bool LiesInside(const vec2 &) const = 0;
     virtual const vec2 & GetCenter() const = 0;
 
@@ -38,6 +37,9 @@ public:
     virtual bool IntersectsWithCircle(const Circle &) const = 0;
     virtual bool IntersectsWithPoint(const Point &) const = 0;
     virtual bool IntersectsWith(const IShape &) const = 0;
+    
+    virtual shape Type() const = 0;
+    virtual void shift(const vec2 &) = 0;
 protected:
     virtual double _getRight() const = 0;
     virtual double _getLeft() const = 0;
@@ -63,7 +65,8 @@ public:
     AABB(const vec2 & center, const double w, const double h);
     AABB(const double center_x, const double center_y, const double w, const double h);
 
-    shape Type() override { return shape::AABB_shape; }
+    shape Type() const override { return shape::AABB_shape; }
+    void shift(const vec2 & delta) override { center += delta; }
 
     bool LiesInside(const core::vec2 &) const override;
 
@@ -95,7 +98,9 @@ public:
     ~Circle() = default;
     Circle(const double center_x, const double center_y, const double R);
     Circle(const vec2 & center, const double R);
-    shape Type() override { return shape::Circle_shape; }
+
+    shape Type() const override { return shape::Circle_shape; }
+    void shift(const vec2 & delta) override { center += delta; }
 
     bool LiesInside(const vec2 &) const override;
 
@@ -123,7 +128,9 @@ public:
     ~Point() = default;
     Point(const vec2 & center);
     Point(const double center_x, const double center_y);
-    shape Type() override { return shape::Point_shape; }
+
+    shape Type() const override { return shape::Point_shape; }
+    void shift(const vec2 & delta) override { center += delta; }
 
     bool LiesInside(const vec2 &) const override;
 
