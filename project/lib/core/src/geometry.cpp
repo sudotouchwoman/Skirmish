@@ -1,14 +1,9 @@
-#include <cmath>
 #include <limits>
 #include <algorithm>
 
 #include "core.hpp"
 
 namespace core {
-    double degrees_to_rad(const double theta) {
-    return theta * PI / 180.0;
-    }
-
     bool allclose(const double a, const double b) {
         return
             a == b or
@@ -23,24 +18,37 @@ namespace core {
         return tmp;
     }
 
-    vec2 vec2::operator+(const vec2 & other) {
+    vec2 clamp_vector(const vec2 & v, const vec2 & lb, const vec2 & ub) {
+        const auto x_clamped = std::min(std::max(v.x, lb.x), ub.x);
+        const auto y_clamped = std::min(std::max(v.y, lb.y), ub.y);
+        return vec2(x_clamped, y_clamped);
+    }
+
+    vec2 vec2::operator+(const vec2 & other) const {
         vec2 tmp;
         tmp.x = x + other.x;
         tmp.y = y + other.y;
         return tmp;
     }
 
-    vec2 vec2::operator-(const vec2 & other) {
+    vec2 vec2::operator-(const vec2 & other) const {
         vec2 tmp;
         tmp.x = x - other.x;
         tmp.y = y - other.y;
         return tmp;
     }
 
-    vec2 vec2::operator*(const double a) {
+    vec2 vec2::operator*(const double a) const {
         vec2 tmp;
         tmp.x = a * x;
         tmp.y = a * y;
+        return tmp;
+    }
+
+    vec2 vec2::operator-() const {
+        vec2 tmp;
+        tmp.x = -x;
+        tmp.y = -y;
         return tmp;
     }
 
@@ -50,6 +58,14 @@ namespace core {
         const double y_ = x * std::sin(rad_theta) + y * std::cos(rad_theta);
         x = std::round(x_);
         y = std::round(y_);
+    }
+
+    double vec2::angle_r() const {
+        return std::atan2(y, x);
+    }
+
+    double vec2::angle_d() const {   
+        return rad_to_degrees(std::atan2(y, x));
     }
 
     double vec2::len_squared() const {

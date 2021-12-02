@@ -3,6 +3,7 @@ project(Skirmish)
 
 set(CMAKE_CXX_STANDARD 14)
 set(CMAKE_CXX_STANDARD_REQUIRED)
+add_compile_options(-Wall -Werror -Wpedantic)
 
 set(PROJECT_FOLDER ${CMAKE_CURRENT_SOURCE_DIR})
 

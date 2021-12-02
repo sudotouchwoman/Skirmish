@@ -1,5 +1,7 @@
 // _LIB_CORE_INC_GEOMETRY_HPP
 #pragma once  
+#include <cmath>
+#include <iostream>
 
 // core namespace contains
 // helper classes, the geometric primitives
@@ -7,11 +9,14 @@
 // build more complex entities on top of these
 namespace core
 {
-    const double PI = 3.141592653589793238462643383;
-    double degrees_to_rad(const double theta);
+    const double PI = M_PI;
+    inline double degrees_to_rad(const double theta) { return theta * PI / 180.0; }
+    inline double rad_to_degrees(const double theta) { return 180.0 / PI * theta; }
+
     bool allclose(const double a, const double b);
     struct vec2;
     vec2 rotate_vector(const vec2 & v, const double theta);
+    vec2 clamp_vector(const vec2 & v, const vec2 & lb, const vec2 & ub);
 }  // namespace core
 
 // 2-dimensional vector/dot/point
@@ -25,11 +30,14 @@ public:
 
     vec2 & operator+=(const vec2 & other) { x += other.x; y += other.y; return *this; }
     vec2 & operator-=(const vec2 & other) { x -= other.x; y -= other.y; return *this; }
-    vec2 operator+(const vec2 &);
-    vec2 operator-(const vec2 &);
-    vec2 operator*(const double);
+    vec2 operator+(const vec2 &) const;
+    vec2 operator-(const vec2 &) const;
+    vec2 operator*(const double) const;
+    vec2 operator-() const;
 
     void rotate(const double theta);
+    double angle_r() const;
+    double angle_d() const;
 
     double distance_to_squared(const vec2 & other) const;
     double distance_to(const vec2 & other) const;
@@ -39,6 +47,11 @@ public:
     vec2 normalized() const;
     bool operator==(const vec2 &) const;
     bool operator!=(const vec2 &) const;
+
+    friend std::ostream & operator<<(std::ostream & out, const vec2 & v) {
+        out << "core::vec2 object: X=" << v.x << " Y=" << v.y << std::endl;
+        return out;
+    }
 };
 
 // _LIB_CORE_INC_GEOMETRY_HPP

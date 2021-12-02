@@ -44,47 +44,99 @@ namespace core {
         return a and b and c and d;
     }
 
-    bool AABB::IntersectsWithAABB(const AABB & other) const {
-        if (&other == this) return true;
+    ContactPoint AABB::IntersectsWithAABB(const AABB & other) const {
+        if (&other == this) return ContactPoint();
 
+        // first check if the boxes are actually intersecting
+        // the expressions are unintuitive, however
+        // the idea is simple: boxes DEFINETELY DO NOT overlap
+        // (it is actually easier to check)
+        // if one of them has, e.g., left border
+        // with greater value then the right border of the other
         const bool isLefter = _getLeft() >= other._getRight();
         const bool isRighter = _getRight() <= other._getLeft();
         const bool isAbove = _getBottom() >= other._getTop();
         const bool isBelow = _getTop() <= other._getBottom();
 
-        return not (
-            isLefter or isRighter or isAbove or isBelow
-        );
-    }
+        // if at least one was true, there is no collision
+        if (isLefter or isRighter or isAbove or isBelow)
+            return ContactPoint();
 
-    bool AABB::IntersectsWithCircle(const Circle & other) const {
-        const double R = other.GetRadius();
-        const vec2 & other_center = other.GetCenter();
+        // it is what it is
+        const vec2 this_halfdims(width / 2, height / 2);
+        const vec2 other_halfdims(other.width / 2, other.height / 2);
 
-        const std::array<IShapeUPtr, 6> shapes = {
-                std::make_unique<Circle>(TopLeft(), R),
-                std::make_unique<Circle>(TopRight(), R),
-                std::make_unique<Circle>(BottomLeft(), R),
-                std::make_unique<Circle>(BottomRight(), R),
-                std::make_unique<AABB>(center, width, height + 2*R),
-                std::make_unique<AABB>(center, width + 2*R, height)
-                };
+        // uncanny flex with lambdas
+        double penetration;  // pen distance
+        const vec2 normal = [&]() {
+            // as we are checking AABBs,
+            // the intersection normal must be
+            // aligned along axis, what a surprize!
+            const std::array<double, 4> distances = {
+                other.TopRight().x - BottomLeft().x,
+                TopRight().x - other.BottomLeft().x,
+                other.TopRight().y - BottomLeft().y,
+                TopRight().y - other.BottomLeft().y,
+            };
 
-        return std::any_of(
-            shapes.begin(),
-            shapes.end(),
-            [&other_center](const IShapeUPtr & p) {
-                return p->LiesInside(other_center);
-                }
+            const std::array<vec2, 4> axis = {
+                vec2(-1.0, 0.0), vec2(1.0, 0.0),
+                vec2(0.0, -1.0), vec2(0.0, 1.0)
+            };
+
+            // we are looking for the least distance
+            const auto min_iter = std::min_element(
+                distances.begin(),
+                distances.end()
             );
+
+            const auto min_idx = std::distance(
+                distances.begin(),
+                min_iter
+            );
+
+            penetration = *min_iter;
+            return axis[min_idx];
+        }();
+
+        return ContactPoint {
+            true,
+            vec2(),  // the local vectors are empty
+            vec2(),
+            normal,
+            penetration
+        };
     }
 
-    bool AABB::IntersectsWith(const IShape & other) const {
-        return other.IntersectsWithAABB(*this);
+    ContactPoint AABB::IntersectsWithCircle(const Circle & other) const {
+        const auto R = other.GetRadius();
+        const vec2 & other_center = other.GetCenter();
+        const vec2 half_dims(width / 2, height / 2);
+
+        const vec2 delta = other_center - center;
+        const vec2 closest_point_on_box = clamp_vector(delta, -half_dims, half_dims);
+
+        const vec2 local_point = delta - closest_point_on_box;
+        const auto distance = local_point.len();
+
+        if (distance >= R) return ContactPoint();
+
+        const vec2 normal = local_point.normalized();
+        const double penetration = R - distance;
+        const vec2 localA;
+        const vec2 localB = normal * (-R);
+
+        return ContactPoint {
+            true,
+            localA,
+            localB,
+            normal,
+            penetration
+        };
     }
 
-    bool AABB::IntersectsWithPoint(const Point & other) const {
-        return other.IntersectsWithAABB(*this);
+    ContactPoint AABB::IntersectsWith(const IShape & other) const {
+        return other.IntersectsWithAABB(*this).inverse();
     }
 
     vec2 AABB::TopLeft() const {
@@ -113,27 +165,38 @@ namespace core {
         return center.distance_to_squared(dot) <= R*R;
     }
 
-    bool Circle::IntersectsWithAABB(const AABB & other) const {
-        return other.IntersectsWithCircle(*this);
+    ContactPoint Circle::IntersectsWithAABB(const AABB & other) const {
+        return other.IntersectsWithCircle(*this).inverse();
     }
 
-    bool Circle::IntersectsWithCircle(const Circle & other) const {
-        const double R_sum = R + other.R;
-        const double squared_centers_distance = 
-            center.distance_to_squared(other.center);
+    ContactPoint Circle::IntersectsWithCircle(const Circle & other) const {
+        const double radii = R + other.R;
 
-        return squared_centers_distance <= R_sum*R_sum;
+        const auto delta = other.center - center;
+        const auto delta_len = delta.len();
+
+        const bool intersect(delta_len <= radii);
+        if (not intersect) return ContactPoint();
+        
+        auto normal = delta.normalized();
+        auto localA = normal * R;
+        auto localB = normal * (-other.R);
+        double penetration = radii - delta_len;
+
+        return ContactPoint {
+            true,
+            localA,
+            localB,
+            normal,
+            penetration
+        };
     }
 
-    bool Circle::IntersectsWithPoint(const Point & other) const {
-        return other.IntersectsWithCircle(*this);
+    ContactPoint Circle::IntersectsWith(const IShape & other) const {
+        return other.IntersectsWithCircle(*this).inverse();
     }
 
-    bool Circle::IntersectsWith(const IShape & other) const {
-        return other.IntersectsWithCircle(*this);
-    }
-
-    Point::Point(const vec2 & center) : center(center) {}
+    Point::Point(const vec2 & center) : Circle(center, 0.0) {}
 
     Point::Point(const double center_x, const double center_y) :
     Point(vec2(center_x, center_y)) {}
@@ -144,19 +207,15 @@ namespace core {
         return same_x and same_y;
     }
 
-    bool Point::IntersectsWithPoint(const Point & other) const {
-        return LiesInside(other.center);
+    ContactPoint Point::IntersectsWithAABB(const AABB & other) const {
+        return other.IntersectsWithCircle(*this).inverse();
     }
 
-    bool Point::IntersectsWithAABB(const AABB & other) const {
-        return other.LiesInside(center);
+    ContactPoint Point::IntersectsWithCircle(const Circle & other) const {
+        return other.IntersectsWithCircle(*this).inverse();
     }
 
-    bool Point::IntersectsWithCircle(const Circle & other) const {
-        return other.LiesInside(center);
-    }
-
-    bool Point::IntersectsWith(const IShape & other) const {
-        return other.IntersectsWithPoint(*this);
+    ContactPoint Point::IntersectsWith(const IShape & other) const {
+        return other.IntersectsWithCircle(*this).inverse();
     }
 }

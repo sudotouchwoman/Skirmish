@@ -107,7 +107,7 @@ TEST(CoreShapeTest, polymorphism) {
                     shapes.end(),
                     [&shapes, &p](const IShapeUPtr & m) {
                         if (m == p) return false;
-                        return p->IntersectsWith(*m.get());
+                        return (bool)p->IntersectsWith(*m.get());
                     });
                 });
 
@@ -122,7 +122,7 @@ TEST(CoreShapeTest, polymorphism) {
                     shapes.end(),
                     [&shapes, &p](const IShapeUPtr & m) {
                         if (m == p) return false;
-                        return p->IntersectsWith(*m.get());
+                        return (bool)p->IntersectsWith(*m.get());
                     });
                 });
 
