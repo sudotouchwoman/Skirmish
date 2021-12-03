@@ -1,7 +1,3 @@
-#include <vector>
-#include <memory>
-#include <algorithm>
-
 #include "gtest/gtest.h"
 #include "shapes.hpp"
 
@@ -87,15 +83,25 @@ TEST(CoreCollisionTest, AABBtoCircle) {
 
 TEST(CoreCollisionTest, collidingCircles) {
     Circle cc(2.0, 1.0, 1.2);
+    Circle cpp(2.0, 1.0, 1.2);
 
-    auto intersects = cc.IntersectsWith(cc);
+    auto intersects = cpp.IntersectsWith(cc);
+    EXPECT_TRUE(intersects);
+    EXPECT_DOUBLE_EQ(intersects.penetration, 2*1.2);
 
     // check intersection of the object with itself
     // nans appear! this is an interesting problem
     // what should one expect when checking the object with itself?
     // the collision is obviuos, but how should we resolve?
-    EXPECT_TRUE(intersects);
-    EXPECT_DOUBLE_EQ(intersects.penetration, 2*1.2);
+    // UPD:
+    // in case of collision with itself,
+    // return false anyway
+    // another idea is checking the geometry
+    // equivalence before applying anything
+    // (possibly causing nans)
+    // actually, this would only require
+    // asking if center == other.center?
+    EXPECT_FALSE(cc.IntersectsWith(cc));
 
     // this example is okay now
     // the circles are located closely,

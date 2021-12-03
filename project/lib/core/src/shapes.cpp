@@ -170,6 +170,7 @@ namespace core {
     }
 
     ContactPoint Circle::IntersectsWithCircle(const Circle & other) const {
+        if (&other == this) return ContactPoint();
         const double radii = R + other.R;
 
         const auto delta = other.center - center;
