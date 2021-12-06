@@ -18,8 +18,10 @@ namespace Server {
         void run();
     private:
         void initializeGE();
-        std::string requestHandler(std::string);
+        std::string requestHandler(const std::string &request);
 
+        /// соответствие игровой сущности игрока и адреса с которого поступил реквест.
+        std::vector<int> dkkd;
         GameEntities::GlobalEnvironment _ge;
     };
 

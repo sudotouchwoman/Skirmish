@@ -15,7 +15,6 @@ namespace Server {
     private:
         GameEntities::GlobalEnvironment *_ge;
         PhisicsManager pm;
-        CollisionManager cm;
 
         bool gameEnd();
     };

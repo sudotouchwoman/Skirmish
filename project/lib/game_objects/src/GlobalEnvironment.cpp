@@ -14,6 +14,22 @@ int GlobalEnvironment::finishAccess() {
     _mutex.unlock();
     return 0;
 }
+
+int GlobalEnvironment::deleteObjects(){
+    for (auto elem: _game_objects){
+        if (elem.deleted){
+            elem = _game_objects[_game_objects.size() - 1];
+            _game_objects.pop_back();
+        }
+    }
+    return 0;
+}
+
+int GlobalEnvironment::addObject(const std::shared_ptr<GameEntities::GameObject> &go){
+    _game_objects.push_back(go);
+    return 0;
+}
+
 std::vector<std::shared_ptr<GameEntities::GameObject>> &GlobalEnvironment::getModifyGameObjects() {
     return _game_objects;
 }

@@ -19,6 +19,8 @@ namespace GameEntities{
         int getAccess();
         int finishAccess();
         std::vector<std::shared_ptr<GameEntities::GameObject>> &getModifyGameObjects();
+        int deleteObjects();
+        int addObject(const std::shared_ptr<GameEntities::GameObject> &go);
 
         int generateSnapshot();
         const std::string &getSnapshot();

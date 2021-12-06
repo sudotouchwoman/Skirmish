@@ -14,8 +14,8 @@ void GameLoop::run() {
     while (!gameEnd()) {
         std::this_thread::sleep_for(std::chrono::microseconds(game_frequency));
         _ge->getAccess();
-//        std::vector<Collision> collisions = pm.makePhisics(_ge->getModifyGameObjects());
-//        cm.resolveCollisions(collisions, _ge);
+//        pm.makePhisics(_ge->getModifyGameObjects());
+        _ge->deleteObjects();   // на этапе обработки коллизий появились уадаленные элементы
         _ge->finishAccess();
         _ge->generateSnapshot();
     }

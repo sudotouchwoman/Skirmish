@@ -31,6 +31,14 @@ void GameServer::initializeGE() {
     go.push_back(std::make_shared<GameEntities::Player>());
 }
 
-std::string GameServer::requestHandler(std::string){
+std::string GameServer::requestHandler(const std::string &request){
+    ClientServer::Event ev;
+    ev.deserialize(request);
+    switch(ev.type){
+        case ClientServer::tCheck:
+            break;
+        case ClientServer::tWalk:
+
+    }
     return _ge.getSnapshot();
 }

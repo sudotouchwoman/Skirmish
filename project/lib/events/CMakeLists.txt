@@ -1,6 +1,7 @@
-set(SOURCES src/Serializer.cpp)
+set(SOURCES include/PlayerEvent.h)
 
-add_library(game_loop ${SOURCES})
+add_library(events INTERFACE)
 
-target_link_libraries(game_loop plug game_objecst)
-target_include_directories(game_loop PUBLIC include)
+target_link_libraries(events PUBLIC Boost::json)
+target_include_directories(events PUBLIC ${Boost_INCLUDE_DIRS})
+target_include_directories(events INTERFACE include)
