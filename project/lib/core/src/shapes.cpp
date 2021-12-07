@@ -114,7 +114,7 @@ namespace core {
         const vec2 half_dims(width / 2, height / 2);
 
         const vec2 delta = other_center - center;
-        const vec2 closest_point_on_box = clamp_vector(delta, -half_dims, half_dims);
+        const vec2 closest_point_on_box = vec2::clamp(delta, -half_dims, half_dims);
 
         const vec2 local_point = delta - closest_point_on_box;
         const auto distance = local_point.len();

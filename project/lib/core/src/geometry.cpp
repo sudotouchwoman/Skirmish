@@ -12,13 +12,19 @@ namespace core {
                 std::min(a, b)*std::numeric_limits<double>::epsilon());
     }
 
-    vec2 rotate_vector(const vec2 & v, const double theta) {
+    vec2 vec2::rotate_r(const vec2 & v, const double theta_r) {
         vec2 tmp(v);
-        tmp.rotate(theta);
+        tmp.rotate_r(theta_r);
         return tmp;
     }
 
-    vec2 clamp_vector(const vec2 & v, const vec2 & lb, const vec2 & ub) {
+    vec2 vec2::rotate_d(const vec2 & v, const double theta_d) {
+        vec2 tmp(v);
+        tmp.rotate_d(theta_d);
+        return tmp;
+    }
+
+    vec2 vec2::clamp(const vec2 & v, const vec2 & lb, const vec2 & ub) {
         const auto x_clamped = std::min(std::max(v.x, lb.x), ub.x);
         const auto y_clamped = std::min(std::max(v.y, lb.y), ub.y);
         return vec2(x_clamped, y_clamped);
@@ -52,10 +58,17 @@ namespace core {
         return tmp;
     }
 
-    void vec2::rotate(const double theta) {
-        const double rad_theta = degrees_to_rad(theta);
-        const double x_ = x * std::cos(rad_theta) - y * std::sin(rad_theta);
-        const double y_ = x * std::sin(rad_theta) + y * std::cos(rad_theta);
+    void vec2::rotate_d(const double theta_d) {
+        const double theta_r = degrees_to_rad(theta_d);
+        const double x_ = x * std::cos(theta_r) - y * std::sin(theta_r);
+        const double y_ = x * std::sin(theta_r) + y * std::cos(theta_r);
+        x = std::round(x_);
+        y = std::round(y_);
+    }
+
+    void vec2::rotate_r(const double theta_r) {
+        const double x_ = x * std::cos(theta_r) - y * std::sin(theta_r);
+        const double y_ = x * std::sin(theta_r) + y * std::cos(theta_r);
         x = std::round(x_);
         y = std::round(y_);
     }

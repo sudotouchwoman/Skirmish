@@ -1,57 +1,48 @@
 #include "physical.hpp"
 
 namespace physical {
-    State::State(const core::vec2 & velocity, const core::vec2 & acceleration, const double mass) :
-    velocity(velocity), acceleration(acceleration), mass(mass) {}
+    State::State(const core::vec2 & velocity, const core::vec2 & acceleration, const double inverse_mass) :
+        velocity(velocity), acceleration(acceleration), inverse_mass(inverse_mass) {}
 
-    State::State(const double mass) : mass(mass) {}
+    State::State(const double inverse_mass) : inverse_mass(inverse_mass) {}
 
-    // get const reference to the current geometry
-    // core::IShape & StaticObject::getGeometry() { return *geometry.get(); }
+    PhysicalObject::PhysicalObject(const double inverse_mass) :
+        state(State(inverse_mass)) {}
 
-    // // get const reference to the current state
-    // State & StaticObject::getState() { return state; }
+    PhysicalObject::PhysicalObject(const State & state, IShapeUPtr geometry) :
+        state(state), geometry(std::move(geometry)) {}
 
-    // MovableObject::MovableObject(const core::IShape & geometry, const State & state) :
-    //     geometry(std::make_unique<core::IShape>(geometry)),
-    //     geometry_shadow_copy(std::make_unique<core::IShape>(geometry)),
-    //     state(state) {}
+    void PhysicalObject::update(const double dt) {
+        state.acceleration += state.acceleration * dt;
+        state.velocity += state.velocity * dt;
+        geometry->shift(state.velocity * dt);
+    }
 
-    // MovableObject::MovableObject(const core::IShape & geometry) :
-    //     geometry(std::make_unique<core::IShape>(geometry)),
-    //     geometry_shadow_copy(std::make_unique<core::IShape>(geometry)),
-    //     state(State()) {}
+    void PhysicalObject::setGeometry(IShapeUPtr new_geometry) {
+        geometry = std::move(new_geometry);
+    }
 
-    // // utilize move semantics to transfer ownewship over
-    // // geometry from one object to another
-    // MovableObject & MovableObject::operator=(MovableObject && other) {
-    //     geometry_shadow_copy = std::move(other.geometry_shadow_copy);
-    //     geometry = std::move(other.geometry);
-    //     state = other.state;
-    //     return *this;
-    // }    
+    void PhysicalObject::setState(const State & new_state) {
+        state = new_state;
+    }
 
-    // // the problem here is the interactivity with the other objects
-    // // in such cases, the acceleration should change
-    // // e.g., according to the Newtons's second law
-    // void MovableObject::update(const double dt) {
-    //     geometry->shift(state.velocity * dt);
-    //     state.velocity += state.acceleration * dt;
-    // }
+    const core::ContactPoint PhysicalObject::collide(PhysicalObject & a, PhysicalObject & b) {
+        const core::ContactPoint cp = a.geometry->IntersectsWith(*a.geometry.get());
+        if (not cp) return cp;
 
-    // // solve some equations to get the new acceleration
-    // // values
-    // void MovableObject::interact(IPhysicalObject & another) {
-        
-    //     // const auto other_mass = another.getState().mass;
-    //     // const auto this_mass = state.mass;
-    // }
+        const double total_mass = a.state.inverse_mass + b.state.inverse_mass;
 
-    // core::IShape & MovableObject::getGeometry() { return *geometry.get(); }
+        a.geometry->shift(-cp.normal * cp.penetration * (a.state.inverse_mass / total_mass));
+        b.geometry->shift(cp.normal * cp.penetration * (b.state.inverse_mass / total_mass));
 
-    // // get const reference to the current state
-    // State & MovableObject::getState() { return state; }
+        const double a_theta_d = cp.normal.angle_r() - a.state.velocity.angle_r();
+        a.state.velocity.rotate_r(2*a_theta_d);
+        a.state.velocity.inverse();
 
-    IPhysicalObject::~IPhysicalObject() {}
+        const double b_theta_d = cp.normal.angle_r() - b.state.velocity.angle_r();
+        b.state.velocity.rotate_r(2*b_theta_d);
+        b.state.velocity.inverse();
 
+        return cp;
+    }
 }  // namespace physical

@@ -15,8 +15,6 @@ namespace core
 
     bool allclose(const double a, const double b);
     struct vec2;
-    vec2 rotate_vector(const vec2 & v, const double theta);
-    vec2 clamp_vector(const vec2 & v, const vec2 & lb, const vec2 & ub);
 }  // namespace core
 
 // 2-dimensional vector/dot/point
@@ -35,7 +33,9 @@ public:
     vec2 operator*(const double) const;
     vec2 operator-() const;
 
-    void rotate(const double theta);
+    void inverse() { x = -x; y = -y; }
+    void rotate_r(const double theta_r);
+    void rotate_d(const double theta_d);
     double angle_r() const;
     double angle_d() const;
 
@@ -48,9 +48,18 @@ public:
     bool operator==(const vec2 &) const;
     bool operator!=(const vec2 &) const;
 
+    static vec2 rotate_r(const vec2 & v, const double theta_r);
+    static vec2 rotate_d(const vec2 & v, const double theta_d);
+    static vec2 clamp(const vec2 & v, const vec2 & lb, const vec2 & ub);
+
     friend std::ostream & operator<<(std::ostream & out, const vec2 & v) {
         out << "core::vec2 object: X=" << v.x << " Y=" << v.y << std::endl;
         return out;
+    }
+
+    friend std::istream & operator>>(std::istream & in, vec2 & v) {
+        in >> v.x >> v.y;
+        return in;
     }
 };
 

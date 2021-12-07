@@ -52,17 +52,17 @@ TEST(CoreGeometryTest, rotation) {
 
     EXPECT_NE(a, b);
 
-    a.rotate(90.0);
+    a.rotate_d(90.0);
     EXPECT_DOUBLE_EQ(a.y, 1.0);
     EXPECT_DOUBLE_EQ(a.x, 0.0);
 
     EXPECT_EQ(a, b);
 
-    a.rotate(90.0);
+    a.rotate_d(90.0);
     EXPECT_DOUBLE_EQ(a.y, 0.0);
     EXPECT_DOUBLE_EQ(a.x, -1.0);
 
-    a.rotate(180.0);
+    a.rotate_d(180.0);
     EXPECT_DOUBLE_EQ(a.y, 0.0);
     EXPECT_DOUBLE_EQ(a.x, 1.0);
 }
