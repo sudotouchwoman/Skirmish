@@ -65,7 +65,9 @@ namespace physical
         // collision detection)
         bool isInteractive() const { return interactive; }
         void setInteractivity(const bool new_interactive) { interactive = new_interactive; }
+        bool hasGeometry() const { return static_cast<bool>(geometry); }
 
+        bool collidesWith(const PhysicalObject & other) const;
         static const core::ContactPoint collide(PhysicalObject & a, PhysicalObject & b);
     };
 }  // namespace physical

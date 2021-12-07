@@ -26,7 +26,15 @@ namespace physical {
         state = new_state;
     }
 
+    bool PhysicalObject::collidesWith(const PhysicalObject & other) const {
+        if (not hasGeometry()) return false;
+        if (not other.hasGeometry()) return false;
+
+        return geometry->IntersectsWith(*other.geometry.get());
+    }
+
     const core::ContactPoint PhysicalObject::collide(PhysicalObject & a, PhysicalObject & b) {
+        if (not a.geometry or not b.geometry) return core::ContactPoint();
         const core::ContactPoint cp = a.geometry->IntersectsWith(*a.geometry.get());
         if (not cp) return cp;
 

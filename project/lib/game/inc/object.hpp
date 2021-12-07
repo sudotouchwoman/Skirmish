@@ -1,4 +1,6 @@
+// _LIB_GAME_INC_OBJECT_HPP
 #pragma once
+
 #include <vector>
 
 #include "core.hpp"
@@ -19,6 +21,7 @@ namespace game {
 
     };
 
+    // plugs for other game objects
     class Projectile: public GameObject {
 
     };
@@ -59,4 +62,4 @@ namespace game {
         const core::ContactPoint & getContactPoint() const { return where; }
     };
 }  // namespace game
-
+// _LIB_GAME_INC_OBJECT_HPP
