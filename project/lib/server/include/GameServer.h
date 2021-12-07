@@ -3,10 +3,13 @@
 #include "GameLoop.h"
 #include "ConnectionServer.h"
 #include "GlobalEnvironment.h"
+#include "PlayerEvent.h"
+
 
 #include <boost/asio.hpp>
 #include <string>
 #include <vector>
+#include <tuple>
 #include <boost/noncopyable.hpp>
 #include <boost/shared_ptr.hpp>
 
@@ -18,10 +21,10 @@ namespace Server {
         void run();
     private:
         void initializeGE();
-        std::string requestHandler(const std::string &request);
+        std::string requestHandler(const boost::asio::ip::udp::endpoint &endpoint, const std::string &request);
 
         /// соответствие игровой сущности игрока и адреса с которого поступил реквест.
-        std::vector<int> dkkd;
+        std::vector<std::tuple<boost::asio::ip::udp::endpoint, int>> endpoint_id;
         GameEntities::GlobalEnvironment _ge;
     };
 

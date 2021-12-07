@@ -1,33 +1,29 @@
 #pragma once
 
 #include <boost/json.hpp>
-#include "GlobalEnvironment.h"
-#include "plug.h"
 
 namespace ClientServer {
-    enum {
+    enum Type{
         tCheck,
         tWalk,
         tShoot,
         tRegister,
     };
 
-    struct Event {
-        int info[2];
-        int type;
-        value serialize() {
-            value jv = {
-                {"hp", hp},
-                {"type", type},
-            };
-            return jv;
-        }
+    enum Movement{
+        U, L, R, D, UL, UR, DL, DR,
+    };
 
-        int deserialize(const std::string & request) {
-            value jv = parse(request);
-            object const& obj = jv.as_object();
-            extract( obj, hp, "hp" );
-            extract( obj, type, "type" );
-        }
+    struct ShootEvent{
+        int angle;
+        int weapon;
+    };
+
+    struct MoveEvent{
+        int movement;
+    };
+
+    struct InteractEvent{
+        int object_type;
     };
 }

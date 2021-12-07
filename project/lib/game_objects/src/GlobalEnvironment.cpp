@@ -6,10 +6,12 @@ using GameEntities::GlobalEnvironment;
 void GlobalEnvironment::updateEnvironment() {
 
 }
+
 int GlobalEnvironment::getAccess() {
     _mutex.lock();
     return 0;
 }
+
 int GlobalEnvironment::finishAccess() {
     _mutex.unlock();
     return 0;
@@ -25,13 +27,11 @@ int GlobalEnvironment::deleteObjects(){
     return 0;
 }
 
-int GlobalEnvironment::addObject(const std::shared_ptr<GameEntities::GameObject> &go){
-    _game_objects.push_back(go);
-    return 0;
-}
+int GlobalEnvironment::onCollision(Collision cl){
+    // game logic depending on type
 
-std::vector<std::shared_ptr<GameEntities::GameObject>> &GlobalEnvironment::getModifyGameObjects() {
-    return _game_objects;
+    // calling methods on collision of two passed links of elements
+    return 0;
 }
 
 int GlobalEnvironment::generateSnapshot(){

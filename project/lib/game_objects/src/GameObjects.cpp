@@ -11,25 +11,44 @@ void extract( object const& obj, T& t, string_view key )
 }
 
 
-// Player methods definition
-//Player::Player(const Player &other) {
-//
-//}
-//Player &Player::operator=(const Player &other) {
-//
-//}
-value Player::serialize() {
+void GameObject::deserialize(value jv) {
+    object ob = jv.as_object();
+    extract(ob, type, "type");
+    extract(ob, id, "id");
+
+    // ?????
+    extract(ob, ob, "Physical");
+
+    // extract to pointer of physical object
+}
+
+value GameObject::serialize() {
     value jv = {
-        {"hp", hp},
         {"type", type},
+        {"id", id},
+        {"Physical", {
+            // objects of physical
+        }}
     };
     return jv;
 }
 
-int Player::deserialize(value jv) {
+value Player::serialize() {
+    value jv = {
+        {"hp", hp},
+        {"name", name},
+        {"GameObject", GameObject::serialize()}
+    };
+    return jv;
+}
+
+void Player::deserialize(value jv) {
     object const& obj = jv.as_object();
     extract( obj, hp, "hp" );
-    extract( obj, type, "type" );
+    extract( obj, name, "name" );
+
+    extract( obj, jv, "GameObject");
+    GameObject::deserialize(jv);
 }
 
 // Bullet methods definition

@@ -35,6 +35,9 @@ private:
     int collisionProcessorByType(size_t type);
 };
 
+class PhysicalObject{
+
+};
 
 class Snapshot{
 public:

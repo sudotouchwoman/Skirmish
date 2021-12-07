@@ -15,20 +15,32 @@ namespace GameEntities{
         GlobalEnvironment & operator=(const GlobalEnvironment &) = delete;
         GlobalEnvironment & operator=(GlobalEnvironment &&) = delete;
 
-        void updateEnvironment();
         int getAccess();
         int finishAccess();
-        std::vector<std::shared_ptr<GameEntities::GameObject>> &getModifyGameObjects();
+        int onCollision(Collision);
+
+        int onEvent(const ClientServer::MoveEvent &);
+        int onEvent(const ClientServer::ShootEvent &);
+        int onEvent(const ClientServer::InteractEvent &);
+
+//        std::vector<std::shared_ptr<GameEntities::GameObject>> &getModifyGameObjects();
+
         int deleteObjects();
-        int addObject(const std::shared_ptr<GameEntities::GameObject> &go);
 
         int generateSnapshot();
         const std::string &getSnapshot();
         int setSnapshot(std::string &&);
         int getObjectsFromSnapshot();
+
+
     private:
         std::mutex _mutex;
         std::string _snapshot;
-        std::vector<std::shared_ptr<GameEntities::GameObject>> _game_objects;
+//        std::vector<std::shared_ptr<GameEntities::GameObject>> _game_objects;
+
+        std::vector <GameEntities::Player> Players;
+        std::vector <GameEntities::Bullet> Bullet;
+        std::vector <GameEntities::Terrain> Terrain;
+        std::vector <GameEntities::Object> Object;
     };
 }
