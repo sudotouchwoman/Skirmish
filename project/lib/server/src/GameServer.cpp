@@ -38,6 +38,7 @@ int onEvent(const ClientServer::InteractEvent &ie) {
 }
 
 std::string GameServer::requestHandler(const boost::asio::ip::udp::endpoint &endpoint, const std::string &request) {
+    _ge.getAccess();
     // if player exist, than check events
     if (std::any_of(endpoint_id.begin(),
                     endpoint_id.end(),
@@ -62,7 +63,7 @@ std::string GameServer::requestHandler(const boost::asio::ip::udp::endpoint &end
                 onEvent(*event);
                 break;
             }
-            default:return std::string();
+            default: break;
         }
         // if not and event register - register player ( else ignore request)
     else if (request[0] - 'a' == ClientServer::Type::tRegister) {
@@ -75,6 +76,8 @@ std::string GameServer::requestHandler(const boost::asio::ip::udp::endpoint &end
         endpoint_id.emplace_back(endpoint, pl.getID());
         _ge.addPlayer(pl);
     }
+
+    _ge.finishAccess();
 
     return _ge.getSnapshot();
 }

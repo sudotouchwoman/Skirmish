@@ -96,8 +96,7 @@ int GlobalEnvironment::deleteObjects() {
 //}
 
 int GlobalEnvironment::addPlayer(GameEntities::Player &pl) {
-    Players.emplace_back();
-    Players[Players.size() - 1] = std::move(pl);
+    Players.emplace_back(std::move(pl));
     return 0;
 }
 

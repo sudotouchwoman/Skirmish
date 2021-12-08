@@ -71,7 +71,6 @@ Player &Player::operator=(Player &&other) {
 Player::Player(Player &&other): GameObject(std::move(other)) {
     name = std::move(other.name);
     hp = other.hp;
-    GameObject::operator=(std::move(other));
 }
 
 void Player::deserialize(value jv) {
