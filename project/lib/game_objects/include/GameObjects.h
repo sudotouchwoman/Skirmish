@@ -1,8 +1,8 @@
 #pragma once
 
 #include <boost/json.hpp>
-#include "plug.h"
 #include "PlayerEvent.h"
+#include "physical.hpp"
 
 using namespace boost::json;
 
@@ -22,7 +22,7 @@ namespace GameEntities {
 
     class Logic {
     private:
-        virtual void collisionHandler(const std::shared_ptr<GameObject> &other) = 0;
+//        virtual void collisionHandler(const std::shared_ptr<GameObject> &other) = 0;
 //        virtual void eventHandler(const ClientServer::Eve &ev) = 0;
     };
 
@@ -43,18 +43,23 @@ namespace GameEntities {
     private:
         int type;
         int id;
-        std::unique_ptr<PhysicalObject> model;
+        std::unique_ptr<physical::PhysicalObject> model;
 
     public:
         GameObject(int type_, int id_) : type(type_), id(id_){};
+        GameObject(GameObject &&);
+        GameObject(const GameObject &) = delete;
+        GameObject & operator=(GameObject &&);
+        GameObject & operator=(const GameObject &) = delete;
+
         int getType() { return type; };
         int getID() { return id; };
-        void setModel(std::unique_ptr<PhysicalObject> & model_) {model = std::move(model_);}
+        void setModel(std::unique_ptr<physical::PhysicalObject> model_) {model = std::move(model_);}
 
         value serialize();
         void deserialize(value);
         bool deleted = false;
-        std::unique_ptr<PhysicalObject> &getModel();
+        std::unique_ptr<physical::PhysicalObject> &getModel();
     };
 
     class Player : public GameObject {
@@ -62,10 +67,10 @@ namespace GameEntities {
         Player(int hp_, int type_, int id_) : hp(hp_), GameObject(type_, id_) {}
         Player(): GameObject(ObjectTypes::tPlayer, 1), hp(100) {}
         ~Player() = default;
-        Player(const Player &other);
-        Player &operator=(const Player &other);
-        Player(Player &&other) = delete;
-        Player &operator=(Player &&other) = delete;
+        Player(const Player &other) = delete;
+        Player &operator=(const Player &other) = delete;
+        Player(Player &&other);
+        Player &operator=(Player &&other);
 
         value serialize();
         void deserialize(value);
@@ -76,7 +81,7 @@ namespace GameEntities {
 
         int getHp();
 
-        void collisionHandler(const std::shared_ptr<GameObject> &other);
+//        void collisionHandler(const std::shared_ptr<GameObject> &other);
 //        void eventHandler(const ClientServer::Event &ev);
     private:
         std::string name;
@@ -85,56 +90,56 @@ namespace GameEntities {
 
     class Bullet : public GameObject {
     public:
-        Bullet(int hp_, int type_, int id_, int damage_, PhysicalObject i_physical_object) : GameObject(hp_, type_, id_, damage_, std::make_unique<PhysicalObject>(i_physical_object)){};
-        Bullet(): GameObject(ObjectTypes::tBullet, 1, 10, std::make_unique<PhysicalObject>(PhysicalObject())){};
-        ~Bullet() = default;
-        Bullet(const Bullet &other);
-        Bullet &operator=(const Bullet &other);
-        Bullet(Bullet &&other) = delete;
-        Bullet &operator=(Bullet &&other) = delete;
-
-        value serialize();
-        int deserialize(value);
-
-        void collisionHandler(const std::shared_ptr<GameObject> &other);
-        void eventHandler(const ClientServer::Event &ev);
-
-    private:
-        int damage;
+//        Bullet(int hp_, int type_, int id_, int damage_, physical::PhysicalObject i_physical_object) : GameObject(hp_, type_, id_, damage_, std::make_unique<physical::PhysicalObject>(i_physical_object)){};
+//        Bullet(): GameObject(ObjectTypes::tBullet, 1, 10, std::make_unique<physical::PhysicalObject>(physical::PhysicalObject())){};
+//        ~Bullet() = default;
+//        Bullet(const Bullet &other);
+//        Bullet &operator=(const Bullet &other);
+//        Bullet(Bullet &&other) = delete;
+//        Bullet &operator=(Bullet &&other) = delete;
+//
+//        value serialize();
+//        int deserialize(value);
+//
+//        void collisionHandler(const std::shared_ptr<GameObject> &other);
+//        void eventHandler(const ClientServer::Event &ev);
+//
+//    private:
+//        int damage;
     };
 
     class Terrain : public GameObject {
-    public:
-        Terrain() = default;
-        ~Terrain() = default;
-        value serialize();
-        int deserialize(value);
-        Terrain(const Terrain &other);
-        Terrain &operator=(const Terrain &other);
-        Terrain(Terrain &&other) = delete;
-        Terrain &operator=(Terrain &&other) = delete;
-
-        void сollisionHandler(const std::shared_ptr<GameObject> &other);
-        void eventHandler(const Event &ev);
-    private:
+//    public:
+//        Terrain() = default;
+//        ~Terrain() = default;
+//        value serialize();
+//        int deserialize(value);
+//        Terrain(const Terrain &other);
+//        Terrain &operator=(const Terrain &other);
+//        Terrain(Terrain &&other) = delete;
+//        Terrain &operator=(Terrain &&other) = delete;
+//
+//        void сollisionHandler(const std::shared_ptr<GameObject> &other);
+//        void eventHandler(const Event &ev);
+//    private:
     };
 
     class Object : public GameObject {
-    public:
-        Object() = default;
-        ~Object() = default;
-        value serialize();
-        int deserialize(value);
-        Object(const Object &other);
-        Object &operator=(const Object &other);
-        Object(Object &&other) = delete;
-        Object &operator=(Object &&other) = delete;
-
-        void ollisionHandler(const std::shared_ptr<GameObject> &other);
-        void eventHandler(const Event &ev);
-    private:
-        int hp;
-        int type = ObjectTypes::tOther;
+//    public:
+//        Object() = default;
+//        ~Object() = default;
+//        value serialize();
+//        int deserialize(value);
+//        Object(const Object &other);
+//        Object &operator=(const Object &other);
+//        Object(Object &&other) = delete;
+//        Object &operator=(Object &&other) = delete;
+//
+//        void ollisionHandler(const std::shared_ptr<GameObject> &other);
+//        void eventHandler(const Event &ev);
+//    private:
+//        int hp;
+//        int type = ObjectTypes::tOther;
     };
 
 }

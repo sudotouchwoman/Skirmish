@@ -20,7 +20,6 @@ namespace Server {
         GameServer();
         void run();
     private:
-        void initializeGE();
         std::string requestHandler(const boost::asio::ip::udp::endpoint &endpoint, const std::string &request);
 
         /// соответствие игровой сущности игрока и адреса с которого поступил реквест.

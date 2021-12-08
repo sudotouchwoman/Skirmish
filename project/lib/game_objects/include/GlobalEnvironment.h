@@ -17,15 +17,14 @@ namespace GameEntities{
 
         int getAccess();
         int finishAccess();
-        int onCollision(Collision);
+//        int onCollision(Collision);
 
         int onEvent(const ClientServer::MoveEvent &);
         int onEvent(const ClientServer::ShootEvent &);
         int onEvent(const ClientServer::InteractEvent &);
 
-//        std::vector<std::shared_ptr<GameEntities::GameObject>> &getModifyGameObjects();
-
         int deleteObjects();
+        int addPlayer(GameEntities::Player & pl);
 
         int generateSnapshot();
         const std::string &getSnapshot();
@@ -36,11 +35,10 @@ namespace GameEntities{
     private:
         std::mutex _mutex;
         std::string _snapshot;
-//        std::vector<std::shared_ptr<GameEntities::GameObject>> _game_objects;
 
         std::vector <GameEntities::Player> Players;
-        std::vector <GameEntities::Bullet> Bullet;
+        std::vector <GameEntities::Bullet> Bullets;
         std::vector <GameEntities::Terrain> Terrain;
-        std::vector <GameEntities::Object> Object;
+        std::vector <GameEntities::Object> Objects;
     };
 }

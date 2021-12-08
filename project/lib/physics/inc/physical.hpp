@@ -45,6 +45,7 @@ namespace physical
     public:
         PhysicalObject(const double inverse_mass);
         PhysicalObject(const State &, IShapeUPtr);
+        PhysicalObject() = default;
         ~PhysicalObject() = default;
 
         // update the object properties with dt time step

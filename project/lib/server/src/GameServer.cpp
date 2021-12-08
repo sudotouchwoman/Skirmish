@@ -9,7 +9,6 @@ GameServer::GameServer() {
 };
 
 void GameServer::run() {
-    initializeGE();
     try {
         Server::GameLoop gl(&_ge);
         Server::ConnectionServer cs([this](const boost::asio::ip::udp::endpoint &endpoint,
@@ -18,21 +17,12 @@ void GameServer::run() {
                                         request);
         });
         std::thread game_loop_thread(&Server::GameLoop::run, &gl);
-        std::thread server_thread(&Server::ConnectionServer::startReceive, &cs);
+        cs.startReceive();
         game_loop_thread.join();
-        server_thread.join();
     }
     catch (std::exception &e) {
         std::cerr << e.what() << std::endl;
     }
-}
-
-void GameServer::initializeGE() {
-    std::vector<std::shared_ptr<GameEntities::GameObject>> &go = _ge.getModifyGameObjects();
-    go.push_back(std::make_shared<GameEntities::Player>());
-    go.push_back(std::make_shared<GameEntities::Player>());
-    go.push_back(std::make_shared<GameEntities::Player>());
-    go.push_back(std::make_shared<GameEntities::Player>());
 }
 
 int onEvent(const ClientServer::MoveEvent &me) {
@@ -52,11 +42,11 @@ std::string GameServer::requestHandler(const boost::asio::ip::udp::endpoint &end
     if (std::any_of(endpoint_id.begin(),
                     endpoint_id.end(),
                     [&endpoint](auto elem) {
-                        if (elem.first == endpoint) return true;
+                        if (get<0>(elem) == endpoint) return true;
                         return false;
                     }))
 
-        switch (request[0]) {
+        switch (request[0] - 'a') {
             case ClientServer::Type::tCheck :break;
             case ClientServer::Type::tWalk : {
                 // validate string
@@ -75,11 +65,12 @@ std::string GameServer::requestHandler(const boost::asio::ip::udp::endpoint &end
             default:return std::string();
         }
         // if not and event register - register player ( else ignore request)
-    else if (request[0] == ClientServer::Type::tRegister) {
+    else if (request[0] - 'a' == ClientServer::Type::tRegister) {
         GameEntities::Player pl;
-//        pl.setModel()
-        //создание объекта игрока, занесение его в базу отношений между айпи адресами
-        // и прикрепление его к игровому пространству.
+        pl.setModel(std::make_unique<physical::PhysicalObject>());
+        endpoint_id.emplace_back(endpoint, pl.getID());
+        _ge.addPlayer(pl);
     }
+
     return _ge.getSnapshot();
 }

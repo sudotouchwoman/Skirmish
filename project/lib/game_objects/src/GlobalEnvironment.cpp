@@ -3,10 +3,6 @@
 using namespace boost::json;
 using GameEntities::GlobalEnvironment;
 
-void GlobalEnvironment::updateEnvironment() {
-
-}
-
 int GlobalEnvironment::getAccess() {
     _mutex.lock();
     return 0;
@@ -18,29 +14,53 @@ int GlobalEnvironment::finishAccess() {
 }
 
 int GlobalEnvironment::deleteObjects(){
-    for (auto elem: _game_objects){
+
+    // lambda for elements deletion
+    auto deleter = [](auto &Vector) {
+        for (auto &elem: Vector){
         if (elem.deleted){
-            elem = _game_objects[_game_objects.size() - 1];
-            _game_objects.pop_back();
+            elem = std::move(Vector[Vector.size() - 1]);
+            Vector.pop_back();
         }
-    }
-    return 0;
+    }};
+
+    deleter(Players);
+//    deleter(Bullets);
+//    deleter(Terrain);
+//    deleter(Objects);
 }
 
-int GlobalEnvironment::onCollision(Collision cl){
-    // game logic depending on type
+//int GlobalEnvironment::onCollision(Collision cl){
+//    // game logic depending on type
+//
+//    // calling methods on collision of two passed links of elements
+//    return 0;
+//}
 
-    // calling methods on collision of two passed links of elements
+int GlobalEnvironment::addPlayer(GameEntities::Player & pl){
+    Players.emplace_back();
+    Players[Players.size() - 1] = std::move(pl);
     return 0;
 }
 
 int GlobalEnvironment::generateSnapshot(){
     /// not effective realization!
-    array arr;
-    for (size_t i = 0; i < _game_objects.size(); i++){
-        arr.emplace_back(_game_objects[i]->serialize());
-    }
-    _snapshot = serialize(arr);
+    auto vectorSerializer = [](auto &Vector){
+        array arr;
+        for (auto & elem: Vector){
+            arr.push_back(elem.serialize());
+        }
+        return std::move(arr);
+    };
+
+    value jv = {
+        {"Players", vectorSerializer(Players)},
+//        {"Bullets", vectorSerializer(Players)},
+//        {"Terrain", vectorSerializer(Players)},
+//        {"Objects", vectorSerializer(Players)},
+    };
+
+    _snapshot = serialize(jv);
     return 0;
 }
 const std::string &GlobalEnvironment::getSnapshot(){
@@ -51,10 +71,10 @@ int GlobalEnvironment::setSnapshot(std::string &&new_snapshot){
     return 0;
 }
 int GlobalEnvironment::getObjectsFromSnapshot(){
-    /// definetely memory loss coused by shared_ptr
-    array arr = parse(_snapshot).as_array();
-    _game_objects.resize(arr.size());
-    for (size_t i = 0; i < _game_objects.size(); i++)
-        _game_objects[i]->deserialize(arr[i]);
-    return 0;
+//    /// definetely memory loss coused by shared_ptr
+//    array arr = parse(_snapshot).as_array();
+//    _game_objects.resize(arr.size());
+//    for (size_t i = 0; i < _game_objects.size(); i++)
+//        _game_objects[i]->deserialize(arr[i]);
+//    return 0;
 }
