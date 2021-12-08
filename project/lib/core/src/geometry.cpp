@@ -91,6 +91,7 @@ namespace core {
 
     vec2 vec2::normalized() const {
         const double length = len();
+        if (allclose(length, 0.0)) return vec2();
         return vec2(std::round(x / length), std::round(y / length));
     }
 

@@ -13,8 +13,7 @@ namespace physical {
         state(state), geometry(std::move(geometry)) {}
 
     void PhysicalObject::update(const double dt) {
-        state.acceleration += state.acceleration * dt;
-        state.velocity += state.velocity * dt;
+        state.velocity += state.acceleration * dt;
         geometry->shift(state.velocity * dt);
     }
 
@@ -34,14 +33,23 @@ namespace physical {
     }
 
     const core::ContactPoint PhysicalObject::collide(PhysicalObject & a, PhysicalObject & b) {
+        // the objects do not have valid geometry, i.e. they cannot collide anyways
         if (not a.geometry or not b.geometry) return core::ContactPoint();
-        const core::ContactPoint cp = a.geometry->IntersectsWith(*a.geometry.get());
+        // obtain collision data
+        const core::ContactPoint cp = a.geometry->IntersectsWith(*b.geometry.get());
         if (not cp) return cp;
 
-        const double total_mass = a.state.inverse_mass + b.state.inverse_mass;
+        // resolve the collision using the mass info
+        // note: if the total inverse mass is zero,
+        // both colliding objects are infinetely heavy!
+        // one should be warned that in this case the collision will appear constantly
+        // as it cannot be resolved using this simple method
+        // (to be honest, I do not know how to behave in such sutuation)
+        const double total_inverse_mass = a.state.inverse_mass + b.state.inverse_mass;
+        if (core::allclose(total_inverse_mass, 0.0)) return cp;
 
-        a.geometry->shift(-cp.normal * cp.penetration * (a.state.inverse_mass / total_mass));
-        b.geometry->shift(cp.normal * cp.penetration * (b.state.inverse_mass / total_mass));
+        a.geometry->shift(-cp.normal * cp.penetration * (a.state.inverse_mass / total_inverse_mass));
+        b.geometry->shift(cp.normal * cp.penetration * (b.state.inverse_mass / total_inverse_mass));
 
         const double a_theta_d = cp.normal.angle_r() - a.state.velocity.angle_r();
         a.state.velocity.rotate_r(2*a_theta_d);

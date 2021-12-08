@@ -43,6 +43,7 @@ namespace physical
         State state;
         IShapeUPtr geometry;
     public:
+        PhysicalObject() = default;
         PhysicalObject(const double inverse_mass);
         PhysicalObject(const State &, IShapeUPtr);
         ~PhysicalObject() = default;

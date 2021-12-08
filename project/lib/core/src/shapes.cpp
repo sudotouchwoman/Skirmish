@@ -110,20 +110,32 @@ namespace core {
 
     ContactPoint AABB::IntersectsWithCircle(const Circle & other) const {
         const auto R = other.GetRadius();
-        const vec2 & other_center = other.GetCenter();
         const vec2 half_dims(width / 2, height / 2);
 
-        const vec2 delta = other_center - center;
+        // circle's origin position relative to the AABB's origin
+        const vec2 delta = other.GetCenter() - center;
+        // clamped point: the point on AABB which is closest to the circle's origin
         const vec2 closest_point_on_box = vec2::clamp(delta, -half_dims, half_dims);
-
-        const vec2 local_point = delta - closest_point_on_box;
-        const auto distance = local_point.len();
+        // the direction of normal, i.e. inverse radius direction
+        // to the closest point on box
+        const vec2 normal_direction = delta - closest_point_on_box;
+        // distance between closest point on AABB and the circle's origin
+        // if it is greater than R, the collision is impossible!
+        const auto distance = normal_direction.len();
 
         if (distance >= R) return ContactPoint();
 
-        const vec2 normal = local_point.normalized();
-        const double penetration = R - distance;
+        // if we got that far, we must be colliding!
+        const vec2 normal = normal_direction.normalized();
+        // penetration is pretty self-explanatory,
+        // if R and distance are aknowledged
+        const auto penetration = R - distance;
+        // local collision point for AABB will always match its position,
+        // i.e. the relative position is just zeros
         const vec2 localA;
+        // local collision point for circle
+        // is the point on circle in the inverse (!) direction of normal
+        // as the normal is directed from AABB to circle
         const vec2 localB = normal * (-R);
 
         return ContactPoint {
@@ -170,6 +182,9 @@ namespace core {
     }
 
     ContactPoint Circle::IntersectsWithCircle(const Circle & other) const {
+        // circle to circle collision detection is quite straightforward,
+        // just check whether the sum of radii is greater
+        // than distance between circle origins
         if (&other == this) return ContactPoint();
         const double radii = R + other.R;
 
