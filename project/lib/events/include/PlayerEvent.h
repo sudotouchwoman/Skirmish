@@ -11,7 +11,7 @@ namespace ClientServer {
     };
 
     enum Movement{
-        U, L, R, D, UL, UR, DL, DR,
+        U, L, R, D, UL, UR, DL, DR, Void,
     };
 
     struct ShootEvent{

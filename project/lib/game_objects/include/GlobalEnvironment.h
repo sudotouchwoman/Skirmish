@@ -17,7 +17,10 @@ namespace GameEntities{
 
         int getAccess();
         int finishAccess();
-//        int onCollision(Collision);
+
+        // collision manager for game logic
+        template <class T1, class T2>
+        int onCollision(T1 &go, T2 &go2, core::ContactPoint & cp);
 
         int onEvent(const ClientServer::MoveEvent &);
         int onEvent(const ClientServer::ShootEvent &);
@@ -31,14 +34,14 @@ namespace GameEntities{
         int setSnapshot(std::string &&);
         int getObjectsFromSnapshot();
 
-
+        void tick();
     private:
         std::mutex _mutex;
         std::string _snapshot;
 
         std::vector <GameEntities::Player> Players;
         std::vector <GameEntities::Bullet> Bullets;
-        std::vector <GameEntities::Terrain> Terrain;
-        std::vector <GameEntities::Object> Objects;
+//        std::vector <GameEntities::Terrain> Terrain;
+//        std::vector <GameEntities::Object> Objects;
     };
 }

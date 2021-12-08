@@ -12,7 +12,7 @@ namespace physical
 {
     struct State;
     class PhysicalObject;
-    
+
     using IShapeUPtr = std::unique_ptr<core::IShape>;
 
     // container for all properties
@@ -28,6 +28,14 @@ namespace physical
         State(const core::vec2 & velocity, const core::vec2 & acceleration, const double mass);
         State(const double mass);
         ~State() = default;
+
+        // I considered a separate force entity to be
+        // overengineering as applying force merely means
+        // updating the acceleration accordingly like a single time
+        // dropping force may be trickier as the mass may change (who knows?)
+        // but the general idea is quite straightforward
+        void addForce(const core::vec2 & force) { acceleration += force * inverse_mass; }
+        void dropForce(const core::vec2 & force) { acceleration -= force * inverse_mass; }
     };
 
     // Interface for Physical objects
@@ -43,9 +51,9 @@ namespace physical
         State state;
         IShapeUPtr geometry;
     public:
+        PhysicalObject() = default;
         PhysicalObject(const double inverse_mass);
         PhysicalObject(const State &, IShapeUPtr);
-        PhysicalObject() = default;
         ~PhysicalObject() = default;
 
         // update the object properties with dt time step
@@ -56,7 +64,7 @@ namespace physical
         void setGeometry(IShapeUPtr geometry);
         void setState(const State & new_state);
         // getters
-        core::IShape * const getGeometry() { return geometry.get(); }
+        core::IShape & getGeometry();
         State & getState() { return state; }
 
         // conceptually, tell whether the current object is

@@ -1,11 +1,7 @@
 #pragma once
 
 #include "GlobalEnvironment.h"
-#include "plug.h"
-
-// main game parameters
-const int game_frequency = 10; // miliseconds
-// main game parameters
+#include "physical.hpp"
 
 namespace Server {
     class GameLoop {
@@ -14,7 +10,6 @@ namespace Server {
         void run();
     private:
         GameEntities::GlobalEnvironment *_ge;
-        PhisicsManager pm;
 
         bool gameEnd();
     };

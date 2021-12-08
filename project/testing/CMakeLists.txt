@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 add_executable(shapes_test shapes-test.cpp)
 add_test(NAME shapes COMMAND shapes_test)
 
@@ -6,6 +7,8 @@ target_link_libraries(shapes_test core)
 target_link_libraries(shapes_test gtest)
 
 
+=======
+>>>>>>> 2cb5d489be76079190caa65cc88f6a6f9f5bdfca
 add_executable(core_test core-test.cpp)
 add_test(NAME core COMMAND core_test)
 
@@ -14,6 +17,17 @@ target_link_libraries(core_test core)
 target_link_libraries(core_test gtest)
 
 
+<<<<<<< HEAD
+=======
+add_executable(shapes_test shapes-test.cpp)
+add_test(NAME shapes COMMAND shapes_test)
+
+target_include_directories(shapes_test PUBLIC ${shapes_HEADERS})
+target_link_libraries(shapes_test core)
+target_link_libraries(shapes_test gtest)
+
+
+>>>>>>> 2cb5d489be76079190caa65cc88f6a6f9f5bdfca
 add_executable(collision_test collision-test.cpp)
 add_test(NAME collision COMMAND collision_test)
 

@@ -67,7 +67,11 @@ std::string GameServer::requestHandler(const boost::asio::ip::udp::endpoint &end
         // if not and event register - register player ( else ignore request)
     else if (request[0] - 'a' == ClientServer::Type::tRegister) {
         GameEntities::Player pl;
-        pl.setModel(std::make_unique<physical::PhysicalObject>());
+        auto model = std::make_unique<physical::PhysicalObject>();
+        auto default_player_geometry = physical::IShapeUPtr(new core::Circle());
+        model->setGeometry(std::move(default_player_geometry));
+        pl.setModel(std::move(model));
+
         endpoint_id.emplace_back(endpoint, pl.getID());
         _ge.addPlayer(pl);
     }
