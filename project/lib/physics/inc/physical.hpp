@@ -28,6 +28,14 @@ namespace physical
         State(const core::vec2 & velocity, const core::vec2 & acceleration, const double mass);
         State(const double mass);
         ~State() = default;
+
+        // I considered a separate force entity to be
+        // overengineering as applying force merely means
+        // updating the acceleration accordingly like a single time
+        // dropping force may be trickier as the mass may change (who knows?)
+        // but the general idea is quite straightforward
+        void addForce(const core::vec2 & force) { acceleration += force * inverse_mass; }
+        void dropForce(const core::vec2 & force) { acceleration -= force * inverse_mass; }
     };
 
     // Interface for Physical objects

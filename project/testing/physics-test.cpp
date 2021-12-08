@@ -109,7 +109,7 @@ TEST(PhysicalTest, objectCollisions) {
 }
 
 TEST(PhysicalTest, objectMovement) {
-    PhysicalObject bibwatcher;
+    PhysicalObject bibwatcher(1.0);
     auto some_geometry = IShapeUPtr(new Circle());
 
     bibwatcher.setGeometry(std::move(some_geometry));
