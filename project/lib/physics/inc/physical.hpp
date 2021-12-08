@@ -12,7 +12,7 @@ namespace physical
 {
     struct State;
     class PhysicalObject;
-    
+
     using IShapeUPtr = std::unique_ptr<core::IShape>;
 
     // container for all properties
@@ -56,7 +56,7 @@ namespace physical
         void setGeometry(IShapeUPtr geometry);
         void setState(const State & new_state);
         // getters
-        core::IShape * const getGeometry() { return geometry.get(); }
+        core::IShape & getGeometry();
         State & getState() { return state; }
 
         // conceptually, tell whether the current object is

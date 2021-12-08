@@ -25,9 +25,15 @@ namespace physical {
         state = new_state;
     }
 
+    core::IShape & PhysicalObject::getGeometry() {
+        if (not geometry) throw -1;  // just to make sure the caller will not casue segfault
+        return *geometry.get();
+        }
+
+
     bool PhysicalObject::collidesWith(const PhysicalObject & other) const {
-        if (not hasGeometry()) return false;
-        if (not other.hasGeometry()) return false;
+        if (not geometry) return false;
+        if (not other.geometry) return false;
 
         return geometry->IntersectsWith(*other.geometry.get());
     }
@@ -36,8 +42,20 @@ namespace physical {
         // the objects do not have valid geometry, i.e. they cannot collide anyways
         if (not a.geometry or not b.geometry) return core::ContactPoint();
         // obtain collision data
-        const core::ContactPoint cp = a.geometry->IntersectsWith(*b.geometry.get());
-        if (not cp) return cp;
+        const core::ContactPoint cp = a.geometry->IntersectsWith(b.getGeometry());
+        // it may happen that the normal was not found correctly
+        // in this case, we cannot resolve the collision and should
+        // just propagate the collision data
+        // the game itself will possibly handle such situation, e.g.
+        // if projectile has hit the wall and got inside it
+        // the problem is that sometimes we may like *not* to remove this
+        // object
+        // our simple physics engine will be unable of handling such situations
+        // as long as the collision detection is discrete
+        // ...making it continuous will be really complicated, however
+        // this method may only be needed for projectiles
+        // maybe I should implement the ray IShape...
+        if (not cp or cp.normal.len_squared() == 0.0) return cp;
 
         // resolve the collision using the mass info
         // note: if the total inverse mass is zero,
@@ -48,15 +66,19 @@ namespace physical {
         const double total_inverse_mass = a.state.inverse_mass + b.state.inverse_mass;
         if (core::allclose(total_inverse_mass, 0.0)) return cp;
 
+        // move the objects with respect to their masses
+        // if this boi is damn thicc af (its inverse mass is 0)
+        // the shift will not change its position
         a.geometry->shift(-cp.normal * cp.penetration * (a.state.inverse_mass / total_inverse_mass));
         b.geometry->shift(cp.normal * cp.penetration * (b.state.inverse_mass / total_inverse_mass));
 
-        const double a_theta_d = cp.normal.angle_r() - a.state.velocity.angle_r();
-        a.state.velocity.rotate_r(2*a_theta_d);
+        // the second trick is about rotation of the velocity vectors
+        const double a_theta_r = cp.normal.angle_r() - a.state.velocity.angle_r();
+        a.state.velocity.rotate_r(2*a_theta_r);
         a.state.velocity.inverse();
 
-        const double b_theta_d = cp.normal.angle_r() - b.state.velocity.angle_r();
-        b.state.velocity.rotate_r(2*b_theta_d);
+        const double b_theta_r = cp.normal.angle_r() - b.state.velocity.angle_r();
+        b.state.velocity.rotate_r(2*b_theta_r);
         b.state.velocity.inverse();
 
         return cp;
