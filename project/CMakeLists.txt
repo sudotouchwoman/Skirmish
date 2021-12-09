@@ -5,5 +5,8 @@ find_package(Boost 1.77.0 REQUIRED COMPONENTS json)
 add_subdirectory(lib)
 add_subdirectory(src)
 
-add_executable(main main.cpp)
-target_link_libraries(main PRIVATE server)
+add_executable(server_ main.cpp)
+target_link_libraries(server_ PRIVATE server)
+
+add_executable(client client.cpp)
+target_link_libraries(client PRIVATE events)
