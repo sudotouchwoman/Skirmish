@@ -41,6 +41,17 @@ GameObject::GameObject(GameObject && other){
     type = other.type;
 }
 
+void GameObject::setDefaultGeometry(const double x, const double y, const double R) {
+    if (not model) throw std::runtime_error("empty model");
+    auto geometry = physical::IShapeUPtr(new core::Circle(x, y, R));
+    model->setGeometry(std::move(geometry));
+}
+
+void GameObject::setDefaultModel(const double vx, const double vy, const double inverse_mass) {
+    model = std::make_unique<physical::PhysicalObject>(inverse_mass);
+    model->getState().velocity = { vx, vy };
+}
+
 value GameObject::serialize() {
     const auto & geometry = model->getGeometry().GetCenter();
 
@@ -85,6 +96,15 @@ void Player::deserialize(value jv) {
     GameObject::deserialize(jv);
 }
 
+Player::Player(const double x,
+               const double y,
+               const double R,
+               const double vx,
+               const double vy,
+               const double inverse_mass) : GameObject(ObjectTypes::tPlayer), hp(100) {
+    setDefaultModel(vx, vy, inverse_mass);
+    setDefaultGeometry(x, y, R);
+}
 
 void Player::eventHandler(const ClientServer::MoveEvent &ev){
     using namespace ClientServer;
@@ -98,6 +118,7 @@ void Player::eventHandler(const ClientServer::MoveEvent &ev){
         case UR: velocity = {1, 1}; break;
         case DL: velocity = {-1, -1}; break;
         case DR: velocity = {1, -1}; break;
+        case Void: velocity = {0, 0}; break;
         default: break;
     }
 
@@ -131,6 +152,16 @@ value Bullet::serialize() {
         {"GameObject", GameObject::serialize()}
     };
     return jv;
+}
+
+Bullet::Bullet(const double x,
+       const double y,
+       const double R,
+       const double vx,
+       const double vy,
+       const double inverse_mass) : GameObject(ObjectTypes::tBullet), damage(10) {
+    setDefaultModel(vx, vy, inverse_mass);
+    setDefaultGeometry(x, y, R);
 }
 
 void Bullet::collisionHandler(Player const &other){

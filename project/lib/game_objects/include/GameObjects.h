@@ -8,6 +8,8 @@ using namespace boost::json;
 
 namespace GameEntities {
 
+    using PhobjUPtr = std::unique_ptr<physical::PhysicalObject>;
+
     class Bullet;
     class Player;
 
@@ -48,7 +50,12 @@ namespace GameEntities {
         int type;
         int id;
         std::unique_ptr<physical::PhysicalObject> model;
+
+        void setDefaultGeometry(const double x, const double y, const double R);
+        void setDefaultModel(const double vx, const double vy, const double inverse_mass);
+
     public:
+        static void resetID() { global_id = 0; };
         GameObject(int type_) : type(type_), id(global_id++) {};
         GameObject(GameObject &&);
         GameObject(const GameObject &) = delete;
@@ -72,7 +79,12 @@ namespace GameEntities {
     class Player : public GameObject {
     public:
         Player(int hp_, int type_) : hp(hp_), GameObject(type_) {}
-        Player() : GameObject(ObjectTypes::tPlayer), hp(100) {}
+        Player(const double x = 0,
+               const double y = 0,
+               const double R = 4,
+               const double vx = 0,
+               const double vy = 0,
+               const double inverse_mass = 1);
 
         ~Player() = default;
         Player(const Player &other) = delete;
@@ -102,7 +114,12 @@ namespace GameEntities {
     class Bullet : public GameObject {
     public:
         Bullet(int damage_, int type_) : damage(damage_), GameObject(type_) {}
-        Bullet() : GameObject(ObjectTypes::tBullet), damage(10) {}
+        Bullet(const double x = 0,
+               const double y = 0,
+               const double R = 1,
+               const double vx = 0,
+               const double vy = 0,
+               const double inverse_mass = 1);
 
         ~Bullet() = default;
         Bullet(const Bullet &other) = delete;

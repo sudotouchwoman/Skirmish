@@ -23,7 +23,7 @@ namespace Server {
         std::string requestHandler(const boost::asio::ip::udp::endpoint &endpoint, const std::string &request);
 
         /// соответствие игровой сущности игрока и адреса с которого поступил реквест.
-        std::vector<std::tuple<boost::asio::ip::udp::endpoint, int>> endpoint_id;
+        std::vector<std::tuple<boost::asio::ip::udp::endpoint, size_t>> endpoint_id;
         GameEntities::GlobalEnvironment _ge;
     };
 

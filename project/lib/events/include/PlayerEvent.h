@@ -13,7 +13,8 @@ namespace ClientServer {
     };
 
     struct ShootEvent{
-        int angle;
+        double x;
+        double y;
         int weapon;
     };
 

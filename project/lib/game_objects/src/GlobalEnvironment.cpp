@@ -19,13 +19,13 @@ void GlobalEnvironment::tick() {
     auto updater = [](auto &Vector) {
         for (auto &elem: Vector) {
             if (elem.hasModel()) {
-                elem.getModel().update(game_frequency);
+                elem.getModel().update(physics_tick);
             }
         }
     };
 
     updater(Players);
-//    updater(Bullets);
+    updater(Bullets);
 //    updater(Terrain);
 //    updater(Objects);
 
@@ -84,7 +84,7 @@ int GlobalEnvironment::deleteObjects() {
     };
 
     deleter(Players);
-//    deleter(Bullets);
+    deleter(Bullets);
 //    deleter(Terrain);
 //    deleter(Objects);
 }
@@ -113,7 +113,7 @@ int GlobalEnvironment::generateSnapshot() {
 
     value jv = {
         {"Players", vectorSerializer(Players)},
-//        {"Bullets", vectorSerializer(Players)},
+        {"Bullets", vectorSerializer(Bullets)},
 //        {"Terrain", vectorSerializer(Players)},
 //        {"Objects", vectorSerializer(Players)},
     };
@@ -152,14 +152,22 @@ int GlobalEnvironment::onEvent(size_t player_id, const ClientServer::MoveEvent &
 int GlobalEnvironment::onEvent(size_t player_id, const ClientServer::ShootEvent &se) {
     /// bullet object creating
 
+    // find player who school shooting
+    auto it = Players.begin();
+    for (; it != Players.end() && it->getID() != player_id; ++it);
+
     // model methods need to be in class constructor.
     GameEntities::Bullet bullet;
-    auto model = std::make_unique<physical::PhysicalObject>();
-    auto default_player_geometry = physical::IShapeUPtr(new core::Circle());
-    model->setGeometry(std::move(default_player_geometry));
-    bullet.setModel(std::move(model));
+    auto &model = bullet.getModel();
+    model.getState().velocity = {se.x * bullet_speed, se.y * bullet_speed};
+    auto shift_player = it->getModel().getGeometry().GetCenter() +
+        core::vec2{se.x * (default_player_radius + default_bullet_radius),
+                   se.y * (default_player_radius + default_bullet_radius)};
+
+    model.getGeometry().shift(shift_player);
 
     Bullets.emplace_back(std::move(bullet));
+    return 0;
 }
 
 int GlobalEnvironment::onEvent(size_t player_id, const ClientServer::InteractEvent &ie) {
