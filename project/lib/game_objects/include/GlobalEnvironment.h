@@ -22,9 +22,9 @@ namespace GameEntities{
         template <class T1, class T2>
         int onCollision(T1 &go, T2 &go2, core::ContactPoint & cp);
 
-        int onEvent(const ClientServer::MoveEvent &);
-        int onEvent(const ClientServer::ShootEvent &);
-        int onEvent(const ClientServer::InteractEvent &);
+        int onEvent(const size_t player_id, const ClientServer::MoveEvent &);
+        int onEvent(const size_t player_id, const ClientServer::ShootEvent &);
+        int onEvent(const size_t player_id, const ClientServer::InteractEvent &);
 
         int deleteObjects();
         int addPlayer(GameEntities::Player & pl);

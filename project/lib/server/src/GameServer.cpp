@@ -2,11 +2,11 @@
 
 #include <thread>
 #include <iostream>
+#include <utility>
 
 using Server::GameServer;
 
-GameServer::GameServer() {
-};
+GameServer::GameServer() {};
 
 void GameServer::run() {
     try {
@@ -25,25 +25,17 @@ void GameServer::run() {
     }
 }
 
-int onEvent(const ClientServer::MoveEvent &me) {
-    // change position of player
-}
-
-int onEvent(const ClientServer::ShootEvent &se) {
-    // make bullet
-}
-
-int onEvent(const ClientServer::InteractEvent &ie) {
-    //do some logic
-}
-
 std::string GameServer::requestHandler(const boost::asio::ip::udp::endpoint &endpoint, const std::string &request) {
     _ge.getAccess();
+    size_t player_id = 0;
     // if player exist, than check events
-    if (std::any_of(endpoint_id.begin(),
-                    endpoint_id.end(),
-                    [&endpoint](auto elem) {
-                        if (get<0>(elem) == endpoint) return true;
+    if (std::any_of(endpoint_id.cbegin(),
+                    endpoint_id.cend(),
+                    [&endpoint, &player_id](auto & elem) {
+                        if (get<0>(elem) == endpoint) {
+                            player_id = get<1>(elem);
+                            return true;
+                        }
                         return false;
                     }))
 
@@ -53,19 +45,19 @@ std::string GameServer::requestHandler(const boost::asio::ip::udp::endpoint &end
                 // validate string
                 const ClientServer::MoveEvent
                     *event = reinterpret_cast<const ClientServer::MoveEvent *>(request.data());
-                onEvent(*event);
+                _ge.onEvent(player_id, *event);
                 break;
             }
             case ClientServer::Type::tShoot: {
                 // validate string
                 const ClientServer::ShootEvent
                     *event = reinterpret_cast<const ClientServer::ShootEvent *>(request.data());
-                onEvent(*event);
+                _ge.onEvent(player_id, *event);
                 break;
             }
             default: break;
         }
-        // if not and event register - register player ( else ignore request)
+        // if not and event register - register player ( else send snapshot)
     else if (request[0] - 'a' == ClientServer::Type::tRegister) {
         GameEntities::Player pl;
         auto model = std::make_unique<physical::PhysicalObject>();

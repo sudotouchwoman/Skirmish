@@ -34,7 +34,8 @@ void GlobalEnvironment::tick() {
             if (!Vector1[i].hasModel()) continue;
             for (size_t j = i; j < Vector2.size(); ++j) {
                 if (!Vector2[j].hasModel()) continue;
-                auto collision_details = physical::PhysicalObject::collide(Vector1[i].getModel(), Vector2[j].getModel());
+                auto
+                    collision_details = physical::PhysicalObject::collide(Vector1[i].getModel(), Vector2[j].getModel());
                 if (!collision_details) continue;
 
                 this->onCollision(Vector1[i], Vector2[j], collision_details);
@@ -43,9 +44,9 @@ void GlobalEnvironment::tick() {
     };
 
     auto collisionFullMaker = [this](auto &Vector1, auto &Vector2) {
-        for (auto & elem1: Vector1) {
+        for (auto &elem1: Vector1) {
             if (!elem1.hasModel()) continue;
-            for (auto & elem2: Vector2) {
+            for (auto &elem2: Vector2) {
                 if (!elem2.hasModel()) continue;
                 auto collision_details = physical::PhysicalObject::collide(elem1.getModel(), elem2.getModel());
                 if (!collision_details) continue;
@@ -59,8 +60,8 @@ void GlobalEnvironment::tick() {
     collisionFullMaker(Players, Bullets);
 }
 
-template <class T1, class T2>
-int GlobalEnvironment::onCollision(T1 &go1, T2 &go2, core::ContactPoint & cp){
+template<class T1, class T2>
+int GlobalEnvironment::onCollision(T1 &go1, T2 &go2, core::ContactPoint &cp) {
     // probably some game logic, moving objects
     // like player to player collision need to be
     // two players get back.
@@ -134,4 +135,33 @@ int GlobalEnvironment::getObjectsFromSnapshot() {
 //    for (size_t i = 0; i < _game_objects.size(); i++)
 //        _game_objects[i]->deserialize(arr[i]);
 //    return 0;
+}
+
+int GlobalEnvironment::onEvent(size_t player_id, const ClientServer::MoveEvent &me) {
+    /// change position of player
+
+    // find player by id
+    auto it = Players.begin();
+    for (; it != Players.end() && it->getID() != player_id; ++it);
+
+    // change it geometry
+    it->eventHandler(me);
+    return 0;
+}
+
+int GlobalEnvironment::onEvent(size_t player_id, const ClientServer::ShootEvent &se) {
+    /// bullet object creating
+
+    // model methods need to be in class constructor.
+    GameEntities::Bullet bullet;
+    auto model = std::make_unique<physical::PhysicalObject>();
+    auto default_player_geometry = physical::IShapeUPtr(new core::Circle());
+    model->setGeometry(std::move(default_player_geometry));
+    bullet.setModel(std::move(model));
+
+    Bullets.emplace_back(std::move(bullet));
+}
+
+int GlobalEnvironment::onEvent(size_t player_id, const ClientServer::InteractEvent &ie) {
+    //do some logic
 }

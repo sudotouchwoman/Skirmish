@@ -42,13 +42,14 @@ namespace GameEntities {
     };
 
     class GameObject : public Logic, public IRenderable, public ISerializeble {
+    private:
+        static size_t global_id;
     protected:
         int type;
         int id;
         std::unique_ptr<physical::PhysicalObject> model;
-
     public:
-        GameObject(int type_, int id_) : type(type_), id(id_) {};
+        GameObject(int type_) : type(type_), id(global_id++) {};
         GameObject(GameObject &&);
         GameObject(const GameObject &) = delete;
         GameObject &operator=(GameObject &&);
@@ -70,8 +71,8 @@ namespace GameEntities {
 
     class Player : public GameObject {
     public:
-        Player(int hp_, int type_, int id_) : hp(hp_), GameObject(type_, id_) {}
-        Player() : GameObject(ObjectTypes::tPlayer, 1), hp(100) {}
+        Player(int hp_, int type_) : hp(hp_), GameObject(type_) {}
+        Player() : GameObject(ObjectTypes::tPlayer), hp(100) {}
 
         ~Player() = default;
         Player(const Player &other) = delete;
@@ -100,8 +101,8 @@ namespace GameEntities {
 
     class Bullet : public GameObject {
     public:
-        Bullet(int damage_, int type_, int id_) : damage(damage_), GameObject(type_, id_) {}
-        Bullet() : GameObject(ObjectTypes::tBullet, 1), damage(10) {}
+        Bullet(int damage_, int type_) : damage(damage_), GameObject(type_) {}
+        Bullet() : GameObject(ObjectTypes::tBullet), damage(10) {}
 
         ~Bullet() = default;
         Bullet(const Bullet &other) = delete;

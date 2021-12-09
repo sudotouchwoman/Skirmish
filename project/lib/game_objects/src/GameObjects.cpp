@@ -10,6 +10,9 @@ void extract(object const &obj, T &t, string_view key) {
     t = value_to<T>(obj.at(key));
 }
 
+// initialization of static member
+size_t GameEntities::GameObject::global_id = 0;
+
 void GameObject::deserialize(value jv) {
     core::vec2 shift;
     object ob = jv.as_object();
@@ -100,7 +103,6 @@ void Player::eventHandler(const ClientServer::MoveEvent &ev){
 
     model->getState().velocity = velocity;
 }
-
 
 void Player::collisionHandler(Player const &other){
 }

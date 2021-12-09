@@ -1,7 +1,5 @@
 #pragma once
 
-#include <boost/json.hpp>
-
 namespace ClientServer {
     enum Type{
         tCheck,
