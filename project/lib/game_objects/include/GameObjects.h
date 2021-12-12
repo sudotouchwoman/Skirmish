@@ -55,7 +55,7 @@ namespace GameEntities {
         void setDefaultModel(const double vx, const double vy, const double inverse_mass);
 
     public:
-        static void resetID() { global_id = 0; };
+        static void resetID() { global_id = 1; };
         GameObject(int type_) : type(type_), id(global_id++) {};
         GameObject(GameObject &&);
         GameObject(const GameObject &) = delete;

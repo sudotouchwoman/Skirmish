@@ -41,7 +41,7 @@ std::string GameServer::requestHandler(const boost::asio::ip::udp::endpoint &end
                         return false;
                     }))
 
-        switch (request[0] - 'a') {
+        switch (request[0]) {
             case ClientServer::Type::tCheck :break;
             case ClientServer::Type::tWalk : {
                 // validate string
@@ -59,11 +59,14 @@ std::string GameServer::requestHandler(const boost::asio::ip::udp::endpoint &end
             }
             default: break;
         }
+
         // if not and event register - register player ( else send snapshot)
-    else if (request[0] - 'a' == ClientServer::Type::tRegister) {
+    else if (request[0] == ClientServer::Type::tRegister) {
         GameEntities::Player pl;
+        size_t id = pl.getID();
         endpoint_id.emplace_back(endpoint, pl.getID());
         _ge.addPlayer(pl);
+        return std::to_string(id);
     }
 
     _ge.finishAccess();

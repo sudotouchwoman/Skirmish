@@ -2,7 +2,7 @@
 
 namespace ClientServer {
     enum Type{
-        tCheck,
+        tCheck = 1, //for enumeration which can be passed by string (\000 == 0)
         tWalk,
         tShoot,
         tRegister,
@@ -13,8 +13,8 @@ namespace ClientServer {
     };
 
     struct ShootEvent{
-        double x;
-        double y;
+        float x;
+        float y;
         int weapon;
     };
 
