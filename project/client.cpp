@@ -3,8 +3,9 @@
 #include "ConnectionClient.h"
 
 int main(){
+    std::ios_base::sync_with_stdio(false);
     Client::ConnectionClient cc;
-    cc.setSnapshotRecieveCallback([](const std::string &s){std::cout << s;});
+    cc.setSnapshotRecieveCallback([](const std::string &s){std::cout << s; std::flush(std::cout);});
 
     int ev;
     while(std::cin >> ev){
@@ -22,12 +23,6 @@ int main(){
                 int weapon;
                 std::cin >> x >> y >> weapon;
                 ClientServer::ShootEvent ev_send{x, y, weapon};
-
-                char* data = reinterpret_cast<char*>(&ev_send);
-                std::string request = (std::string() + (char)ClientServer::Type::tShoot).append(data, sizeof(ev_send));
-                const ClientServer::ShootEvent
-                    *event = reinterpret_cast<const ClientServer::ShootEvent *>(request.data() + 1);
-
                 cc.sendEvent(ev_send);
                 break;
             }

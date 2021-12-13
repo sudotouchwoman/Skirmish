@@ -15,19 +15,19 @@ using namespace boost::asio::ip;
 namespace Server {
     class ConnectionServer {
     public:
-        ConnectionServer(std::function<std::string(const boost::asio::ip::udp::endpoint &, std::string)> handle_message_);
+        ConnectionServer(std::function<std::string(const boost::asio::ip::udp::endpoint &, const char *request)> handle_message_);
         void startReceive();
     private:
         void asyncRecieve();
         void handleReceive(const boost::system::error_code &error,
                            std::size_t /*bytes_transferred*/);
 
-        void handleSend(boost::shared_ptr<std::string> /*message*/,
+        void handleSend(//boost::shared_ptr<std::string> /*message*/,
                         const boost::system::error_code & /*error*/,
                         std::size_t /*bytes_transferred*/);
 
         boost::asio::io_context io_context_;
-        std::function<std::string(const boost::asio::ip::udp::endpoint &, std::string)> handle_message;
+        std::function <std::string(const boost::asio::ip::udp::endpoint &, const char *request)> handle_message;
         udp::socket socket_;
         udp::endpoint remote_endpoint_;
         boost::array<char, max_transfer_event_bytes> recv_buffer_;

@@ -24,13 +24,12 @@ namespace Client {
         void sendEvent(ClientServer::ShootEvent &ev);
         void sendEvent(ClientServer::InteractEvent &ev);
 
-        void send(const std::string &str);
-        void getReply();
-
         //register player and get his id
         size_t registerPlayer();
 
     private:
+        void send(const std::string &str);
+        void getReply();
 
         boost::asio::io_context io_context_;
         std::function<void(std::string)> handle_snapshot;

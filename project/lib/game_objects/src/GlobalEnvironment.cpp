@@ -121,7 +121,7 @@ int GlobalEnvironment::generateSnapshot() {
     _snapshot = serialize(jv);
     return 0;
 }
-const std::string &GlobalEnvironment::getSnapshot() {
+const std::string GlobalEnvironment::getSnapshot() {
     return _snapshot;
 }
 int GlobalEnvironment::setSnapshot(std::string &&new_snapshot) {

@@ -45,7 +45,7 @@ void ConnectionClient::getReply(){
     if (reply_length == 0)
         return;
 
-    handle_snapshot(std::string(reply));
+    handle_snapshot(std::string(reply, reply_length));
 }
 
 void ConnectionClient::sendEvent(ClientServer::MoveEvent &ev){

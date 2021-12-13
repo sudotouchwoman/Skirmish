@@ -20,7 +20,7 @@ namespace Server {
         GameServer();
         void run();
     private:
-        std::string requestHandler(const boost::asio::ip::udp::endpoint &endpoint, const std::string &request);
+        std::string requestHandler(const boost::asio::ip::udp::endpoint &endpoint, const char * &request);
 
         /// соответствие игровой сущности игрока и адреса с которого поступил реквест.
         std::vector<std::tuple<boost::asio::ip::udp::endpoint, size_t>> endpoint_id;

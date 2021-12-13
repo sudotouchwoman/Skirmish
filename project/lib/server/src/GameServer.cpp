@@ -13,7 +13,7 @@ void GameServer::run() {
     try {
         Server::GameLoop gl(&_ge);
         Server::ConnectionServer cs([this](const boost::asio::ip::udp::endpoint &endpoint,
-                                           const std::string &request) {
+                                           const char *request) {
             return this->requestHandler(endpoint,
                                         request);
         });
@@ -26,7 +26,7 @@ void GameServer::run() {
     }
 }
 
-std::string GameServer::requestHandler(const boost::asio::ip::udp::endpoint &endpoint, const std::string &request) {
+std::string GameServer::requestHandler(const boost::asio::ip::udp::endpoint &endpoint, const char * &request) {
     _ge.getAccess();
     size_t player_id = 0;
     // if player exist, than check events
@@ -45,15 +45,14 @@ std::string GameServer::requestHandler(const boost::asio::ip::udp::endpoint &end
             case ClientServer::Type::tWalk : {
                 // validate string
                 const ClientServer::MoveEvent
-                    *event = reinterpret_cast<const ClientServer::MoveEvent *>(request.data() + 1);
+                    *event = reinterpret_cast<const ClientServer::MoveEvent *>(request + 1);
                 _ge.onEvent(player_id, *event);
                 break;
             }
             case ClientServer::Type::tShoot: {
                 // validate string
-                const char * data = request.data();
                 const ClientServer::ShootEvent
-                    *event = reinterpret_cast<const ClientServer::ShootEvent *>(&data[1]);
+                    *event = reinterpret_cast<const ClientServer::ShootEvent *>(request + 1);
                 _ge.onEvent(player_id, *event);
                 break;
             }
@@ -78,10 +77,11 @@ std::string GameServer::requestHandler(const boost::asio::ip::udp::endpoint &end
 
         return std::to_string(id);
     }
-
+    // ling for avoid copy
+    auto &response = _ge.getSnapshot();
     // Dont forget to finish access!!!!!!!!
     _ge.finishAccess();
     // Dont forget to finish access!!!!!!!!
 
-    return _ge.getSnapshot();
+    return response;
 }

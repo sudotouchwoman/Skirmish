@@ -30,7 +30,7 @@ namespace GameEntities{
         int addPlayer(GameEntities::Player & pl);
 
         int generateSnapshot();
-        const std::string &getSnapshot();
+        const std::string getSnapshot();
         int setSnapshot(std::string &&);
         int getObjectsFromSnapshot();
 
