@@ -1,4 +1,5 @@
 #include "ConnectionServer.h"
+#include "GameSettings.h"
 
 using namespace boost::asio::ip;
 
@@ -11,16 +12,21 @@ ConnectionServer::ConnectionServer(std::function<std::string(const boost::asio::
 }
 
 void ConnectionServer::startReceive() {
+    asyncRecieve();
+    io_context_.run();
+}
+
+void ConnectionServer::asyncRecieve(){
     socket_.async_receive_from(
-        boost::asio::buffer(recv_buffer_), remote_endpoint_,
+        boost::asio::buffer(recv_buffer_, max_transfer_event_bytes), remote_endpoint_,
         boost::bind(&ConnectionServer::handleReceive, this,
                     boost::asio::placeholders::error,
                     boost::asio::placeholders::bytes_transferred));
-    io_context_.run();
 }
 
 void ConnectionServer::handleReceive(const boost::system::error_code &error,
                                      std::size_t /*bytes_transferred*/) {
+    remote_endpoint_ = socket_.remote_endpoint();
     if (!error || error == boost::asio::error::message_size) {
         boost::shared_ptr<std::string> message(
             new std::string(handle_message(remote_endpoint_, recv_buffer_.data())));
@@ -30,7 +36,7 @@ void ConnectionServer::handleReceive(const boost::system::error_code &error,
                                           boost::asio::placeholders::error,
                                           boost::asio::placeholders::bytes_transferred));
 
-        startReceive();
+        asyncRecieve();
     }
 }
 

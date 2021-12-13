@@ -2,7 +2,6 @@
 
 #include <thread>
 #include <iostream>
-#include <utility>
 
 using Server::GameServer;
 
@@ -46,17 +45,23 @@ std::string GameServer::requestHandler(const boost::asio::ip::udp::endpoint &end
             case ClientServer::Type::tWalk : {
                 // validate string
                 const ClientServer::MoveEvent
-                    *event = reinterpret_cast<const ClientServer::MoveEvent *>(request.data());
+                    *event = reinterpret_cast<const ClientServer::MoveEvent *>(request.data() + 1);
                 _ge.onEvent(player_id, *event);
                 break;
             }
             case ClientServer::Type::tShoot: {
                 // validate string
+                const char * data = request.data();
                 const ClientServer::ShootEvent
-                    *event = reinterpret_cast<const ClientServer::ShootEvent *>(request.data());
+                    *event = reinterpret_cast<const ClientServer::ShootEvent *>(&data[1]);
                 _ge.onEvent(player_id, *event);
                 break;
             }
+            case ClientServer::Type::tRegister:
+                // Dont forget to finish access!!!!!!!!
+                _ge.finishAccess();
+                // Dont forget to finish access!!!!!!!!
+                return std::to_string(-1);
             default: break;
         }
 
@@ -66,10 +71,17 @@ std::string GameServer::requestHandler(const boost::asio::ip::udp::endpoint &end
         size_t id = pl.getID();
         endpoint_id.emplace_back(endpoint, pl.getID());
         _ge.addPlayer(pl);
+
+        // Dont forget to finish access!!!!!!!!
+        _ge.finishAccess();
+        // Dont forget to finish access!!!!!!!!
+
         return std::to_string(id);
     }
 
+    // Dont forget to finish access!!!!!!!!
     _ge.finishAccess();
+    // Dont forget to finish access!!!!!!!!
 
     return _ge.getSnapshot();
 }

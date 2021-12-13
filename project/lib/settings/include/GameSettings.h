@@ -15,4 +15,6 @@ const double default_bullet_radius = 1;
 const std::string host_server = "127.0.0.1";
 const std::string port_server = "5000";
 const int udp_size = 65527;
+
+const int max_transfer_event_bytes = 40;
 // client server settings

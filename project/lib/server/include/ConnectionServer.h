@@ -16,6 +16,7 @@ namespace Server {
         ConnectionServer(std::function<std::string(const boost::asio::ip::udp::endpoint &, std::string)> handle_message_);
         void startReceive();
     private:
+        void asyncRecieve();
         void handleReceive(const boost::system::error_code &error,
                            std::size_t /*bytes_transferred*/);
 
