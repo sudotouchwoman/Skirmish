@@ -1,5 +1,6 @@
 #include "GlobalEnvironment.h"
 #include "GameSettings.h"
+#include "Extract.h"
 
 using namespace boost::json;
 using GameEntities::GlobalEnvironment;
@@ -121,20 +122,34 @@ int GlobalEnvironment::generateSnapshot() {
     _snapshot = serialize(jv);
     return 0;
 }
-const std::string GlobalEnvironment::getSnapshot() {
+
+std::string GlobalEnvironment::getSnapshot() const{
     return _snapshot;
 }
+
+void GlobalEnvironment::handleServerResponse(std::string &&server_response){
+    setSnapshot(std::move(server_response));
+    getObjectsFromSnapshot();
+}
+
 int GlobalEnvironment::setSnapshot(std::string &&new_snapshot) {
     _snapshot = new_snapshot;
     return 0;
 }
+
 int GlobalEnvironment::getObjectsFromSnapshot() {
-//    /// definetely memory loss coused by shared_ptr
-//    array arr = parse(_snapshot).as_array();
-//    _game_objects.resize(arr.size());
-//    for (size_t i = 0; i < _game_objects.size(); i++)
-//        _game_objects[i]->deserialize(arr[i]);
-//    return 0;
+    object objects = parse(_snapshot).as_object();
+    array bullets, players;
+    extract(objects, players, "Players");
+    extract(objects, bullets, "Bullets");
+    Bullets.resize(bullets.size());
+    Players.resize(players.size());
+
+    for (size_t i = 0; i < Players.size(); ++i)
+        Players[i].deserialize(players[i]);
+    for (size_t i = 0; i < Bullets.size(); ++i)
+        Bullets[i].deserialize(bullets[i]);
+    return 0;
 }
 
 int GlobalEnvironment::onEvent(size_t player_id, const ClientServer::MoveEvent &me) {

@@ -4,6 +4,7 @@
 
 #include <vector>
 #include <mutex>
+#include <unordered_map>
 
 namespace GameEntities{
     class GlobalEnvironment{
@@ -30,15 +31,18 @@ namespace GameEntities{
         int addPlayer(GameEntities::Player & pl);
 
         int generateSnapshot();
-        const std::string getSnapshot();
-        int setSnapshot(std::string &&);
-        int getObjectsFromSnapshot();
+        std::string getSnapshot() const;
+        void handleServerResponse(std::string &&);
 
         void tick();
     private:
+        int setSnapshot(std::string &&);
+        int getObjectsFromSnapshot();
+
         std::mutex _mutex;
         std::string _snapshot;
 
+        std::unordered_map <size_t,  std::vector<GameEntities::Player>::iterator> id_to_players;
         std::vector <GameEntities::Player> Players;
         std::vector <GameEntities::Bullet> Bullets;
 //        std::vector <GameEntities::Terrain> Terrain;

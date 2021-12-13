@@ -1,14 +1,11 @@
 #include "GameObjects.h"
 #include "physical.hpp"
+#include "Extract.h"
 
 using namespace GameEntities;
 using namespace boost::json;
 
-// function for deducing parameters
-template<typename T>
-void extract(object const &obj, T &t, string_view key) {
-    t = value_to<T>(obj.at(key));
-}
+
 
 // initialization of static member
 size_t GameEntities::GameObject::global_id = 0;
@@ -19,11 +16,13 @@ void GameObject::deserialize(value jv) {
     extract(ob, type, "type");
     extract(ob, id, "id");
 
+    float x, y;
     extract(ob, ob, "Physical");
-    extract(ob, shift.x, "geometry_x");
-    extract(ob, shift.y, "geometry_y");
+    extract(ob, x, "geometry_x");
+    extract(ob, y, "geometry_y");
 
-    model->getGeometry().shift(shift);
+    setX(x);
+    setY(y);
 }
 
 GameObject &GameObject::operator=(GameObject &&other) {
@@ -148,7 +147,7 @@ Bullet &Bullet::operator=(Bullet &&other) {
 
 value Bullet::serialize() {
     value jv = {
-        {"hp", damage},
+        {"damage", damage},
         {"GameObject", GameObject::serialize()}
     };
     return jv;

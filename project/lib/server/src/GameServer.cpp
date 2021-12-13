@@ -77,8 +77,8 @@ std::string GameServer::requestHandler(const boost::asio::ip::udp::endpoint &end
 
         return std::to_string(id);
     }
-    // ling for avoid copy
-    auto &response = _ge.getSnapshot();
+    // link for avoid copy
+    const auto &response = _ge.getSnapshot();
     // Dont forget to finish access!!!!!!!!
     _ge.finishAccess();
     // Dont forget to finish access!!!!!!!!

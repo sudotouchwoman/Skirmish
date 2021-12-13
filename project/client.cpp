@@ -1,11 +1,14 @@
 #include "PlayerEvent.h"
 #include <iostream>
 #include "ConnectionClient.h"
+#include "GlobalEnvironment.h"
 
 int main(){
     std::ios_base::sync_with_stdio(false);
+    GameEntities::GlobalEnvironment ge;
+
     Client::ConnectionClient cc;
-    cc.setSnapshotRecieveCallback([](const std::string &s){std::cout << s; std::flush(std::cout);});
+    cc.setSnapshotRecieveCallback([&ge](std::string &&s){ge.handleServerResponse(std::move(s));});
 
     int ev;
     while(std::cin >> ev){

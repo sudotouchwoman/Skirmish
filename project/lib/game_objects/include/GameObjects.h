@@ -30,11 +30,19 @@ namespace GameEntities {
 //        virtual void collisionHandler(const std::shared_ptr<GameObject> &other) = 0;
     };
 
+    // lightweight object for using on client side only
     class IRenderable {
     public:
+        IRenderable(float x_ = 0, float y_ = 0) : x(x_), y(y_) {};
         virtual int update() = 0;
         virtual int render() = 0;
-        virtual int getPosition() = 0;
+        float getX() const { return x; };
+        float getY() const { return y; };
+        void setX(float x_) {x = x_; };
+        void setY(float y_) {y = y_; };
+    private:
+        float x;
+        float y;
     };
 
     class ISerializeble {
@@ -56,7 +64,7 @@ namespace GameEntities {
 
     public:
         static void resetID() { global_id = 1; };
-        GameObject(int type_) : type(type_), id(global_id++) {};
+        GameObject(int type_, float x = 0, float y = 0) : type(type_), id(global_id++), IRenderable(x, y) {};
         GameObject(GameObject &&);
         GameObject(const GameObject &) = delete;
         GameObject &operator=(GameObject &&);
@@ -78,6 +86,7 @@ namespace GameEntities {
 
     class Player : public GameObject {
     public:
+        // server side constructors
         Player(int hp_, int type_) : hp(hp_), GameObject(type_) {}
         Player(const double x = 0,
                const double y = 0,
@@ -85,6 +94,9 @@ namespace GameEntities {
                const double vx = 0,
                const double vy = 0,
                const double inverse_mass = 1);
+
+        // client side constructors
+        Player(int hp_, int type_, std::string &&name_, float x, float y) : GameObject(type_, x, y), hp(hp_), name(std::move(name_)) {};
 
         ~Player() = default;
         Player(const Player &other) = delete;
@@ -113,6 +125,7 @@ namespace GameEntities {
 
     class Bullet : public GameObject {
     public:
+        // server side constructors
         Bullet(int damage_, int type_) : damage(damage_), GameObject(type_) {}
         Bullet(const double x = 0,
                const double y = 0,
@@ -120,6 +133,9 @@ namespace GameEntities {
                const double vx = 0,
                const double vy = 0,
                const double inverse_mass = 1);
+
+        // client side constructors
+        Bullet(int type_, int damage_, float x, float y) : GameObject(type_, x, y), damage(damage_) {};
 
         ~Bullet() = default;
         Bullet(const Bullet &other) = delete;
