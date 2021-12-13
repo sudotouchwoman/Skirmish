@@ -1,5 +1,7 @@
 #pragma once
 
+#include "GameSettings.h"
+
 #include <boost/asio.hpp>
 #include <string>
 #include <vector>
@@ -28,6 +30,6 @@ namespace Server {
         std::function<std::string(const boost::asio::ip::udp::endpoint &, std::string)> handle_message;
         udp::socket socket_;
         udp::endpoint remote_endpoint_;
-        boost::array<char, 1> recv_buffer_;
+        boost::array<char, max_transfer_event_bytes> recv_buffer_;
     };
 }
