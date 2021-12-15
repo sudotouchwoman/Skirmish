@@ -31,7 +31,7 @@ namespace GameEntities{
         int addPlayer(GameEntities::Player & pl);
 
         int generateSnapshot();
-        std::string getSnapshot() const;
+        std::string getSnapshot();
         void handleServerResponse(std::string &&);
 
         void tick();
@@ -39,8 +39,8 @@ namespace GameEntities{
         int setSnapshot(std::string &&);
         int getObjectsFromSnapshot();
 
-        std::mutex _mutex;
-        std::string _snapshot;
+        std::mutex mutex_;
+        std::string snapshot_;
 
         std::unordered_map <size_t,  std::vector<GameEntities::Player>::iterator> id_to_players;
         std::vector <GameEntities::Player> Players;
