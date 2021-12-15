@@ -1,5 +1,6 @@
 #include "GameObjects.h"
 #include "physical.hpp"
+#include "GameSettings.h"
 #include "Extract.h"
 
 using namespace GameEntities;
@@ -13,7 +14,10 @@ size_t GameEntities::GameObject::global_id = 0;
 void GameObject::deserialize(value jv) {
     core::vec2 shift;
     object ob = jv.as_object();
+    int type;
     extract(ob, type, "type");
+    type_ = static_cast<ObjectTypes>(type);
+
     extract(ob, id, "id");
 
     float x, y;
@@ -29,7 +33,7 @@ GameObject &GameObject::operator=(GameObject &&other) {
     model = std::move(other.model);
     other.model = nullptr;
     id = other.id;
-    type = other.type;
+    type_ = other.type_;
     return *this;
 }
 
@@ -37,7 +41,7 @@ GameObject::GameObject(GameObject && other){
     model = std::move(other.model);
     other.model = nullptr;
     id = other.id;
-    type = other.type;
+    type_ = other.type_;
 }
 
 void GameObject::setDefaultGeometry(const double x, const double y, const double R) {
@@ -55,7 +59,7 @@ value GameObject::serialize() {
     const auto & geometry = model->getGeometry().GetCenter();
 
     value jv = {
-        {"type", type},
+        {"type", static_cast<int>(type_)},
         {"id", id},
         {"Physical", {
             {"geometry_x", geometry.x},
@@ -98,10 +102,8 @@ void Player::deserialize(value jv) {
 Player::Player(const double x,
                const double y,
                const double R,
-               const double vx,
-               const double vy,
-               const double inverse_mass) : GameObject(ObjectTypes::tPlayer), hp(100) {
-    setDefaultModel(vx, vy, inverse_mass);
+               const double inverse_mass) : GameObject(ObjectTypes::T_PLAYER), hp(100) {
+    setDefaultModel(default_spawn_vx, default_spawn_vy, inverse_mass);
     setDefaultGeometry(x, y, R);
 }
 
@@ -156,10 +158,8 @@ value Bullet::serialize() {
 Bullet::Bullet(const double x,
        const double y,
        const double R,
-       const double vx,
-       const double vy,
-       const double inverse_mass) : GameObject(ObjectTypes::tBullet), damage(10) {
-    setDefaultModel(vx, vy, inverse_mass);
+       const double inverse_mass) : GameObject(ObjectTypes::T_BULLET), damage(10) {
+    setDefaultModel(default_spawn_vx, default_spawn_vy, inverse_mass);
     setDefaultGeometry(x, y, R);
 }
 

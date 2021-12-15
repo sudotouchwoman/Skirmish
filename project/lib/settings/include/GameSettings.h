@@ -9,6 +9,11 @@ const int bullet_speed = 800;
 const int player_speed = 4;
 const double default_player_radius = 4;
 const double default_bullet_radius = 1;
+const float default_spawn_x = 0;
+const float default_spawn_y = 0;
+const float default_spawn_vx = 0;
+const float default_spawn_vy = 0;
+
 // main game parameters
 
 // client server settings
