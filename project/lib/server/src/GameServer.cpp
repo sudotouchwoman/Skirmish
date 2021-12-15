@@ -60,10 +60,8 @@ namespace Server {
         }
             // if not and event register - register player ( else send snapshot)
         else if (request[0] == ClientServer::Type::tRegister) {
-            GameEntities::Player pl;
-            size_t id = pl.getID();
-            endpoint_id[endpoint_string] = pl.getID();
-            _ge.addPlayer(pl);
+            size_t id = _ge.addPlayer();
+            endpoint_id[endpoint_string] = id;
 
             return std::to_string(id);
         }

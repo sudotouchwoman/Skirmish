@@ -41,7 +41,7 @@ namespace GameEntities {
                         physical::PhysicalObject::collide(Vector1[i].getModel(), Vector2[j].getModel());
                     if (!collision_details) continue;
 
-                    this->onCollision(Vector1[i], Vector2[j], collision_details);
+                    onCollision(Vector1[i], Vector2[j], collision_details);
                 }
             }
         };
@@ -54,7 +54,7 @@ namespace GameEntities {
                     auto collision_details = physical::PhysicalObject::collide(elem1.getModel(), elem2.getModel());
                     if (!collision_details) continue;
 
-                    this->onCollision(elem1, elem2, collision_details);
+                    onCollision(elem1, elem2, collision_details);
                 }
             }
         };
@@ -111,13 +111,14 @@ namespace GameEntities {
 //    return 0;
 //}
 
-    int GlobalEnvironment::addPlayer(GameEntities::Player &pl) {
+    size_t GlobalEnvironment::addPlayer() {
         getAccess();
 
-        Players.emplace_back(std::move(pl));
+        Players.emplace_back(Player());
 
+        size_t id = Players[Players.size() - 1].getID();
         finishAccess();
-        return 0;
+        return id;
     }
 
     int GlobalEnvironment::generateSnapshot() {
