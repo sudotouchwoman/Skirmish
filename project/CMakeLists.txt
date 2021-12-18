@@ -1,12 +1,15 @@
-cmake_minimum_required(VERSION 3.20)
-project(Skirmish)
-
-set(CMAKE_CXX_STANDARD 20)
-set(CMAKE_CXX_STANDARD_REQUIRED ON)
-add_compile_options(-Wall -Werror -Wpedantic -lSDL2 -lSDL2_image)
-
-set(PROJECT_FOLDER .)
-add_subdirectory("${PROJECT_FOLDER}/lib/")
+set(THREADS_PREFER_PTHREAD_FLAG ON)
+set(BOOST_ROOT "/home/dominik/boost")
+find_package(Threads REQUIRED)
+find_package(Boost 1.77.0 REQUIRED COMPONENTS json)
+add_subdirectory(lib)
+add_subdirectory(src)
 
 add_executable(main main.cpp)
-target_link_libraries(main manager)
+target_link_libraries(main PRIVATE server)
+
+add_executable(client_ client.cpp)
+target_link_libraries(client_ PRIVATE events client)
+
+add_executable(graphics graphics.cpp)
+target_link_libraries(graphics PRIVATE manager)
