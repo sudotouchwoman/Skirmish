@@ -26,8 +26,8 @@ namespace GameEntities {
             }
         };
 
-        updater(Players);
-        updater(Bullets);
+        updater(players);
+        updater(bullets);
 //    updater(Terrain);
 //    updater(Objects);
 
@@ -59,8 +59,8 @@ namespace GameEntities {
             }
         };
 
-        collisionMaker(Players, Players);
-        collisionFullMaker(Players, Bullets);
+        collisionMaker(players, players);
+        collisionFullMaker(players, bullets);
 
         finishAccess();
 
@@ -96,8 +96,8 @@ namespace GameEntities {
             }
         };
 
-        deleter(Players);
-        deleter(Bullets);
+        deleter(players);
+        deleter(bullets);
 //    deleter(Terrain);
 //    deleter(Objects);
 
@@ -114,9 +114,14 @@ namespace GameEntities {
     size_t GlobalEnvironment::addPlayer() {
         getAccess();
 
-        Players.emplace_back(Player());
+        players.emplace_back(Player());
 
-        size_t id = Players[Players.size() - 1].getID();
+        size_t id = players[players.size() - 1].getID();
+
+        // redesign unordered hashmap
+        for (auto it = players.begin(); it < players.end(); ++it)
+            id_to_players[it->getID()] = it;
+
         finishAccess();
         return id;
     }
@@ -134,8 +139,8 @@ namespace GameEntities {
         };
 
         value jv = {
-            {"Players", vectorSerializer(Players)},
-            {"Bullets", vectorSerializer(Bullets)},
+            {"Players", vectorSerializer(players)},
+            {"Bullets", vectorSerializer(bullets)},
 //        {"Terrain", vectorSerializer(Players)},
 //        {"Objects", vectorSerializer(Players)},
         };
@@ -165,18 +170,20 @@ namespace GameEntities {
 
     int GlobalEnvironment::getObjectsFromSnapshot() {
         object objects = parse(snapshot_).as_object();
-        array bullets, players;
-        extract(objects, players, "Players");
-        extract(objects, bullets, "Bullets");
+        array bullets_, players_;
+        extract(objects, players_, "Players");
+        extract(objects, bullets_, "Bullets");
 
         getAccess();
-        Bullets.resize(bullets.size());
-        Players.resize(players.size());
+        bullets.resize(bullets_.size());
+        players.resize(players_.size());
 
-        for (size_t i = 0; i < Players.size(); ++i)
-            Players[i].deserialize(players[i]);
-        for (size_t i = 0; i < Bullets.size(); ++i)
-            Bullets[i].deserialize(bullets[i]);
+        for (size_t i = 0; i < players.size(); ++i){
+            players[i].deserialize(players_[i]);
+            id_to_players[players[i].getID()] = players.begin() + i;
+        }
+        for (size_t i = 0; i < bullets.size(); ++i)
+            bullets[i].deserialize(bullets_[i]);
         finishAccess();
         return 0;
     }
@@ -186,11 +193,10 @@ namespace GameEntities {
         getAccess();
 
         // find player by id
-        auto it = Players.begin();
-        for (; it != Players.end() && it->getID() != player_id; ++it);
+        auto &player = getPlayerById(player_id);
 
         // change it geometry
-        it->eventHandler(me);
+        player.eventHandler(me);
 
         finishAccess();
     }
@@ -199,10 +205,9 @@ namespace GameEntities {
         getAccess();
 
         // find player who school shooting
-        auto it = Players.begin();
-        for (; it != Players.end() && it->getID() != player_id; ++it);
+        auto &player = getPlayerById(player_id);
 
-        it->setAngle(ev.angle);
+        player.setAngle(ev.angle);
         finishAccess();
     }
 
@@ -211,26 +216,29 @@ namespace GameEntities {
         getAccess();
 
         // find player who school shooting
-        auto it = Players.begin();
-        for (; it != Players.end() && it->getID() != player_id; ++it);
+        auto &player = getPlayerById(player_id);
 
         // model methods need to be in class constructor.
         GameEntities::Bullet bullet;
         auto &model = bullet.getModel();
         model.getState().velocity = {se.x * bullet_speed, se.y * bullet_speed};
-        auto shift_player = it->getModel().getGeometry().GetCenter() +
+        auto shift_player = player.getModel().getGeometry().GetCenter() +
             core::vec2{se.x * (default_player_radius + default_bullet_radius),
                        se.y * (default_player_radius + default_bullet_radius)};
 
         model.getGeometry().shift(shift_player);
 
-        Bullets.emplace_back(std::move(bullet));
+        bullets.emplace_back(std::move(bullet));
 
         finishAccess();
     }
 
-    auto &GlobalEnvironment::getPlayerById(size_t id) const{
-        return Players[0];
+    Player &GlobalEnvironment::getPlayerById(size_t id) const{
+        auto it = id_to_players.find(id);
+        if (it != id_to_players.end())
+            return *(it->second);
+        else
+            throw std::runtime_error("Player with this id does not exist!");
     }
 
     void GlobalEnvironment::onEvent(size_t player_id, const ClientServer::InteractEvent &ie) {

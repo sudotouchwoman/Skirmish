@@ -37,9 +37,9 @@ namespace GameEntities{
 
         void tick();
 
-        auto &getPlayerById(size_t id) const;
-        auto &getPlayers() const {return Players;};
-        auto &getBullets() const {return Bullets;};
+        Player &getPlayerById(size_t id) const;
+        auto &getPlayers() const {return players;};
+        auto &getBullets() const {return bullets;};
     private:
         int setSnapshot(std::string &&);
         int getObjectsFromSnapshot();
@@ -48,8 +48,8 @@ namespace GameEntities{
         std::string snapshot_;
 
         std::unordered_map <size_t,  std::vector<GameEntities::Player>::iterator> id_to_players;
-        std::vector <GameEntities::Player> Players;
-        std::vector <GameEntities::Bullet> Bullets;
+        std::vector <GameEntities::Player> players;
+        std::vector <GameEntities::Bullet> bullets;
 //        std::vector <GameEntities::Terrain> Terrain;
 //        std::vector <GameEntities::Object> Objects;
     };
