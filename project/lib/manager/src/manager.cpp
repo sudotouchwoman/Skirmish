@@ -1,24 +1,29 @@
 #include "manager.hpp"
 
-const int Manager::fps = 60;
+void GameManager::Run() {
+    GameEntities::GlobalEnvironment ge;
+    Client::ConnectionClient cc;
+    cc.setSnapshotRecieveCallback([&ge](std::string &&s){ge.handleServerResponse(std::move(s));});
 
-void Manager::Run() {
-    Window& window = Window::Instance();
-    std::unique_ptr<Hero> hero(new Hero);
-    FPS::SetInverseTimer(5);
-    Menu::Load(window,fps, hero);
+    Menu menu(&window, frames);
+    EventManager command(window.imageList[Tile::GAME_CURSOR]);
+    size_t player_id = cc.registerPlayer();
+    Camera camera(&window, player_id);
+    fps.SetInverseTimer(inverseTimeSeconds);
+    fps.Set(frames);
 
-    FPS::Set(fps);
-    FPS::SetInverseTimer(5);
-    Window::SetCursor(window.textures.textureImageMap[Tile::GAME_CURSOR]);
-    while (!Input::HeroAction(hero)) {
-        if (FPS::Update() >= 1) {
+    menu.Load();
+    window.SetCursor(window.textures.textureImageMap[Tile::GAME_CURSOR]);
+    fps.SetInverseTimer(inverseTimeSeconds);
+    while (!command.HandleEvents(cc)) {
+        if (fps.Update() >= 1) {
             window.ClearSurface();
-            Menu::InverseTimer(window, FPS::InverseTimeCheck());
-
-            hero->Render();
+            inverseTimeSeconds = fps.InverseTimeCheck();
+            if (inverseTimeSeconds > 0)
+                menu.InverseTimer(inverseTimeSeconds);
+            camera.Update(ge.getPlayers(), ge.getBullets());
             window.Render();
-            FPS::Release();
+            fps.Release();
         }
     }
 }

@@ -1,17 +1,13 @@
 #include "fps.hpp"
 
-int FPS::fps = 0, FPS::startInverseTimer = 0;
-double FPS::delta = 0, FPS::currentTime = 0, FPS::lastTime = 0, FPS::timePerTick = 0, FPS::lastCheck = 0, FPS::currentCheck = 0;
-
-void FPS::Set(int required_fps) {
-    fps = required_fps;
-    timePerTick = (double) 1000 / fps;
-    lastTime = SDL_GetTicks();
+void FPS::Set(int fps) {
+    timePerTick = 1000 / (float) fps;
+    lastTime = (float) SDL_GetTicks();
     lastCheck = lastTime;
 }
 
-double FPS::Update() {
-    currentTime = SDL_GetTicks();
+float FPS::Update() {
+    currentTime = (float) SDL_GetTicks();
     delta += (currentTime - lastTime) / timePerTick;
     lastTime = currentTime;
     return delta;
@@ -22,7 +18,7 @@ void FPS::Release() {
 }
 
 int FPS::InverseTimeCheck() {
-    currentCheck = SDL_GetTicks();
+    currentCheck = (float) SDL_GetTicks();
     if ((currentCheck - lastCheck) / 1000 >= 1) {
         lastCheck = currentCheck;
         return --startInverseTimer;

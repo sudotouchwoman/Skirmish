@@ -6,15 +6,19 @@
 
 class FPS {
 public:
-    static void Set(int fps);
-    static double Update();
-    static void Release();
-    static int InverseTimeCheck();
-    static void SetInverseTimer(int seconds);
+    void Set(int fps);
+    float Update();
+    void Release();
+    int InverseTimeCheck();
+    void SetInverseTimer(int seconds);
+
+    FPS(const FPS &other) = delete;
+    FPS &operator=(const FPS &other) = delete;
+    FPS() : startInverseTimer(0), delta(0), currentTime(0), lastTime(0), timePerTick(0), lastCheck(0), currentCheck(0) {}
 
 private:
-    static int fps, startInverseTimer;
-    static double delta, currentTime, lastTime, timePerTick, lastCheck, currentCheck;
+    int startInverseTimer;
+    float delta, currentTime, lastTime, timePerTick, lastCheck, currentCheck;
 
 };
 

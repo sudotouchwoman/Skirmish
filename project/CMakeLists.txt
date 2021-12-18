@@ -5,6 +5,8 @@ set(CMAKE_CXX_STANDARD 20)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 add_compile_options(-Wall -Werror -Wpedantic -lSDL2 -lSDL2_image)
 
-add_subdirectory(lib/)
+set(PROJECT_FOLDER .)
+add_subdirectory("${PROJECT_FOLDER}/lib/")
+
 add_executable(main main.cpp)
 target_link_libraries(main manager)

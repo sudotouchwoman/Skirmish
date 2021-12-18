@@ -1,10 +1,15 @@
 #include "command.hpp"
 
-bool Input::quit = false;
-SDL_Event Input::gameEvent = {};
-int Input::x = 0, Input::y = 0;
+EventManager::EventManager(SDL_Texture* texture) : quit(false), x(0), y(0), width(0), height(0) {
+    SDL_QueryTexture(texture, nullptr, nullptr, &width, &height);
+}
 
-bool Input::HeroAction(const std::unique_ptr<Hero>& hero) {
+void EventManager::GetCursorPosition() {
+    x += width / 2;
+    y += height / 2;
+}
+
+bool EventManager::HandleEvents(Client::ConnectionClient& connectionClient) {
     while (SDL_PollEvent(&gameEvent)) {
         switch (gameEvent.type) {
             case SDL_QUIT:
@@ -13,23 +18,23 @@ bool Input::HeroAction(const std::unique_ptr<Hero>& hero) {
             case SDL_KEYDOWN:
                 switch (gameEvent.key.keysym.scancode) {
                     case SDL_SCANCODE_W: {
-                        Up command;
-                        command.Move(hero->fieldRect.x, hero->fieldRect.y);
+                        moveEvent.movement = ClientServer::Movement::U;
+                        connectionClient.sendEvent(moveEvent);
                         break;
                     }
                     case SDL_SCANCODE_S: {
-                        Down command;
-                        command.Move(hero->fieldRect.x, hero->fieldRect.y);
+                        moveEvent.movement = ClientServer::Movement::D;
+                        connectionClient.sendEvent(moveEvent);
                         break;
                     }
                     case SDL_SCANCODE_A: {
-                        Left command;
-                        command.Move(hero->fieldRect.x, hero->fieldRect.y);
+                        moveEvent.movement = ClientServer::Movement::L;
+                        connectionClient.sendEvent(moveEvent);
                         break;
                     }
                     case SDL_SCANCODE_D: {
-                        Right command;
-                        command.Move(hero->fieldRect.x, hero->fieldRect.y);
+                        moveEvent.movement = ClientServer::Movement::R;
+                        connectionClient.sendEvent(moveEvent);
                         break;
                     }
                     default:
@@ -38,18 +43,19 @@ bool Input::HeroAction(const std::unique_ptr<Hero>& hero) {
                 break;
             case SDL_MOUSEMOTION: {
                 SDL_GetMouseState(&x, &y);
-                core::vec2 cursorPosition = {static_cast<double>(x), static_cast<double>(y)};
                 GetCursorPosition();
-                Rotation command;
-                command.Rotate(hero->position, cursorPosition, hero->rotation);
+                rotateEvent.x = x;
+                rotateEvent.y = y;
+                connectionClient.sendEvent(rotateEvent);
                 break;
             }
             case SDL_MOUSEBUTTONDOWN: {
                 SDL_GetMouseState(&x, &y);
-                core::vec2 cursorPosition = {static_cast<double>(x), static_cast<double>(y)};
                 GetCursorPosition();
-                Fire command;
-                command.Shoot(hero, cursorPosition);
+                shootEvent.x = x;
+                shootEvent.y = y;
+                shootEvent.weapon = 0;
+                connectionClient.sendEvent(shootEvent);
                 break;
             }
             default:
@@ -57,12 +63,5 @@ bool Input::HeroAction(const std::unique_ptr<Hero>& hero) {
         }
     }
     return quit;
-}
-
-void Input::GetCursorPosition() {
-    int width, height;
-    SDL_QueryTexture(Window::Instance().imageList[Tile::MENU_CURSOR], nullptr, nullptr, &width, &height);
-    x += width / 2;
-    y += height / 2;
 }
 

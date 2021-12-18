@@ -1,24 +1,12 @@
-#include "graphics.hpp"
-
-int Window::width = 1000;
-int Window::height = 720;
-
-Window& Window::Instance() {
-    static Window instance;
-    return instance;
-}
-
-Window::Window() : window(nullptr), renderer(nullptr) {
-    Init();
-}
+#include "window.hpp"
 
 Window::~Window() {
     SDL_DestroyWindow(window);
     SDL_DestroyRenderer(renderer);
 
     IMG_Quit();
-    SDL_Quit();
     TTF_Quit();
+    SDL_Quit();
 }
 
 void Window::Init() {
@@ -34,7 +22,7 @@ void Window::Init() {
     }
 
     window = SDL_CreateWindow("Skirmish", SDL_WINDOWPOS_UNDEFINED, SDL_WINDOWPOS_UNDEFINED,
-                              width, height, SDL_WINDOW_RESIZABLE);
+                              width, height, SDL_WINDOW_SHOWN); //SDL_WINDOW_RESIZABLE
     if (window == nullptr) {
         std::cerr << "failed to open the window: " << SDL_GetError() << std::endl;
         exit(EXIT_FAILURE);
@@ -70,11 +58,7 @@ void Window::ClearSurface() {
     SDL_RenderClear(renderer);
 }
 
-void Window::DrawTexture(SDL_Texture *texture, SDL_FRect* rect) {
-    SDL_RenderCopyF(renderer, texture, nullptr, rect);
-}
-
-void Window::DrawHeroTexture(SDL_Texture *texture, SDL_FRect* rect, double angle, SDL_FPoint* center) {
+void Window::DrawTexture(SDL_Texture *texture, SDL_FRect* rect, float angle, SDL_FPoint* center) {
     SDL_RenderCopyExF(renderer, texture, nullptr, rect, angle, center, SDL_FLIP_NONE);
 }
 
@@ -85,5 +69,6 @@ void Window::SetCursor(const std::string& path) {
         std::cerr << "failed to create cursor: " << SDL_GetError() << std::endl;
         exit(EXIT_FAILURE);
     }
+    SDL_FreeSurface(surfaceCursor);
     SDL_SetCursor(cursor);
 }

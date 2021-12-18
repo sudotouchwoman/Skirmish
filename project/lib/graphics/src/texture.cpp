@@ -17,7 +17,6 @@ Textures::Textures() {
     AddImagePath(Tile::BULLET_JAVASCRIPT, IMAGE_DIRECTORY_PATH + "bullet/javascript.png");
     AddImagePath(Tile::BULLET_LUA, IMAGE_DIRECTORY_PATH + "bullet/lua.png");
     AddImagePath(Tile::BULLET_PYTHON, IMAGE_DIRECTORY_PATH + "bullet/python.png");
-    //AddTexture(Tile::SPAWN, DIRECTORY_PATH + "spawn/");
     AddImagePath(Tile::ICON_OFF, IMAGE_DIRECTORY_PATH + "button/icon_off.png");
     AddImagePath(Tile::ICON_ON, IMAGE_DIRECTORY_PATH + "button/icon_on.png");
     AddImagePath(Tile::BUTTON_OFF, IMAGE_DIRECTORY_PATH + "button/button_off.png");
