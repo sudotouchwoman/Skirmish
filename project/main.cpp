@@ -1,7 +1,8 @@
-#include "manager.hpp"
+#include "GameServer.h"
+#include <iostream>
 
-int main (int argc, char *argv[]) {
-    Manager::Run();
+int main(){
+    Server::GameServer gs;
+    gs.run();
     return 0;
 }
-
