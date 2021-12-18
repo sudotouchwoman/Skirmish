@@ -22,6 +22,7 @@ namespace Client {
         void sendEvent(ClientServer::MoveEvent &ev);
         void sendEvent();
         void sendEvent(ClientServer::ShootEvent &ev);
+        void sendEvent(ClientServer::RotateEvent &ev);
         void sendEvent(ClientServer::InteractEvent &ev);
 
         //register player and get his id
