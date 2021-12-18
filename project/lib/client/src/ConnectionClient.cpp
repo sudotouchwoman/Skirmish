@@ -64,6 +64,14 @@ void ConnectionClient::sendEvent(){
     getReply();
 }
 
+void ConnectionClient::sendEvent(ClientServer::RotateEvent &ev){
+    char type = ClientServer::Type::ROTATE;
+    char *data = reinterpret_cast<char*>(&ev);
+    std::string request = (std::string() + type).append(data, sizeof(ev));
+    send(request);
+    getReply();
+}
+
 void ConnectionClient::sendEvent(ClientServer::ShootEvent &ev){
     char type = ClientServer::Type::SHOOT;
     char *data = reinterpret_cast<char*>(&ev);
