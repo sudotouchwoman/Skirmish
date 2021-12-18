@@ -27,24 +27,22 @@ void Camera::Update(const std::vector<GameEntities::Player>& Players, const std:
     }
 }
 
-void Camera::GetRectangle(SDL_Texture* texture, float x, float y) const {
-    int width_, height_;
-    SDL_QueryTexture(texture, nullptr, nullptr, &width_, &height_);
-    rect->w = (float) width_;
-    rect->h = (float) height_;
-    rect->x = x - rect->w / 2;
-    rect->y = y - rect->h / 2;
+void Camera::SetRectangle(float x, float y, float size) {
+    rect.w = size;
+    rect.h = size;
+    rect.x = x - rect.w / 2;
+    rect.y = y - rect.h / 2;
 }
 
-void Camera::Render(const GameEntities::Player& player) const {
-    SDL_Texture* texture = nullptr; //через player_id из хеш-таблицы со стороны клиента
+void Camera::Render(const GameEntities::Player& player) {
+    SDL_Texture* texture = window->imageList[player.getTextureId()];
     SDL_FPoint center = {player.getX(), player.getY()};
-    GetRectangle(texture, player.getX(), player.getY());
-    window->DrawTexture(texture, rect, player.getAngle(), &center);
+    SetRectangle(player.getX(), player.getY(), size_of_player);
+    window->DrawTexture(texture, &rect, player.getAngle(), &center);
 }
 
-void Camera::Render(const GameEntities::Bullet& bullet) const {
-    SDL_Texture* texture = nullptr; //через player_id из хеш-таблицы со стороны клиента
-    GetRectangle(texture, bullet.getX(), bullet.getY());
-    window->DrawTexture(texture, rect, 0, {});
+void Camera::Render(const GameEntities::Bullet& bullet) {
+    SDL_Texture* texture = window->imageList[1];
+    SetRectangle(bullet.getX(), bullet.getY(), size_of_bullet);
+    window->DrawTexture(texture, &rect, 0, {});
 }

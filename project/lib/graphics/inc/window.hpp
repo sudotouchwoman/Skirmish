@@ -12,12 +12,11 @@ public:
     int width;
     int height;
     Textures textures;
-    std::map<int, SDL_Texture*> imageList;
+    std::map<size_t, SDL_Texture*> imageList;
 
     void Render();
     void ClearSurface();
     void DrawTexture(SDL_Texture *texture, SDL_FRect* rect, float angle, SDL_FPoint* center);
-    void GetTextureRectPosition(SDL_FRect* rect, SDL_Texture* texture, float x, float y);
     void SetCursor(const std::string& path);
 
     Window(const Window &other) = delete;

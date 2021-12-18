@@ -15,10 +15,10 @@
 namespace Tile {
     enum Type {
         HERO_ASM, HERO_CPP, HERO_GIT, HERO_GO, HERO_JAVA, HERO_JAVASCRIPT, HERO_LUA, HERO_PYTHON,
-        BULLET_ASM, BULLET_CPP, BULLET_GIT, BULLET_GO, BULLET_JAVA, BULLET_JAVASCRIPT, BULLET_LUA, BULLET_PYTHON,
+//        BULLET_ASM, BULLET_CPP, BULLET_GIT, BULLET_GO, BULLET_JAVA, BULLET_JAVASCRIPT, BULLET_LUA, BULLET_PYTHON,
         ICON_OFF, ICON_ON, BUTTON_OFF, BUTTON_ON,
-        FLOOR,
-        WALL,
+//        FLOOR,
+//        WALL,
         MENU_CURSOR, GAME_CURSOR};
 }
 
@@ -29,9 +29,9 @@ namespace Font {
 class Textures {
 public:
     std::vector<std::string> heroName = {"Asm", "Cpp", "Git", "Go", "Java", "Javascript", "Lua", "Python"};
-    std::map<int, std::string> textureImageMap;
-    std::map<int, std::string> textureFontMap;
-    std::map<int, SDL_Texture*> PreLoadImageTextures(SDL_Renderer *renderer);
+    std::map<size_t, std::string> textureImageMap;
+    std::map<size_t, std::string> textureFontMap;
+    std::map<size_t, SDL_Texture*> PreLoadImageTextures(SDL_Renderer *renderer);
 
     Textures();
     SDL_Texture* LoadTextTexture(SDL_Renderer *renderer, const std::string &text, const std::string &path, SDL_Color color, int fontSize);
@@ -43,8 +43,8 @@ private:
     const std::string IMAGE_DIRECTORY_PATH = (std::string) SDL_GetBasePath() + "lib/textures/";
     const std::string FONT_DIRECTORY_PATH = (std::string) SDL_GetBasePath() + "lib/ttf/";
 
-    void AddImagePath(int index, const std::string &path);
-    void AddFontPath(int index, const std::string &path);
+    void AddImagePath(size_t index, const std::string &path);
+    void AddFontPath(size_t index, const std::string &path);
 
     static SDL_Texture* LoadImageTexture(SDL_Renderer *renderer, const std::string &path);
 };

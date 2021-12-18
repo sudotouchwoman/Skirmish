@@ -5,8 +5,8 @@
 // main game parameters
 const int game_tick = 10; // miliseconds
 const double physics_tick = static_cast<double>(game_tick) / 1000;
-const int bullet_speed = 800;
-const int player_speed = 4;
+const int bullet_speed = 20;
+const int player_speed = 5;
 const double default_player_radius = 4;
 const double default_bullet_radius = 1;
 const float default_spawn_x = 0;
@@ -26,5 +26,6 @@ const int max_transfer_event_bytes = 40;
 
 
 // textures settings
-const size_t size_of_textures = 8;
+const size_t size_of_player = 80;
+const size_t size_of_bullet = 15;
 // textures settings

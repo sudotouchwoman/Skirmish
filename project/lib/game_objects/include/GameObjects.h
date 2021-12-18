@@ -34,7 +34,7 @@ namespace GameEntities {
         virtual int render() = 0;
         float getX() const { return x; };
         float getY() const { return y; };
-        float getTextureId() const { return texture_id; };
+        size_t getTextureId() const { return texture_id; };
         float getAngle() const { return angle; };
         void setX(float x_) {x = x_; };
         void setY(float y_) {y = y_; };

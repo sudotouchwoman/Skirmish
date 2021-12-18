@@ -1,6 +1,7 @@
 #ifndef CAMERA_HPP
 #define CAMERA_HPP
 
+#include "GameSettings.h"
 #include "GameObjects.h"
 #include "GlobalEnvironment.h"
 #include "window.hpp"
@@ -14,14 +15,14 @@ public:
     Camera &operator=(const Camera &other) = delete;
 
 private:
-    SDL_FRect* rect{};
+    SDL_FRect rect{};
     Window* window;
     float width, height, offset_x, offset_y;
     size_t player_id;
 
-    void GetRectangle(SDL_Texture* texture, float x, float y) const;
-    void Render(const GameEntities::Player& player) const;
-    void Render(const GameEntities::Bullet& bullet) const;
+    void SetRectangle(float x, float y, float size);
+    void Render(const GameEntities::Player& player);
+    void Render(const GameEntities::Bullet& bullet);
 };
 
 #endif //CAMERA_HPP

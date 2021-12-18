@@ -1,7 +1,8 @@
 #include "command.hpp"
 
-EventManager::EventManager(SDL_Texture* texture) : quit(false), x(0), y(0), width(0), height(0) {
+EventManager::EventManager(SDL_Texture* texture, size_t player_id) : quit(false), x(0), y(0), width(0), height(0) {
     SDL_QueryTexture(texture, nullptr, nullptr, &width, &height);
+    this->player_id = player_id;
 }
 
 void EventManager::GetCursorPosition() {
@@ -9,7 +10,7 @@ void EventManager::GetCursorPosition() {
     y += height / 2;
 }
 
-bool EventManager::HandleEvents(Client::ConnectionClient& connectionClient) {
+bool EventManager::HandleEvents(Client::ConnectionClient& cc, GameEntities::GlobalEnvironment& ge) {
     while (SDL_PollEvent(&gameEvent)) {
         switch (gameEvent.type) {
             case SDL_QUIT:
@@ -19,22 +20,22 @@ bool EventManager::HandleEvents(Client::ConnectionClient& connectionClient) {
                 switch (gameEvent.key.keysym.scancode) {
                     case SDL_SCANCODE_W: {
                         moveEvent.movement = ClientServer::Movement::U;
-                        connectionClient.sendEvent(moveEvent);
+                        cc.sendEvent(moveEvent);
                         break;
                     }
                     case SDL_SCANCODE_S: {
                         moveEvent.movement = ClientServer::Movement::D;
-                        connectionClient.sendEvent(moveEvent);
+                        cc.sendEvent(moveEvent);
                         break;
                     }
                     case SDL_SCANCODE_A: {
                         moveEvent.movement = ClientServer::Movement::L;
-                        connectionClient.sendEvent(moveEvent);
+                        cc.sendEvent(moveEvent);
                         break;
                     }
                     case SDL_SCANCODE_D: {
                         moveEvent.movement = ClientServer::Movement::R;
-                        connectionClient.sendEvent(moveEvent);
+                        cc.sendEvent(moveEvent);
                         break;
                     }
                     default:
@@ -44,9 +45,9 @@ bool EventManager::HandleEvents(Client::ConnectionClient& connectionClient) {
             case SDL_MOUSEMOTION: {
                 SDL_GetMouseState(&x, &y);
                 GetCursorPosition();
-                rotateEvent.x = x;
-                rotateEvent.y = y;
-                connectionClient.sendEvent(rotateEvent);
+                angle = atan2(ge.getPlayerById(player_id).getY() - (float) y, ge.getPlayerById(player_id).getX() - (float) x) * 180 / M_PI;
+                rotateEvent.angle = angle;
+                cc.sendEvent(rotateEvent);
                 break;
             }
             case SDL_MOUSEBUTTONDOWN: {
@@ -55,7 +56,7 @@ bool EventManager::HandleEvents(Client::ConnectionClient& connectionClient) {
                 shootEvent.x = x;
                 shootEvent.y = y;
                 shootEvent.weapon = 0;
-                connectionClient.sendEvent(shootEvent);
+                cc.sendEvent(shootEvent);
                 break;
             }
             default:
