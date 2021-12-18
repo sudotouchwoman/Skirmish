@@ -3,49 +3,48 @@
 #include <boost/json.hpp>
 #include "PlayerEvent.h"
 #include "physical.hpp"
+#include "GameSettings.h"
 
 using namespace boost::json;
 
 namespace GameEntities {
 
-    using PhobjUPtr = std::unique_ptr<physical::PhysicalObject>;
+    using physical_uptr = std::unique_ptr<physical::PhysicalObject>;
 
     class Bullet;
     class Player;
 
-    enum ObjectTypes {
-        tPlayer,
-        tObstacle,
-        tBullet,
-        tWeapon,
-        tVanity,
-        tEcqupable,
-        tOther,
+    enum class ObjectTypes {
+        T_PLAYER,
+        T_OBSTACLE,
+        T_BULLET,
+        T_WEAPON,
+        T_VANITY,
+        T_ECQUPABLE,
+        T_OTHER,
     };
 
     class GameObject;
 
-    class Logic {
-    private:
-//        virtual void collisionHandler(const std::shared_ptr<GameObject> &other) = 0;
-    };
-
     // lightweight object for using on client side only
     class IRenderable {
     public:
-        IRenderable(float x_ = 0, float y_ = 0) : x(x_), y(y_) {};
+        IRenderable(float x_ = 0, float y_ = 0, float angle_ = 0, size_t id_ = 1) : x(x_), y(y_), angle(angle_), texture_id(id_){};
         virtual int update() = 0;
         virtual int render() = 0;
         float getX() const { return x; };
         float getY() const { return y; };
-        float getAngle() const { return angle; }
+        float getTextureId() const { return texture_id; };
+        float getAngle() const { return angle; };
         void setX(float x_) {x = x_; };
         void setY(float y_) {y = y_; };
+        void setAngle(float angle_) {angle = angle_; };
+        void setTextureId(size_t texture_id_) {texture_id = texture_id_; };
     private:
         float x;
         float y;
         float angle;
-        size_t player_id;
+        size_t texture_id;
     };
 
     class ISerializeble {
@@ -54,12 +53,12 @@ namespace GameEntities {
         virtual void deserialize(value) = 0;
     };
 
-    class GameObject : public Logic, public IRenderable, public ISerializeble {
+    class GameObject : public IRenderable, public ISerializeble {
     private:
         static size_t global_id;
     protected:
-        int type;
-        int id;
+        ObjectTypes type_;
+        size_t id;
         std::unique_ptr<physical::PhysicalObject> model;
 
         void setDefaultGeometry(const double x, const double y, const double R);
@@ -67,14 +66,15 @@ namespace GameEntities {
 
     public:
         static void resetID() { global_id = 1; };
-        GameObject(int type_, float x = 0, float y = 0) : type(type_), id(global_id++), IRenderable(x, y) {};
+        GameObject(ObjectTypes type, float x = 0, float y = 0) : type_(type), id(global_id++), IRenderable(x, y) {};
         GameObject(GameObject &&);
         GameObject(const GameObject &) = delete;
         GameObject &operator=(GameObject &&);
         GameObject &operator=(const GameObject &) = delete;
+        virtual ~GameObject() = default;
 
-        int getType() const { return type; };
-        int getID() const { return id; };
+        ObjectTypes getType() const { return type_; };
+        size_t getID() const { return id; };
         void setModel(std::unique_ptr<physical::PhysicalObject> model_) { model = std::move(model_); }
         bool hasModel() const { return static_cast<bool> (model); }
         physical::PhysicalObject &getModel() {
@@ -90,16 +90,14 @@ namespace GameEntities {
     class Player : public GameObject {
     public:
         // server side constructors
-        Player(int hp_, int type_) : hp(hp_), GameObject(type_) {}
-        Player(const double x = 0,
-               const double y = 0,
-               const double R = 4,
-               const double vx = 0,
-               const double vy = 0,
+        Player(int hp_, ObjectTypes type_) : hp(hp_), GameObject(type_) {}
+        Player(const double x = default_spawn_x,
+               const double y = default_spawn_y,
+               const double R = default_player_radius,
                const double inverse_mass = 1);
 
         // client side constructors
-        Player(int hp_, int type_, std::string &&name_, float x, float y) : GameObject(type_, x, y), hp(hp_), name(std::move(name_)) {};
+        Player(int hp_, ObjectTypes type_, std::string &&name_, float x, float y) : GameObject(type_, x, y), hp(hp_), name(std::move(name_)) {};
 
         ~Player() = default;
         Player(const Player &other) = delete;
@@ -117,7 +115,7 @@ namespace GameEntities {
         int getHp() { return hp; };
 
         void collisionHandler(Player const &other);
-        void collisionHandler(GameEntities::Bullet const &other);    //palyer id
+        void collisionHandler(GameEntities::Bullet const &other);
 
         void eventHandler(const ClientServer::MoveEvent &ev);
         void eventHandler(const ClientServer::InteractEvent &ev);
@@ -129,16 +127,14 @@ namespace GameEntities {
     class Bullet : public GameObject {
     public:
         // server side constructors
-        Bullet(int damage_, int type_) : damage(damage_), GameObject(type_) {}
-        Bullet(const double x = 0,
-               const double y = 0,
-               const double R = 1,
-               const double vx = 0,
-               const double vy = 0,
+        Bullet(int damage_, ObjectTypes type_) : damage(damage_), GameObject(type_) {}
+        Bullet(const double x = default_spawn_x,
+               const double y = default_spawn_y,
+               const double R = default_bullet_radius,
                const double inverse_mass = 1);
 
         // client side constructors
-        Bullet(int type_, int damage_, float x, float y) : GameObject(type_, x, y), damage(damage_) {};
+        Bullet(ObjectTypes type_, int damage_, float x, float y) : GameObject(type_, x, y), damage(damage_) {};
 
         ~Bullet() = default;
         Bullet(const Bullet &other) = delete;
