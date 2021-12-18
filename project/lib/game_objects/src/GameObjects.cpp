@@ -12,7 +12,6 @@ using namespace boost::json;
 size_t GameEntities::GameObject::global_id = 0;
 
 void GameObject::deserialize(value jv) {
-    core::vec2 shift;
     object ob = jv.as_object();
     int type;
     extract(ob, type, "type");
@@ -21,12 +20,18 @@ void GameObject::deserialize(value jv) {
     extract(ob, id, "id");
 
     float x, y;
+    size_t texture_id;
+    float angle;
     extract(ob, ob, "Physical");
-    extract(ob, x, "geometry_x");
-    extract(ob, y, "geometry_y");
+    extract(ob, x, "x");
+    extract(ob, y, "y");
+    extract(ob, texture_id, "t_id");
+    extract(ob, angle, "angle");
 
     setX(x);
     setY(y);
+    setAngle(angle);
+    setTextureId(texture_id);
 }
 
 GameObject &GameObject::operator=(GameObject &&other) {
@@ -62,8 +67,10 @@ value GameObject::serialize() {
         {"type", static_cast<int>(type_)},
         {"id", id},
         {"Physical", {
-            {"geometry_x", geometry.x},
-            {"geometry_y", geometry.y},
+            {"x", geometry.x},
+            {"y", geometry.y},
+            {"t_id", getTextureId()},
+            {"angle", getAngle()},
         }}
     };
     return jv;

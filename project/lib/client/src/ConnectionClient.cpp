@@ -19,7 +19,7 @@ void ConnectionClient::setSnapshotRecieveCallback(const std::function<void(std::
 
 size_t ConnectionClient::registerPlayer() {
     char request[1];
-    request[0] = ClientServer::Type::tRegister;
+    request[0] = ClientServer::Type::REGISTER;
 
     int request_length = 1;
     socket_.send_to(boost::asio::buffer(request, request_length), *remote_endpoint_.begin());
@@ -49,7 +49,7 @@ void ConnectionClient::getReply(){
 }
 
 void ConnectionClient::sendEvent(ClientServer::MoveEvent &ev){
-    char type = ClientServer::Type::tWalk;
+    char type = ClientServer::Type::WALK;
     char* data = reinterpret_cast<char*>(&ev);
     std::string request = (std::string() + type).append(data, sizeof(ev));
     send(request);
@@ -58,14 +58,14 @@ void ConnectionClient::sendEvent(ClientServer::MoveEvent &ev){
 
 void ConnectionClient::sendEvent(){
     char request[1];
-    request[0] =  ClientServer::Type::tCheck;
+    request[0] =  ClientServer::Type::CHECK;
 
     send(std::string(request, 1));
     getReply();
 }
 
 void ConnectionClient::sendEvent(ClientServer::ShootEvent &ev){
-    char type = ClientServer::Type::tShoot;
+    char type = ClientServer::Type::SHOOT;
     char *data = reinterpret_cast<char*>(&ev);
     std::string request = (std::string() + type).append(data, sizeof(ev));
     send(request);

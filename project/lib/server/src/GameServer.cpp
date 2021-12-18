@@ -39,27 +39,34 @@ namespace Server {
             player_id = endpoint_id_element->second;
             // check events
             switch (request[0]) {
-                case ClientServer::Type::tCheck :break;
-                case ClientServer::Type::tWalk : {
+                case ClientServer::Type::CHECK :break;
+                case ClientServer::Type::WALK : {
                     // validate string
                     const ClientServer::MoveEvent
                         *event = reinterpret_cast<const ClientServer::MoveEvent *>(request + 1);
                     _ge.onEvent(player_id, *event);
                     break;
                 }
-                case ClientServer::Type::tShoot: {
+                case ClientServer::Type::ROTATE : {
+                    // validate string
+                    const ClientServer::RotateEvent
+                        *event = reinterpret_cast<const ClientServer::RotateEvent *>(request + 1);
+                    _ge.onEvent(player_id, *event);
+                    break;
+                }
+                case ClientServer::Type::SHOOT: {
                     // validate string
                     const ClientServer::ShootEvent
                         *event = reinterpret_cast<const ClientServer::ShootEvent *>(request + 1);
                     _ge.onEvent(player_id, *event);
                     break;
                 }
-                case ClientServer::Type::tRegister:return std::to_string(-1);
+                case ClientServer::Type::REGISTER:return std::to_string(-1);
                 default: break;
             }
         }
             // if not and event register - register player ( else send snapshot)
-        else if (request[0] == ClientServer::Type::tRegister) {
+        else if (request[0] == ClientServer::Type::REGISTER) {
             size_t id = _ge.addPlayer();
             endpoint_id[endpoint_string] = id;
 

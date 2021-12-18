@@ -23,3 +23,8 @@ const int udp_size = 65527;
 
 const int max_transfer_event_bytes = 40;
 // client server settings
+
+
+// textures settings
+const size_t size_of_textures = 8;
+// textures settings

@@ -181,7 +181,7 @@ namespace GameEntities {
         return 0;
     }
 
-    int GlobalEnvironment::onEvent(size_t player_id, const ClientServer::MoveEvent &me) {
+    void GlobalEnvironment::onEvent(size_t player_id, const ClientServer::MoveEvent &me) {
         /// change position of player
         getAccess();
 
@@ -193,10 +193,20 @@ namespace GameEntities {
         it->eventHandler(me);
 
         finishAccess();
-        return 0;
     }
 
-    int GlobalEnvironment::onEvent(size_t player_id, const ClientServer::ShootEvent &se) {
+    void GlobalEnvironment::onEvent(const size_t player_id, const ClientServer::RotateEvent &ev){
+        getAccess();
+
+        // find player who school shooting
+        auto it = Players.begin();
+        for (; it != Players.end() && it->getID() != player_id; ++it);
+
+        it->setAngle(ev.angle);
+        finishAccess();
+    }
+
+    void GlobalEnvironment::onEvent(size_t player_id, const ClientServer::ShootEvent &se) {
         /// bullet object creating
         getAccess();
 
@@ -217,10 +227,13 @@ namespace GameEntities {
         Bullets.emplace_back(std::move(bullet));
 
         finishAccess();
-        return 0;
     }
 
-    int GlobalEnvironment::onEvent(size_t player_id, const ClientServer::InteractEvent &ie) {
+    auto &GlobalEnvironment::getPlayerById(size_t id) const{
+        return Players[0];
+    }
+
+    void GlobalEnvironment::onEvent(size_t player_id, const ClientServer::InteractEvent &ie) {
         //do some logic
     }
 } // namespace GameEntities

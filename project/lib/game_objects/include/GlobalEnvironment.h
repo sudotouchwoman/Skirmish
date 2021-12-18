@@ -23,9 +23,10 @@ namespace GameEntities{
         template <class T1, class T2>
         int onCollision(T1 &go, T2 &go2, core::ContactPoint & cp);
 
-        int onEvent(const size_t player_id, const ClientServer::MoveEvent &);
-        int onEvent(const size_t player_id, const ClientServer::ShootEvent &);
-        int onEvent(const size_t player_id, const ClientServer::InteractEvent &);
+        void onEvent(const size_t player_id, const ClientServer::MoveEvent &);
+        void onEvent(const size_t player_id, const ClientServer::ShootEvent &);
+        void onEvent(const size_t player_id, const ClientServer::RotateEvent &);
+        void onEvent(const size_t player_id, const ClientServer::InteractEvent &);
 
         int deleteObjects();
         size_t addPlayer();
@@ -35,6 +36,10 @@ namespace GameEntities{
         void handleServerResponse(std::string &&);
 
         void tick();
+
+        auto &getPlayerById(size_t id) const;
+        auto &getPlayers() const {return Players;};
+        auto &getBullets() const {return Bullets;};
     private:
         int setSnapshot(std::string &&);
         int getObjectsFromSnapshot();

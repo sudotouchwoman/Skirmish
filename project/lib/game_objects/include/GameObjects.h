@@ -29,16 +29,22 @@ namespace GameEntities {
     // lightweight object for using on client side only
     class IRenderable {
     public:
-        IRenderable(float x_ = 0, float y_ = 0) : x(x_), y(y_) {};
+        IRenderable(float x_ = 0, float y_ = 0, float angle_ = 0, size_t id_ = 1) : x(x_), y(y_), angle(angle_), texture_id(id_){};
         virtual int update() = 0;
         virtual int render() = 0;
         float getX() const { return x; };
         float getY() const { return y; };
+        float getTextureId() const { return texture_id; };
+        float getAngle() const { return angle; };
         void setX(float x_) {x = x_; };
         void setY(float y_) {y = y_; };
+        void setAngle(float angle_) {angle = angle_; };
+        void setTextureId(size_t texture_id_) {texture_id = texture_id_; };
     private:
         float x;
         float y;
+        float angle;
+        size_t texture_id;
     };
 
     class ISerializeble {
