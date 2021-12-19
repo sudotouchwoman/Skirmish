@@ -4,7 +4,6 @@
 #include <SDL.h>
 #include <iostream>
 #include <memory>
-#include <cmath>
 
 #include "PlayerEvent.h"
 #include "GameObjects.h"
@@ -23,9 +22,10 @@ private:
     ClientServer::RotateEvent rotateEvent{};
     SDL_Event gameEvent{};
     int x, y, width, height;
-    float angle;
+    float angle, vector_x, vector_y;
 
     void GetCursorPosition();
+    void NormalizeVector(float x_, float y_);
 };
 
 #endif //COMMAND_HPP

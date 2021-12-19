@@ -25,6 +25,7 @@ void GameManager::Run() {
             inverseTimeSeconds = fps.InverseTimeCheck();
 //            if (inverseTimeSeconds > 0)
 //                menu.InverseTimer(inverseTimeSeconds);
+//            std::cout << "run" << std::endl;
             camera.Update(ge.getPlayers(), ge.getBullets());
             window.Render();
             fps.Release();
