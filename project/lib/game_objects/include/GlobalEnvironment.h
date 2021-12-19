@@ -29,7 +29,7 @@ namespace GameEntities{
         void onEvent(const size_t player_id, const ClientServer::InteractEvent &);
 
         int deleteObjects();
-        size_t addPlayer();
+        size_t addPlayer(const ClientServer::RegisterEvent &event);
 
         int generateSnapshot();
         void getSnapshot(std::string &);

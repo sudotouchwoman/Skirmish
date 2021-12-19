@@ -106,6 +106,14 @@ void Player::deserialize(value jv) {
     GameObject::deserialize(jv);
 }
 
+void Player::setVanity(const ClientServer::RegisterEvent &event){
+    name = event.name;
+    if (event.id_texture <= textures_num)
+        setTextureId(event.id_texture);
+    else
+        setTextureId(1);
+}
+
 Player::Player(const double x,
                const double y,
                const double R,
@@ -117,15 +125,16 @@ Player::Player(const double x,
 void Player::eventHandler(const ClientServer::MoveEvent &ev){
     using namespace ClientServer;
     core::vec2 velocity;
+    float side_velocity = player_speed * physics_tick;
     switch(ev.movement){
-        case U: velocity = {0, 1}; break;
-        case L: velocity = {-1, 0}; break;
-        case R: velocity = {1, 0}; break;
-        case D: velocity = {0, -1}; break;
-        case UL: velocity = {-1, 1}; break;
-        case UR: velocity = {1, 1}; break;
-        case DL: velocity = {-1, -1}; break;
-        case DR: velocity = {1, -1}; break;
+        case U: velocity = {0, side_velocity}; break;
+        case L: velocity = {-side_velocity, 0}; break;
+        case R: velocity = {side_velocity, 0}; break;
+        case D: velocity = {0, -side_velocity}; break;
+        case UL: velocity = {-side_velocity, side_velocity}; break;
+        case UR: velocity = {side_velocity, side_velocity}; break;
+        case DL: velocity = {-side_velocity, -side_velocity}; break;
+        case DR: velocity = {side_velocity, -side_velocity}; break;
         case Void: velocity = {0, 0}; break;
         default: break;
     }
@@ -134,6 +143,7 @@ void Player::eventHandler(const ClientServer::MoveEvent &ev){
 }
 
 void Player::collisionHandler(Player const &other){
+
 }
 
 void Player::collisionHandler(GameEntities::Bullet const &other){

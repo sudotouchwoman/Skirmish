@@ -111,6 +111,7 @@ namespace GameEntities {
         int update() { return 0; };
         int render() { return 0; };
         int getPosition() { return 0; };
+        void setVanity(const ClientServer::RegisterEvent &event);
 
         int getHp() { return hp; };
 

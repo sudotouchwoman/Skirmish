@@ -9,6 +9,11 @@ namespace ClientServer {
         REGISTER,
     };
 
+    struct RegisterEvent{
+        char name[20];
+        size_t id_texture;
+    };
+
     enum Movement{
         U, L, R, D, UL, UR, DL, DR, Void,
     };

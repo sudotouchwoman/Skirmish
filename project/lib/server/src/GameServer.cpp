@@ -70,7 +70,9 @@ namespace Server {
         }
             // if not and event register - register player ( else send snapshot)
         else if (request[0] == ClientServer::Type::REGISTER) {
-            size_t id = _ge.addPlayer();
+            const ClientServer::RegisterEvent
+                *event = reinterpret_cast<const ClientServer::RegisterEvent *>(request + 1);
+            size_t id = _ge.addPlayer(event);
             endpoint_id[endpoint_string] = id;
 
             return std::to_string(id);

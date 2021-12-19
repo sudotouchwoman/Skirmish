@@ -62,6 +62,13 @@ namespace GameEntities {
         collisionMaker(players, players);
         collisionFullMaker(players, bullets);
 
+        // delete bullets outside range
+        for (auto & bullet : bullets){
+            const auto &center = bullet.getModel().getGeometry().GetCenter();
+            if (center.x < 0 || center.y < 0 || center.x >= map_size || center.y >= map_size)
+                bullet.deleted = true;
+        }
+
         finishAccess();
 
         deleteObjects();
@@ -108,12 +115,14 @@ namespace GameEntities {
 //    return 0;
 //}
 
-    size_t GlobalEnvironment::addPlayer() {
+    size_t GlobalEnvironment::addPlayer(const ClientServer::RegisterEvent &event) {
         getAccess();
 
         players.emplace_back(Player());
 
         size_t id = players[players.size() - 1].getID();
+
+        players[players.size() - 1].setVanity(event);
 
         // redesign unordered hashmap
         for (auto it = players.begin(); it < players.end(); ++it)
@@ -220,7 +229,7 @@ namespace GameEntities {
         // model methods need to be in class constructor.
         GameEntities::Bullet bullet;
         auto &model = bullet.getModel();
-        model.getState().velocity = {se.x * bullet_speed, se.y * bullet_speed};
+        model.getState().velocity = {se.x * bullet_speed * physics_tick, se.y * bullet_speed * physics_tick};
         auto shift_player = player.getModel().getGeometry().GetCenter() +
             core::vec2{se.x * (default_player_radius + default_bullet_radius),
                        se.y * (default_player_radius + default_bullet_radius)};
