@@ -19,6 +19,7 @@ const float default_spawn_vy = 0;
 // client server settings
 const std::string host_server = "127.0.0.1";
 const std::string port_server = "5000";
+const size_t default_client_port = 5001;
 const int udp_size = 65527;
 
 const int max_transfer_event_bytes = 40;
