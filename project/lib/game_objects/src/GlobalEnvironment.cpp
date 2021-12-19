@@ -228,7 +228,7 @@ namespace GameEntities {
             core::vec2{se.x * (default_player_radius + default_bullet_radius),
                        se.y * (default_player_radius + default_bullet_radius)};
 
-        model.getGeometry().shift(shift_player);
+        model.getGeometry().setCenter(shift_player);
 
         bullets.emplace_back(std::move(bullet));
 
