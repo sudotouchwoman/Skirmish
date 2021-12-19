@@ -72,8 +72,11 @@ namespace Server {
 
             return std::to_string(id);
         }
-        // link for avoid copy
-        const auto &response = _ge.getSnapshot();
+        // not return value because there is need to
+        // do it in restrict access and not to copy
+        // value twice
+        std::string response;
+        _ge.getSnapshot(response);
 
         return response;
     }
