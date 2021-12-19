@@ -69,7 +69,6 @@ namespace GameEntities {
 
     template<class T1, class T2>
     int GlobalEnvironment::onCollision(T1 &go1, T2 &go2, core::ContactPoint &cp) {
-        getAccess();
 
         // probably some game logic, moving objects
         // like player to player collision need to be
@@ -77,8 +76,6 @@ namespace GameEntities {
 
         go1.collisionHandler(go2);
         go2.collisionHandler(go1);
-
-        finishAccess();
 
         return 0;
     }

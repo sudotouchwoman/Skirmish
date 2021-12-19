@@ -21,8 +21,6 @@ void Camera::Update(const std::vector<GameEntities::Player>& Players, const std:
             Render(player);
     }
     for (auto& bullet: Bullets) {
-        std::cout << Bullets.size() << std::endl;
-        //std::cout << bullet.getX() << " " << bullet.getY() << std::endl;
         if (bullet.getX() >= offset_x && bullet.getX() <= offset_x + width && bullet.getY() >= offset_y  && bullet.getY() <= offset_y + height)
             Render(bullet);
     }
@@ -43,7 +41,6 @@ void Camera::Render(const GameEntities::Player& player) {
 }
 
 void Camera::Render(const GameEntities::Bullet& bullet) {
-    //std::cout << "BANG" << std::endl;
     SDL_Texture* texture = window->imageList[1];
     SetRectangle(bullet.getX(), bullet.getY(), size_of_bullet);
     SDL_FPoint center = {rect.w / 2, rect.h / 2};

@@ -1,16 +1,15 @@
 #include "manager.hpp"
 
-void GameManager::Run() {
+void GameManager::Run(size_t port_client) {
     GameEntities::GlobalEnvironment ge;
-    Client::ConnectionClient cc;
+    Client::ConnectionClient cc(port_client);
     cc.setSnapshotRecieveCallback([&ge](std::string &&s){ge.handleServerResponse(std::move(s));});
 
     //Menu menu(&window, frames);
     size_t player_id = cc.registerPlayer();
-    for (int i = 0; i < 10000000; ++i) {
-
-    }
+    for (int i = 0; i < 10000000; ++i) {}
     cc.sendEvent();
+
     EventManager command(window.imageList[Tile::GAME_CURSOR], player_id);
     Camera camera(&window, player_id);
     fps.SetInverseTimer(inverseTimeSeconds);
@@ -25,7 +24,6 @@ void GameManager::Run() {
             inverseTimeSeconds = fps.InverseTimeCheck();
 //            if (inverseTimeSeconds > 0)
 //                menu.InverseTimer(inverseTimeSeconds);
-//            std::cout << "run" << std::endl;
             camera.Update(ge.getPlayers(), ge.getBullets());
             window.Render();
             fps.Release();

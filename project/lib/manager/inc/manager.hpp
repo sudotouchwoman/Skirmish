@@ -15,7 +15,7 @@
 
 class GameManager {
 public:
-    void Run();
+    void Run(size_t port_client);
     GameManager() : frames(60), inverseTimeSeconds(1) {}
 
     GameManager(const GameManager &other) = delete;
