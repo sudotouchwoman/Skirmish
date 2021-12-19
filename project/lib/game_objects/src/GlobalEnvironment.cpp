@@ -150,8 +150,10 @@ namespace GameEntities {
         return 0;
     }
 
-    std::string GlobalEnvironment::getSnapshot() {
-        return snapshot_;
+    void GlobalEnvironment::getSnapshot(std::string &ret) {
+        getAccess();
+        ret = snapshot_;
+        finishAccess();
     }
 
     void GlobalEnvironment::handleServerResponse(std::string &&server_response) {

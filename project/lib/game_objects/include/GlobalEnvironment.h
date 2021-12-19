@@ -32,7 +32,7 @@ namespace GameEntities{
         size_t addPlayer();
 
         int generateSnapshot();
-        std::string getSnapshot();
+        void getSnapshot(std::string &);
         void handleServerResponse(std::string &&);
 
         void tick();
