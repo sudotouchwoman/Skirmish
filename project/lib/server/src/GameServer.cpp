@@ -33,7 +33,7 @@ namespace Server {
         size_t player_id = 0;
 
         // if player exist, than check events
-        auto endpoint_string = endpoint.address().to_string();
+        auto &endpoint_string = endpoint;//.address().to_string();
         auto endpoint_id_element = endpoint_id.find(endpoint_string);
         if (endpoint_id_element != endpoint_id.end()) {
             player_id = endpoint_id_element->second;

@@ -16,7 +16,8 @@ using namespace boost::asio::ip;
 namespace Client {
     class ConnectionClient {
     public:
-        ConnectionClient(const std::string &host = host_server, const std::string &port = port_server);
+        ConnectionClient(const std::string &host = host_server, const std::string &port = port_server, const size_t port_client = default_client_port);
+        ConnectionClient(const size_t port_client);
         void setSnapshotRecieveCallback(const std::function<void(std::string)> &);
 
         void sendEvent(ClientServer::MoveEvent &ev);
