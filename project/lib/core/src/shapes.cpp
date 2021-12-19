@@ -167,6 +167,10 @@ namespace core {
         return vec2(_getRight(), _getBottom());
     }
 
+    AABB Circle::getBoundingRect() const {
+        return AABB(center, _getTop() - _getBottom(), _getRight() - _getLeft());
+    }
+
     Circle::Circle(const vec2 & center, const double R) :
     center(center), R(R) {}
 

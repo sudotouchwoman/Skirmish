@@ -54,6 +54,7 @@ public:
     virtual ~IShape() = 0;
     virtual bool LiesInside(const vec2 &) const = 0;
     virtual const vec2 & GetCenter() const = 0;
+    virtual void setCenter(const vec2 &) = 0;
 
     virtual ContactPoint IntersectsWithAABB(const AABB &) const = 0;
     virtual ContactPoint IntersectsWithCircle(const Circle &) const = 0;
@@ -61,6 +62,7 @@ public:
     
     virtual shape Type() const = 0;
     virtual void shift(const vec2 &) = 0;
+    virtual AABB getBoundingRect() const = 0;
 protected:
     virtual double _getRight() const = 0;
     virtual double _getLeft() const = 0;
@@ -96,6 +98,11 @@ public:
     ContactPoint IntersectsWith(const IShape &) const override;
 
     const vec2 & GetCenter() const override { return center; }
+    void setCenter(const vec2 & new_center) { center = new_center; }
+
+    AABB getBoundingRect() const override { return *this; }
+    double getWidth() const { return width; }
+    double getHeight() const { return height; }
 
     vec2 TopLeft() const;
     vec2 TopRight() const;
@@ -130,6 +137,8 @@ public:
 
     double GetRadius() const { return R; }
     const vec2 & GetCenter() const override { return center; }
+    void setCenter(const vec2 & new_center) { center = new_center; }
+    AABB getBoundingRect() const override;
 };
 
 // Point shape class, is merely a wrapper over vec2
