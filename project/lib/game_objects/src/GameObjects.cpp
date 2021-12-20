@@ -35,8 +35,11 @@ void GameObject::deserialize(value jv) {
 }
 
 GameObject &GameObject::operator=(GameObject &&other) {
+    // may cause memory leak try:
+    // delete model;
     model = std::move(other.model);
     other.model = nullptr;
+    deleted = other.deleted;
     id = other.id;
     type_ = other.type_;
     return *this;
