@@ -108,7 +108,7 @@ void Player::deserialize(value jv) {
 
 void Player::setVanity(const ClientServer::RegisterEvent &event){
     name = event.name;
-    if (event.id_texture <= textures_num)
+    if (event.id_texture <= textures_num && event.id_texture > 0)
         setTextureId(event.id_texture);
     else
         setTextureId(1);
