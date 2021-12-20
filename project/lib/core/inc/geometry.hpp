@@ -9,17 +9,15 @@
 // build more complex entities on top of these
 namespace core
 {
-    const double PI = M_PI;
-    inline double degrees_to_rad(const double theta) { return theta * PI / 180.0; }
-    inline double rad_to_degrees(const double theta) { return 180.0 / PI * theta; }
+const double PI = M_PI;
+inline double degrees_to_rad(const double theta) { return theta * PI / 180.0; }
+inline double rad_to_degrees(const double theta) { return 180.0 / PI * theta; }
 
-    bool allclose(const double a, const double b);
-    struct vec2;
-}  // namespace core
+bool allclose(const double a, const double b);
 
 // 2-dimensional vector/dot/point
 // I wanted to create a generic vector entity but did not succeeded
-struct core::vec2 {
+struct vec2 {
     double x = 0.0;
     double y = 0.0;
 public:
@@ -62,5 +60,7 @@ public:
         return in;
     }
 };
+
+}  // namespace core
 
 // _LIB_CORE_INC_GEOMETRY_HPP

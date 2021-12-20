@@ -100,7 +100,7 @@ TEST(CoreCollisionTest, collidingCircles) {
     // equivalence before applying anything
     // (possibly causing nans)
     // actually, this would only require
-    // asking if center == other.center?
+    // asking if center_ == other.center_?
     EXPECT_FALSE(cc.IntersectsWith(cc));
 
     // this example is okay now

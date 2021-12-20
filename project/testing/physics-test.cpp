@@ -123,14 +123,14 @@ TEST(PhysicalTest, objectMovement) {
     // with time step of 1s and make
     // sure that the position of the circle changed appropriately
     bibwatcher.update(1.0);
-    EXPECT_EQ(bibwatcher.getGeometry().GetCenter(), vec2(2.0, 1.0));
+    EXPECT_EQ(bibwatcher.getGeometry().getCenter(), vec2(2.0, 1.0));
     
     // make one more tick, check the position again
     // these tests are kinda trivial but can help
     // to ensure that methods implemented do not trigger
     // segfault at least...
     bibwatcher.update(1.0);
-    EXPECT_EQ(bibwatcher.getGeometry().GetCenter(), vec2(4.0, 2.0));
+    EXPECT_EQ(bibwatcher.getGeometry().getCenter(), vec2(4.0, 2.0));
 
     // next step: assign new value to the acceleration
     // vector
@@ -141,7 +141,7 @@ TEST(PhysicalTest, objectMovement) {
     // the vecocity is updated first, then the 
     bibwatcher.update(1.0);
     EXPECT_EQ(bibwatcher.getState().velocity, vec2(2.0, 2.0));
-    EXPECT_EQ(bibwatcher.getGeometry().GetCenter(), vec2(6.0, 4.0));
+    EXPECT_EQ(bibwatcher.getGeometry().getCenter(), vec2(6.0, 4.0));
 }
 
 TEST(PhysicalTest, objectInteraction) {
@@ -162,7 +162,7 @@ TEST(PhysicalTest, objectInteraction) {
 
     // after 3s of movement with constant speed
     // the ball should be at this position
-    ASSERT_EQ(ball.getGeometry().GetCenter(), vec2(6.0, 3.0));
+    ASSERT_EQ(ball.getGeometry().getCenter(), vec2(6.0, 3.0));
 
     auto collision_details = PhysicalObject::collide(ball, wall);
 
@@ -175,7 +175,7 @@ TEST(PhysicalTest, objectInteraction) {
     EXPECT_DOUBLE_EQ(collision_details.penetration, 1.0);
     EXPECT_EQ(collision_details.normal, vec2());
 
-    EXPECT_EQ(wall.getGeometry().GetCenter(), vec2(7.0, 0.0));
+    EXPECT_EQ(wall.getGeometry().getCenter(), vec2(7.0, 0.0));
 }
 
 TEST(PhysicalTest, collisionResolution) {
@@ -209,7 +209,7 @@ TEST(PhysicalTest, collisionResolution) {
     // so that this collision will be resolved successfully
     ball.update(2.25);
 
-    EXPECT_EQ(ball.getGeometry().GetCenter(), vec2(4.5, 2.25));
+    EXPECT_EQ(ball.getGeometry().getCenter(), vec2(4.5, 2.25));
     EXPECT_EQ(ball.getState().velocity, vec2(2.0, 1.0));
 
     collision_details = PhysicalObject::collide(ball, wall);
@@ -228,7 +228,7 @@ TEST(PhysicalTest, collisionResolution) {
     // in some cases. I personally hope that the objects, primarily
     // projectiles, will not encounter this issue as fixing it
     // would probably involve rewriting the entire physics lib
-    EXPECT_EQ(ball.getGeometry().GetCenter(), vec2(4.0, 2.25));
+    EXPECT_EQ(ball.getGeometry().getCenter(), vec2(4.0, 2.25));
 
     // make sure that second collide() call
     // without updating (i.e. moving) objects

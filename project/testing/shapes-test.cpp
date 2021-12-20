@@ -11,16 +11,16 @@ typedef std::unique_ptr<IShape> IShapeUPtr;
 
 TEST(CoreShapeTest, construction) {
     AABB a;
-    auto a_center = a.GetCenter();
+    auto a_center = a.getCenter();
 
-    EXPECT_EQ(a.Type(), AABB_shape);
+    EXPECT_EQ(a.type(), AABB_SHAPE);
     EXPECT_DOUBLE_EQ(a_center.x, 0.0);
     EXPECT_DOUBLE_EQ(a_center.y, 0.0);
 
     Circle c;
-    auto c_center = c.GetCenter();
+    auto c_center = c.getCenter();
 
-    EXPECT_EQ(c.Type(), Circle_shape);
+    EXPECT_EQ(c.type(), CIRCLE_SHAPE);
     EXPECT_DOUBLE_EQ(c.GetRadius(), 0.0);
     EXPECT_DOUBLE_EQ(c_center.x, 0.0);
     EXPECT_DOUBLE_EQ(c_center.y, 0.0);
@@ -28,14 +28,14 @@ TEST(CoreShapeTest, construction) {
     EXPECT_EQ(a_center, c_center);
 
     Point p;
-    auto p_center = p.GetCenter();
+    auto p_center = p.getCenter();
 
-    EXPECT_EQ(p.Type(), Point_shape);
+    EXPECT_EQ(p.type(), POINT_SHAPE);
     EXPECT_DOUBLE_EQ(p_center.x, 0.0);
     EXPECT_DOUBLE_EQ(p_center.y, 0.0);
 
     AABB aabb(4.0, 2.0, 4.0, 3.0);
-    auto aabb_center = aabb.GetCenter();
+    auto aabb_center = aabb.getCenter();
 
     EXPECT_NE(aabb_center, a_center);
     EXPECT_NE(aabb_center, c_center);
@@ -131,26 +131,26 @@ TEST(CoreShapeTest, polymorphism) {
 
 TEST(CoreShapeTest, properties) {
     // check getters and setters for shape properties
-    // check center setter
+    // check center_ setter
     AABB a;
     a.setCenter(vec2 { 0.5, 1.3 } );
-    auto a_center = a.GetCenter();
+    auto a_center = a.getCenter();
 
-    EXPECT_EQ(a.Type(), AABB_shape);
+    EXPECT_EQ(a.type(), AABB_SHAPE);
     EXPECT_DOUBLE_EQ(a_center.x, 0.5);
     EXPECT_DOUBLE_EQ(a_center.y, 1.3);
 
     auto a_br = a.getBoundingRect();
 
-    EXPECT_EQ(a_br.GetCenter(), a.GetCenter());
+    EXPECT_EQ(a_br.getCenter(), a.getCenter());
     EXPECT_EQ(a.TopLeft(), a_br.TopLeft());
     EXPECT_EQ(a.BottomRight(), a_br.BottomRight());
 
     Circle c;
     c.setCenter(vec2 { 5.5, 10.3 });
-    auto c_center = c.GetCenter();
+    auto c_center = c.getCenter();
 
-    EXPECT_EQ(c.Type(), Circle_shape);
+    EXPECT_EQ(c.type(), CIRCLE_SHAPE);
     EXPECT_DOUBLE_EQ(c.GetRadius(), 0.0);
     EXPECT_DOUBLE_EQ(c_center.x, 5.5);
     EXPECT_DOUBLE_EQ(c_center.y, 10.3);
@@ -159,23 +159,23 @@ TEST(CoreShapeTest, properties) {
 
     auto c_br = c.getBoundingRect();
 
-    EXPECT_EQ(c.GetCenter(), c_br.GetCenter());
+    EXPECT_EQ(c.getCenter(), c_br.getCenter());
     EXPECT_EQ(2 * c.GetRadius(), c_br.getWidth());
     EXPECT_EQ(2 * c.GetRadius(), c_br.getHeight());
 
     Point p;
     p.setCenter(vec2 { 3.0, 12.0 });
 
-    EXPECT_EQ(p.GetCenter(), vec2(3.0, 12.0));
+    EXPECT_EQ(p.getCenter(), vec2(3.0, 12.0));
 
     auto p_br = p.getBoundingRect();
 
-    EXPECT_EQ(p_br.GetCenter(), p.GetCenter());
+    EXPECT_EQ(p_br.getCenter(), p.getCenter());
     EXPECT_DOUBLE_EQ(p_br.getWidth(), 0.0);
     EXPECT_DOUBLE_EQ(p_br.getHeight(), 0.0);
 
     p.setCenter(vec2 { 30.2, 40.0});
-    EXPECT_EQ(p.GetCenter(), vec2(30.2, 40.0));
+    EXPECT_EQ(p.getCenter(), vec2(30.2, 40.0));
 }
 
 int main(int argc, char* argv[]) {
