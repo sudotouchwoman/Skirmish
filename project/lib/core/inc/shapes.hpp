@@ -21,6 +21,7 @@ enum shape {
 
 namespace core
 {
+
 class IShape;
 class AABB;
 class Circle;

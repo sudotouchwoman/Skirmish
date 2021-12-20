@@ -9,6 +9,7 @@
 // build more complex entities on top of these
 namespace core
 {
+
 const double PI = M_PI;
 inline double degrees_to_rad(const double theta) { return theta * PI / 180.0; }
 inline double rad_to_degrees(const double theta) { return 180.0 / PI * theta; }
