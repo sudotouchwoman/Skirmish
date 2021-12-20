@@ -1,8 +1,9 @@
 #include "command.hpp"
 
-EventManager::EventManager(SDL_Texture* texture, size_t player_id) : quit(false), x(0), y(0), width(0), height(0), angle(0), vector_x(0), vector_y(0) {
-    SDL_QueryTexture(texture, nullptr, nullptr, &width, &height);
-    this->player_id = player_id;
+EventManager::EventManager(Window* window) :
+    quit(false), x(0), y(0), width(0), height(0), angle(0), vector_x(0), vector_y(0) {
+    this->window = window;
+    SDL_QueryTexture(window->imageList[Tile::GAME_CURSOR], nullptr, nullptr, &width, &height);
 }
 
 void EventManager::GetCursorPosition() {
@@ -27,35 +28,17 @@ bool EventManager::HandleEvents(Client::ConnectionClient& cc, GameEntities::Glob
                 quit = true;
                 break;
             case SDL_KEYDOWN:
-                switch (gameEvent.key.keysym.scancode) {
-                    case SDL_SCANCODE_W: {
-                        moveEvent.movement = ClientServer::Movement::U;
-                        cc.sendEvent(moveEvent);
-                        break;
-                    }
-                    case SDL_SCANCODE_S: {
-                        moveEvent.movement = ClientServer::Movement::D;
-                        cc.sendEvent(moveEvent);
-                        break;
-                    }
-                    case SDL_SCANCODE_A: {
-                        moveEvent.movement = ClientServer::Movement::L;
-                        cc.sendEvent(moveEvent);
-                        break;
-                    }
-                    case SDL_SCANCODE_D: {
-                        moveEvent.movement = ClientServer::Movement::R;
-                        cc.sendEvent(moveEvent);
-                        break;
-                    }
-                    default:
-                        break;
-                }
+                if (!gameEvent.key.repeat)
+                    buttons[gameEvent.key.keysym.scancode] = true;
+                break;
+            case SDL_KEYUP:
+                if (!gameEvent.key.repeat)
+                    buttons[gameEvent.key.keysym.scancode] = false;
                 break;
             case SDL_MOUSEMOTION: {
                 SDL_GetMouseState(&x, &y);
                 GetCursorPosition();
-                angle = std::atan2(ge.getPlayerById(player_id).getY() - (float) y, ge.getPlayerById(player_id).getX() - (float) x) * 180 / M_PI + 180;
+                angle = std::atan2(window->height / 2 - (float) y, window->width / 2 - (float) x) * 180 / M_PI + 180;
                 rotateEvent.angle = angle;
                 cc.sendEvent(rotateEvent);
                 break;
@@ -63,17 +46,44 @@ bool EventManager::HandleEvents(Client::ConnectionClient& cc, GameEntities::Glob
             case SDL_MOUSEBUTTONDOWN: {
                 SDL_GetMouseState(&x, &y);
                 GetCursorPosition();
-                NormalizeVector(x - ge.getPlayerById(player_id).getX(), y - ge.getPlayerById(player_id).getY());
+                NormalizeVector(x - window->width / 2, y - window->height / 2);
                 shootEvent.x = vector_x;
                 shootEvent.y = vector_y;
-                //shootEvent.weapon = 1;
                 cc.sendEvent(shootEvent);
                 break;
             }
-            default:
-                break;
+            default: break;
         }
+
+        if (buttons[SDL_SCANCODE_W] && buttons[SDL_SCANCODE_A]) {
+            moveEvent.movement = ClientServer::Movement::UL;
+            cc.sendEvent(moveEvent);
+        } else if (buttons[SDL_SCANCODE_W] && buttons[SDL_SCANCODE_D]) {
+            moveEvent.movement = ClientServer::Movement::UR;
+            cc.sendEvent(moveEvent);
+        } else if (buttons[SDL_SCANCODE_S] && buttons[SDL_SCANCODE_A]) {
+            moveEvent.movement = ClientServer::Movement::DL;
+            cc.sendEvent(moveEvent);
+        } else if (buttons[SDL_SCANCODE_S] && buttons[SDL_SCANCODE_D]) {
+             moveEvent.movement = ClientServer::Movement::DR;
+             cc.sendEvent(moveEvent);
+        } else if (buttons[SDL_SCANCODE_W]) {
+            moveEvent.movement = ClientServer::Movement::U;
+            cc.sendEvent(moveEvent);
+        } else if (buttons[SDL_SCANCODE_S]) {
+            moveEvent.movement = ClientServer::Movement::D;
+            cc.sendEvent(moveEvent);
+        } else if (buttons[SDL_SCANCODE_A]) {
+            moveEvent.movement = ClientServer::Movement::L;
+            cc.sendEvent(moveEvent);
+        } else if (buttons[SDL_SCANCODE_D]) {
+            moveEvent.movement = ClientServer::Movement::R;
+            cc.sendEvent(moveEvent);
+        } else {
+            moveEvent.movement = ClientServer::Movement::Void;
+            cc.sendEvent(moveEvent);
+        }
+
     } while (SDL_PollEvent(&gameEvent));
     return quit;
 }
-

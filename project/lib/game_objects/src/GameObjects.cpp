@@ -127,10 +127,10 @@ void Player::eventHandler(const ClientServer::MoveEvent &ev){
     core::vec2 velocity;
     float side_velocity = player_speed * physics_tick;
     switch(ev.movement){
-        case U: velocity = {0, side_velocity}; break;
+        case U: velocity = {0, -side_velocity}; break;
         case L: velocity = {-side_velocity, 0}; break;
         case R: velocity = {side_velocity, 0}; break;
-        case D: velocity = {0, -side_velocity}; break;
+        case D: velocity = {0, side_velocity}; break;
         case UL: velocity = {-side_velocity, side_velocity}; break;
         case UR: velocity = {side_velocity, side_velocity}; break;
         case DL: velocity = {-side_velocity, -side_velocity}; break;

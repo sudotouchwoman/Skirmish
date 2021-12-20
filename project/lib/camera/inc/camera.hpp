@@ -20,9 +20,9 @@ private:
     float width, height, offset_x, offset_y;
     size_t player_id;
     const float scale = 40;
-    //const float bullet_scale = 37.5;
 
     void SetRectangle(float x, float y, float size);
+    void PlayerRender(const GameEntities::Player& player);
     void Render(const GameEntities::Player& player);
     void Render(const GameEntities::Bullet& bullet);
 };
