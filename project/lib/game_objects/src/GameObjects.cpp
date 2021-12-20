@@ -134,10 +134,10 @@ void Player::eventHandler(const ClientServer::MoveEvent &ev){
         case L: velocity = {-side_velocity, 0}; break;
         case R: velocity = {side_velocity, 0}; break;
         case D: velocity = {0, side_velocity}; break;
-        case UL: velocity = {-side_velocity, side_velocity}; break;
-        case UR: velocity = {side_velocity, side_velocity}; break;
-        case DL: velocity = {-side_velocity, -side_velocity}; break;
-        case DR: velocity = {side_velocity, -side_velocity}; break;
+        case UL: velocity = {-side_velocity, -side_velocity}; break;
+        case UR: velocity = {side_velocity, -side_velocity}; break;
+        case DL: velocity = {-side_velocity, side_velocity}; break;
+        case DR: velocity = {side_velocity, side_velocity}; break;
         case Void: velocity = {0, 0}; break;
         default: break;
     }

@@ -8,7 +8,7 @@ Menu::Menu(Window* window, int frames) {
     font = Textures().textureFontMap[Font::OCTIN];
 }
 
-void Menu::Load(Client::ConnectionClient& cc) {
+void Menu::Load(std::string& name, int& texture_id) {
     FPS fps;
     SDL_FRect rect;
     SDL_Texture *texture;
@@ -112,11 +112,10 @@ void Menu::Load(Client::ConnectionClient& cc) {
             window->Render();
         }
 
-        //??
         for (auto& item: heroIcon) {
             if (item.status) {
-//                hero->heroIcon = item.heroIcon;
-//                hero->bullet.bulletIcon = item.bulletIcon;
+                name = "hello";
+                texture_id = item.texture_id;
             }
         }
     }
@@ -155,6 +154,7 @@ void Menu::HeroButtonLoad(std::vector<Button>& button) {
         button[i].selected = window->imageList[Tile::ICON_ON];
         button[i].text = window->textures.LoadTextTexture(window->renderer,window->textures.heroName[i], font, color,24);
         button[i].heroIcon = window->imageList[i];
+        button[i].texture_id = i;
     }
 }
 

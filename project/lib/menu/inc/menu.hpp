@@ -4,7 +4,6 @@
 #include "fps.hpp"
 #include "window.hpp"
 #include "GameSettings.h"
-#include "ConnectionClient.h"
 
 class Button {
 public:
@@ -21,14 +20,15 @@ public:
     SDL_Texture* selected;
     SDL_Texture* text;
     SDL_Texture* heroIcon;
+    int texture_id;
 
-    Button() : status(false), field(nullptr), selected(nullptr), text(nullptr), heroIcon(nullptr) {}
+    Button() : status(false), field(nullptr), selected(nullptr), text(nullptr), heroIcon(nullptr), texture_id(0) {}
 };
 
 class Menu {
 public:
 
-    void Load(Client::ConnectionClient& cc);
+    void Load(std::string& name, int& texture_id);
     void GetTextureRectPosition(SDL_FRect* rect, SDL_Texture* texture, float x, float y);
     void InverseTimer(int second);
 

@@ -13,7 +13,7 @@
 
 class EventManager {
 public:
-    bool HandleEvents(Client::ConnectionClient& cc, GameEntities::GlobalEnvironment& ge);
+    bool HandleEvents(Client::ConnectionClient& cc, GameEntities::GlobalEnvironment& ge, bool enable);
     explicit EventManager(Window* window);
 private:
     Window* window;

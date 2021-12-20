@@ -16,13 +16,14 @@
 class GameManager {
 public:
     void Run(size_t port_client);
-    GameManager() : frames(60), inverseTimeSeconds(1) {}
+    GameManager() : frames(60), inverseTimeSeconds(5), enable(false) {}
 
     GameManager(const GameManager &other) = delete;
     GameManager &operator=(const GameManager &other) = delete;
 private:
     Window window;
     FPS fps;
+    bool enable;
     const int frames;
     int inverseTimeSeconds;
 };

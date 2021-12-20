@@ -4,7 +4,7 @@
 
 // main game parameters
 const int game_tick = 10; // miliseconds
-const float physics_tick = static_cast<double>(game_tick) / 500;   // meters per second -> meters per 10 milliseconds
+const float physics_tick = static_cast<double>(game_tick) / 100;   // meters per second -> meters per 10 milliseconds
 const float bullet_speed = 40;    // meters per seconds
 const float player_speed = 5;     // meters per seconds
 const float default_player_radius = 1;

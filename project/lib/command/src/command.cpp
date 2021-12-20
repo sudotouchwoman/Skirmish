@@ -17,7 +17,7 @@ void EventManager::NormalizeVector(float x_, float y_) {
     vector_y = y_ / vector_size;
 }
 
-bool EventManager::HandleEvents(Client::ConnectionClient& cc, GameEntities::GlobalEnvironment& ge) {
+bool EventManager::HandleEvents(Client::ConnectionClient& cc, GameEntities::GlobalEnvironment& ge, bool enable) {
     if (!SDL_PollEvent(&gameEvent)) {
         cc.sendEvent();
         return quit;
@@ -28,11 +28,11 @@ bool EventManager::HandleEvents(Client::ConnectionClient& cc, GameEntities::Glob
                 quit = true;
                 break;
             case SDL_KEYDOWN:
-                if (!gameEvent.key.repeat)
+                if (!gameEvent.key.repeat && !enable)
                     buttons[gameEvent.key.keysym.scancode] = true;
                 break;
             case SDL_KEYUP:
-                if (!gameEvent.key.repeat)
+                if (!gameEvent.key.repeat && !enable)
                     buttons[gameEvent.key.keysym.scancode] = false;
                 break;
             case SDL_MOUSEMOTION: {
