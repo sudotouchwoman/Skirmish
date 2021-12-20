@@ -27,7 +27,7 @@ namespace Client {
         void sendEvent(ClientServer::InteractEvent &ev);
 
         //register player and get his id
-        size_t registerPlayer();
+        size_t registerPlayer(const char *name, const int texture_id);
 
     private:
         void send(const std::string &str);
