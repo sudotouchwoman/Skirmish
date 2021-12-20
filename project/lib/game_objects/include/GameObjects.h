@@ -30,6 +30,13 @@ namespace GameEntities {
     class IRenderable {
     public:
         IRenderable(float x_ = 0, float y_ = 0, float angle_ = 0, size_t id_ = 1) : x(x_), y(y_), angle(angle_), texture_id(id_){};
+        IRenderable(IRenderable &&);
+        IRenderable(const IRenderable &) = delete;
+        IRenderable &operator=(IRenderable &&);
+        IRenderable &operator=(const IRenderable &) = delete;
+        virtual ~IRenderable() = default;
+
+
         virtual int update() = 0;
         virtual int render() = 0;
         float getX() const { return x; };
