@@ -8,7 +8,7 @@ target_link_libraries(sdl2 INTERFACE ${SDL2_IMAGE_LIBRARIES} ${SDL2_TTF_LIBRARIE
 
 add_library(texture src/texture.cpp)
 target_include_directories(texture PUBLIC inc/)
-target_link_libraries(texture sdl2 core)
+target_link_libraries(texture sdl2)
 
 add_library(window src/window.cpp)
 target_include_directories(window PUBLIC inc/)

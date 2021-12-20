@@ -3,11 +3,16 @@
 
 #include "fps.hpp"
 #include "window.hpp"
-#include "core.hpp"
+#include "GameSettings.h"
 
 class Button {
 public:
-    core::vec2 position{};
+    struct Position {
+        float x;
+        float y;
+    };
+
+    Position position{};
     bool status;
 
     SDL_FRect rect{};
@@ -15,15 +20,15 @@ public:
     SDL_Texture* selected;
     SDL_Texture* text;
     SDL_Texture* heroIcon;
-    SDL_Texture* bulletIcon;
+    int texture_id;
 
-    Button() : status(false), field(nullptr), selected(nullptr), text(nullptr), heroIcon(nullptr), bulletIcon(nullptr) {}
+    Button() : status(false), field(nullptr), selected(nullptr), text(nullptr), heroIcon(nullptr), texture_id(0) {}
 };
 
 class Menu {
 public:
 
-    void Load();
+    void Load(std::string& name, int& texture_id);
     void GetTextureRectPosition(SDL_FRect* rect, SDL_Texture* texture, float x, float y);
     void InverseTimer(int second);
 
@@ -33,7 +38,7 @@ public:
 
 private:
     bool ready;
-    int iconNumber, frames;
+    int frames;
     std::string font;
     Window* window;
 

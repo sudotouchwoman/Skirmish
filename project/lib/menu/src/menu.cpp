@@ -5,16 +5,15 @@ Menu::Menu(Window* window, int frames) {
     this->frames = frames;
     ready = false;
     color = {216, 151, 70, 255};
-    iconNumber = 8;
-    font = font = Textures().textureFontMap[Font::OCTIN];
+    font = Textures().textureFontMap[Font::OCTIN];
 }
 
-void Menu::Load() {
+void Menu::Load(std::string& name, int& texture_id) {
     FPS fps;
     SDL_FRect rect;
     SDL_Texture *texture;
 
-    std::vector<Button> heroIcon(iconNumber);
+    std::vector<Button> heroIcon(textures_num);
     HeroButtonLoad(heroIcon);
 
     Button playButton;
@@ -22,14 +21,14 @@ void Menu::Load() {
     playButton.selected = window->imageList[Tile::BUTTON_ON];
     playButton.text = window->textures.LoadTextTexture(window->renderer,"Play", font, color,36);
     playButton.position.x = (float) window->width / 2;
-    playButton.position.y = 600;
+    playButton.position.y = window->height - 100;
 
     fps.Set(frames);
-    fps.SetInverseTimer(3);
+    fps.SetInverseTimer(1);
     while (fps.InverseTimeCheck() > 0) {
         window->ClearSurface();
         texture = window->textures.LoadTextTexture(window->renderer,"Skirmish", font, color, 150);
-        Menu::GetTextureRectPosition(&rect, texture, (float) window->width / 2, (float) window->height / 2);
+        GetTextureRectPosition(&rect, texture, (float) window->width / 2, (float) window->height / 2);
         window->DrawTexture(texture, &rect, 0, {});
         window->Render();
     }
@@ -38,7 +37,6 @@ void Menu::Load() {
         if (fps.Update() >= 1) {
 
             window->ClearSurface();
-
             texture = window->textures.LoadTextTexture(window->renderer,"Skirmish", font, color,104);
             GetTextureRectPosition(&rect, texture, (float) window->width / 2, 50);
             window->DrawTexture(texture, &rect, 0, {});
@@ -113,21 +111,14 @@ void Menu::Load() {
             }
             window->Render();
         }
-    }
 
-
-/*    for (auto& item: heroIcon) {
-        if (item.status) {
-            hero->heroIcon = item.heroIcon;
-            hero->bullet.bulletIcon = item.bulletIcon;
+        for (auto& item: heroIcon) {
+            if (item.status) {
+                name = "hello";
+                texture_id = item.texture_id;
+            }
         }
     }
-
-    window->ClearSurface();
-    GetTextureRectPosition(&hero->rect, hero->heroIcon, (float) window->width / 2, (float) window->height / 2);
-    GetTextureRectPosition(&hero->bullet.rect, hero->bullet.bulletIcon,
-                           (float) window->width / 2, (float) window->height / 2 - hero->rect.h);
-    hero->center = {hero->rect.x, hero->rect.y};*/
 }
 
 void Menu::GetCursorPosition(int& x, int& y) {
@@ -154,19 +145,16 @@ void Menu::GetTextureRectPosition(SDL_FRect* rect, SDL_Texture* texture, float x
 }
 
 void Menu::HeroButtonLoad(std::vector<Button>& button) {
-    int start_x = 200, start_y = 250;
+    int start_x = 0, start_y = window->height / 2;
     for (int i = 0; i < (int) button.size(); i++) {
+        start_x += window->width / (textures_num + 1);
         button[i].position.x = start_x,
         button[i].position.y = start_y;
+        button[i].field = window->imageList[Tile::ICON_OFF];
+        button[i].selected = window->imageList[Tile::ICON_ON];
         button[i].text = window->textures.LoadTextTexture(window->renderer,window->textures.heroName[i], font, color,24);
         button[i].heroIcon = window->imageList[i];
-        button[i].bulletIcon = window->imageList[i + iconNumber];
-
-        start_x += 200;
-        if (i == 3) {
-            start_x = 200;
-            start_y = 420;
-        }
+        button[i].texture_id = i;
     }
 }
 

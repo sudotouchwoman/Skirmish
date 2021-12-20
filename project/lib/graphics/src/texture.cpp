@@ -1,28 +1,20 @@
 #include "texture.hpp"
 
 Textures::Textures() {
-    AddImagePath(Tile::HERO_ASM, IMAGE_DIRECTORY_PATH + "hero/asm.png");
     AddImagePath(Tile::HERO_CPP, IMAGE_DIRECTORY_PATH + "hero/cpp.png");
     AddImagePath(Tile::HERO_GIT, IMAGE_DIRECTORY_PATH + "hero/git.png");
-    AddImagePath(Tile::HERO_GO, IMAGE_DIRECTORY_PATH + "hero/go.png");
     AddImagePath(Tile::HERO_JAVA, IMAGE_DIRECTORY_PATH + "hero/java.png");
-    AddImagePath(Tile::HERO_JAVASCRIPT, IMAGE_DIRECTORY_PATH + "hero/javascript.png");
-    AddImagePath(Tile::HERO_LUA, IMAGE_DIRECTORY_PATH + "hero/lua.png");
-    AddImagePath(Tile::HERO_PYTHON, IMAGE_DIRECTORY_PATH + "hero/python.png");
-//    AddImagePath(Tile::BULLET_ASM, IMAGE_DIRECTORY_PATH + "bullet/asm.png");
-//    AddImagePath(Tile::BULLET_CPP, IMAGE_DIRECTORY_PATH + "bullet/cpp.png");
-//    AddImagePath(Tile::BULLET_GIT, IMAGE_DIRECTORY_PATH + "bullet/git.png");
-//    AddImagePath(Tile::BULLET_GO, IMAGE_DIRECTORY_PATH + "bullet/go.png");
-//    AddImagePath(Tile::BULLET_JAVA, IMAGE_DIRECTORY_PATH + "bullet/java.png");
-//    AddImagePath(Tile::BULLET_JAVASCRIPT, IMAGE_DIRECTORY_PATH + "bullet/javascript.png");
-//    AddImagePath(Tile::BULLET_LUA, IMAGE_DIRECTORY_PATH + "bullet/lua.png");
-//    AddImagePath(Tile::BULLET_PYTHON, IMAGE_DIRECTORY_PATH + "bullet/python.png");
+
+    AddImagePath(Tile::BULLET_CPP, IMAGE_DIRECTORY_PATH + "bullet/cpp.png");
+    AddImagePath(Tile::BULLET_GIT, IMAGE_DIRECTORY_PATH + "bullet/git.png");
+    AddImagePath(Tile::BULLET_JAVA, IMAGE_DIRECTORY_PATH + "bullet/java.png");
+
     AddImagePath(Tile::ICON_OFF, IMAGE_DIRECTORY_PATH + "button/icon_off.png");
     AddImagePath(Tile::ICON_ON, IMAGE_DIRECTORY_PATH + "button/icon_on.png");
     AddImagePath(Tile::BUTTON_OFF, IMAGE_DIRECTORY_PATH + "button/button_off.png");
     AddImagePath(Tile::BUTTON_ON, IMAGE_DIRECTORY_PATH + "button/button_on.png");
-//    AddImagePath(Tile::FLOOR, IMAGE_DIRECTORY_PATH + "map/floor.png");
-//    AddImagePath(Tile::WALL, IMAGE_DIRECTORY_PATH + "map/wall.png");
+    //AddImagePath(Tile::FLOOR, IMAGE_DIRECTORY_PATH + "map/floor.png");
+    //AddImagePath(Tile::WALL, IMAGE_DIRECTORY_PATH + "map/wall.png");
     AddImagePath(Tile::MENU_CURSOR, IMAGE_DIRECTORY_PATH + "cursor/menu.png");
     AddImagePath(Tile::GAME_CURSOR, IMAGE_DIRECTORY_PATH + "cursor/game.png");
 

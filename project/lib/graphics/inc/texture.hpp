@@ -10,12 +10,10 @@
 #include <map>
 #include <iostream>
 
-#include "core.hpp"
-
 namespace Tile {
     enum Type {
-        HERO_ASM, HERO_CPP, HERO_GIT, HERO_GO, HERO_JAVA, HERO_JAVASCRIPT, HERO_LUA, HERO_PYTHON,
-//        BULLET_ASM, BULLET_CPP, BULLET_GIT, BULLET_GO, BULLET_JAVA, BULLET_JAVASCRIPT, BULLET_LUA, BULLET_PYTHON,
+        HERO_CPP, HERO_GIT, HERO_JAVA,
+        BULLET_CPP, BULLET_GIT, BULLET_JAVA,
         ICON_OFF, ICON_ON, BUTTON_OFF, BUTTON_ON,
 //        FLOOR,
 //        WALL,
@@ -28,7 +26,7 @@ namespace Font {
 
 class Textures {
 public:
-    std::vector<std::string> heroName = {"Asm", "Cpp", "Git", "Go", "Java", "Javascript", "Lua", "Python"};
+    std::vector<std::string> heroName = {"Cpp", "Git", "Java"};
     std::map<size_t, std::string> textureImageMap;
     std::map<size_t, std::string> textureFontMap;
     std::map<size_t, SDL_Texture*> PreLoadImageTextures(SDL_Renderer *renderer);
