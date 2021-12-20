@@ -5,12 +5,12 @@
 // main game parameters
 const int game_tick = 10; // miliseconds
 const float physics_tick = static_cast<double>(game_tick) / 1000;   // meters per second -> meters per 10 milliseconds
-const float bullet_speed = 40;    // meters per seconds
-const float player_speed = 5;     // meters per seconds
+const float bullet_speed = 400;    // meters per seconds
+const float player_speed = 50;     // meters per seconds
 const float default_player_radius = 1;
 const float default_bullet_radius = 0.4;
-const float default_spawn_x = 500;
-const float default_spawn_y = 360;
+const float default_spawn_x = 0;
+const float default_spawn_y = 0;
 const float default_spawn_vx = 0;
 const float default_spawn_vy = 0;
 
@@ -31,6 +31,7 @@ const int max_transfer_event_bytes = 40;
 const float size_of_player = default_player_radius;
 const float size_of_bullet = default_bullet_radius;
 const size_t textures_num = 8;
+
 // textures settings
 
 // map settings
