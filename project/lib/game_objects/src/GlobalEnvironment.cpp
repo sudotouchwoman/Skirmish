@@ -235,6 +235,7 @@ namespace GameEntities {
                        se.y * (default_player_radius + default_bullet_radius)};
 
         model.getGeometry().setCenter(shift_player);
+        bullet.setTextureId(player.getTextureId());
 
         bullets.emplace_back(std::move(bullet));
 
