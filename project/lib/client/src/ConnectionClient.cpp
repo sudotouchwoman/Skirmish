@@ -26,12 +26,17 @@ namespace Client {
         handle_snapshot = handler;
     }
 
-    size_t ConnectionClient::registerPlayer() {
-        char request[1];
-        request[0] = ClientServer::Type::REGISTER;
+    size_t ConnectionClient::registerPlayer(const char *name, const int texture_id) {
+        char type = ClientServer::Type::REGISTER;
 
-        int request_length = 1;
-        socket_.send_to(boost::asio::buffer(request, request_length), *remote_endpoint_.begin());
+        ClientServer::RegisterEvent ev;
+        strcpy(ev.name, name);
+        ev.id_texture = texture_id;
+
+        char *data = reinterpret_cast<char *>(&ev);
+        std::string request = (std::string() + type).append(data, sizeof(ev));
+
+        socket_.send_to(boost::asio::buffer(request, sizeof(ev) + 1), *remote_endpoint_.begin());
         char reply[udp_size];
         udp::endpoint sender_endpoint;
         size_t reply_length = socket_.receive_from(
