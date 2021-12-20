@@ -2,32 +2,35 @@
 
 namespace core {
 double AABB::getLeft() const {
-    return center_.x - width / 2;
+    return center_.x - width_ / 2;
 }
 
 double AABB::getRight() const {
-    return center_.x + width / 2;
+    return center_.x + width_ / 2;
 }
 
 double AABB::getTop() const {
-    return center_.y + height / 2;
+    return center_.y + height_ / 2;
 }
 
 double AABB::getBottom() const {
-    return center_.y - height / 2;
+    return center_.y - height_ / 2;
 }
 
-AABB::AABB(const vec2 & center, const double w, const double h) :
+AABB::AABB(const vec2 & center, const double width, const double height) :
     center_(center),
-    width(w),
-    height(h) {}
+    width_(width),
+    height_(height) {}
 
 AABB::AABB(
     const double center_x,
     double center_y,
-    const double w,
-    const double h) :
-    AABB(vec2(center_x, center_y), w, h) {}
+    const double width,
+    const double height) :
+    AABB(
+        vec2(center_x, center_y),
+        width,
+        height) {}
 
 bool AABB::isInside(const vec2 & dot) const {
     const bool a = (getRight() >= dot.x);
@@ -57,8 +60,8 @@ ContactPoint AABB::IntersectsWithAABB(const AABB & other) const {
         return ContactPoint();
 
     // it is what it is
-    const vec2 this_halfdims(width / 2, height / 2);
-    const vec2 other_halfdims(other.width / 2, other.height / 2);
+    const vec2 this_halfdims(width_ / 2, height_ / 2);
+    const vec2 other_halfdims(other.width_ / 2, other.height_ / 2);
 
     // uncanny flex with lambdas
     double penetration;  // pen distance
@@ -103,8 +106,8 @@ ContactPoint AABB::IntersectsWithAABB(const AABB & other) const {
 }
 
 ContactPoint AABB::IntersectsWithCircle(const Circle & other) const {
-    const auto R = other.GetRadius();
-    const vec2 half_dims(width / 2, height / 2);
+    const double R = other.GetRadius();
+    const vec2 half_dims(width_ / 2, height_ / 2);
 
     // circle's origin position relative to the AABB's origin
     const vec2 delta = other.getCenter() - center_;
@@ -115,7 +118,7 @@ ContactPoint AABB::IntersectsWithCircle(const Circle & other) const {
     const vec2 normal_direction = delta - closest_point_on_box;
     // distance between closest point on AABB and the circle's origin
     // if it is greater than R, the collision is impossible!
-    const auto distance = normal_direction.len();
+    const double distance = normal_direction.len();
 
     if (distance >= R) return ContactPoint();
 
@@ -123,7 +126,7 @@ ContactPoint AABB::IntersectsWithCircle(const Circle & other) const {
     const vec2 normal = normal_direction.normalized();
     // penetration is pretty self-explanatory,
     // if R and distance are aknowledged
-    const auto penetration = R - distance;
+    const double penetration = R - distance;
     // local collision point for AABB will always match its position,
     // i.e. the relative position is just zeros
     const vec2 localA;
@@ -187,15 +190,15 @@ ContactPoint Circle::IntersectsWithCircle(const Circle & other) const {
     if (&other == this) return ContactPoint();
     const double radii = R + other.R;
 
-    const auto delta = other.center_ - center_;
-    const auto delta_len = delta.len();
+    const vec2 delta = other.center_ - center_;
+    const double delta_len = delta.len();
 
     const bool intersect(delta_len <= radii);
     if (not intersect) return ContactPoint();
     
-    auto normal = delta.normalized();
-    auto localA = normal * R;
-    auto localB = normal * (-other.R);
+    vec2 normal = delta.normalized();
+    vec2 localA = normal * R;
+    vec2 localB = normal * (-other.R);
     double penetration = radii - delta_len;
 
     return ContactPoint {

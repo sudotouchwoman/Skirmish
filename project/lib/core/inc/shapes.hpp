@@ -75,7 +75,7 @@ class AABB : public IShape {
 public:
     AABB() = default;
     ~AABB() = default;
-    AABB(const vec2 & center, const double w, const double h);
+    AABB(const vec2 & center, const double width, const double height);
     AABB(const double center_x, const double center_y, const double w, const double h);
 
     shape type() const override { return shape::AABB_SHAPE; }
@@ -91,8 +91,8 @@ public:
     void setCenter(const vec2 & new_center) { center_ = new_center; }
 
     AABB getBoundingRect() const override { return *this; }
-    double getWidth() const { return width; }
-    double getHeight() const { return height; }
+    double getWidth() const { return width_; }
+    double getHeight() const { return height_; }
 
     vec2 TopLeft() const;
     vec2 TopRight() const;
@@ -100,8 +100,8 @@ public:
     vec2 BottomRight() const;
 protected:
     vec2 center_;
-    double width = 0.0;
-    double height = 0.0;
+    double width_ = 0.0;
+    double height_ = 0.0;
 protected:
     double getRight() const override;
     double getLeft() const override;

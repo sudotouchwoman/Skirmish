@@ -41,7 +41,7 @@ TEST(CoreGeometryTest, magnitude) {
     EXPECT_DOUBLE_EQ(a.distance_to_squared(b), 20.0);
     EXPECT_DOUBLE_EQ(b.distance_to_squared(a), 20.0);
 
-    auto a_norm = a.normalized();
+    vec2 a_norm = a.normalized();
     EXPECT_DOUBLE_EQ(a_norm.len(), 1.0);
     EXPECT_DOUBLE_EQ(a_norm.len_squared(), 1.0);
 }

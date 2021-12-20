@@ -7,18 +7,16 @@
 
 using namespace core;
 
-typedef std::unique_ptr<IShape> IShapeUPtr;
-
 TEST(CoreShapeTest, construction) {
     AABB a;
-    auto a_center = a.getCenter();
+    vec2 a_center = a.getCenter();
 
     EXPECT_EQ(a.type(), AABB_SHAPE);
     EXPECT_DOUBLE_EQ(a_center.x, 0.0);
     EXPECT_DOUBLE_EQ(a_center.y, 0.0);
 
     Circle c;
-    auto c_center = c.getCenter();
+    vec2 c_center = c.getCenter();
 
     EXPECT_EQ(c.type(), CIRCLE_SHAPE);
     EXPECT_DOUBLE_EQ(c.GetRadius(), 0.0);
@@ -28,14 +26,14 @@ TEST(CoreShapeTest, construction) {
     EXPECT_EQ(a_center, c_center);
 
     Point p;
-    auto p_center = p.getCenter();
+    vec2 p_center = p.getCenter();
 
     EXPECT_EQ(p.type(), POINT_SHAPE);
     EXPECT_DOUBLE_EQ(p_center.x, 0.0);
     EXPECT_DOUBLE_EQ(p_center.y, 0.0);
 
     AABB aabb(4.0, 2.0, 4.0, 3.0);
-    auto aabb_center = aabb.getCenter();
+    vec2 aabb_center = aabb.getCenter();
 
     EXPECT_NE(aabb_center, a_center);
     EXPECT_NE(aabb_center, c_center);
@@ -98,7 +96,7 @@ TEST(CoreShapeTest, polymorphism) {
     shapes.push_back(std::make_unique<Circle>(0.0, 1.5, 1.0));
     shapes.push_back(std::make_unique<Point>(3.0, 3.0));
 
-    auto any_intersects = std::any_of(
+    bool any_intersects = std::any_of(
             shapes.begin(),
             shapes.end(),
             [&shapes](const IShapeUPtr & p) {
@@ -107,13 +105,13 @@ TEST(CoreShapeTest, polymorphism) {
                     shapes.end(),
                     [&shapes, &p](const IShapeUPtr & m) {
                         if (m == p) return false;
-                        return (bool)p->IntersectsWith(*m.get());
+                        return (bool)p->IntersectsWith(*m);
                     });
                 });
 
     EXPECT_TRUE(any_intersects);
 
-    auto all_intersect = std::all_of(
+    bool all_intersect = std::all_of(
             shapes.begin(),
             shapes.end(),
             [&shapes](const IShapeUPtr & p) {
@@ -122,7 +120,7 @@ TEST(CoreShapeTest, polymorphism) {
                     shapes.end(),
                     [&shapes, &p](const IShapeUPtr & m) {
                         if (m == p) return false;
-                        return (bool)p->IntersectsWith(*m.get());
+                        return (bool)p->IntersectsWith(*m);
                     });
                 });
 
@@ -134,13 +132,13 @@ TEST(CoreShapeTest, properties) {
     // check center_ setter
     AABB a;
     a.setCenter(vec2 { 0.5, 1.3 } );
-    auto a_center = a.getCenter();
+    vec2 a_center = a.getCenter();
 
     EXPECT_EQ(a.type(), AABB_SHAPE);
     EXPECT_DOUBLE_EQ(a_center.x, 0.5);
     EXPECT_DOUBLE_EQ(a_center.y, 1.3);
 
-    auto a_br = a.getBoundingRect();
+    AABB a_br = a.getBoundingRect();
 
     EXPECT_EQ(a_br.getCenter(), a.getCenter());
     EXPECT_EQ(a.TopLeft(), a_br.TopLeft());
@@ -148,7 +146,7 @@ TEST(CoreShapeTest, properties) {
 
     Circle c;
     c.setCenter(vec2 { 5.5, 10.3 });
-    auto c_center = c.getCenter();
+    vec2 c_center = c.getCenter();
 
     EXPECT_EQ(c.type(), CIRCLE_SHAPE);
     EXPECT_DOUBLE_EQ(c.GetRadius(), 0.0);
@@ -157,7 +155,7 @@ TEST(CoreShapeTest, properties) {
 
     EXPECT_NE(a_center, c_center);
 
-    auto c_br = c.getBoundingRect();
+    AABB c_br = c.getBoundingRect();
 
     EXPECT_EQ(c.getCenter(), c_br.getCenter());
     EXPECT_EQ(2 * c.GetRadius(), c_br.getWidth());
@@ -168,7 +166,7 @@ TEST(CoreShapeTest, properties) {
 
     EXPECT_EQ(p.getCenter(), vec2(3.0, 12.0));
 
-    auto p_br = p.getBoundingRect();
+    AABB p_br = p.getBoundingRect();
 
     EXPECT_EQ(p_br.getCenter(), p.getCenter());
     EXPECT_DOUBLE_EQ(p_br.getWidth(), 0.0);

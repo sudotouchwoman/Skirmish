@@ -1,7 +1,7 @@
+#include "core.hpp"
+
 #include <limits>
 #include <algorithm>
-
-#include "core.hpp"
 
 namespace core {
 
@@ -26,8 +26,8 @@ vec2 vec2::rotate_d(const vec2 & v, const double theta_d) {
 }
 
 vec2 vec2::clamp(const vec2 & v, const vec2 & lb, const vec2 & ub) {
-    const auto x_clamped = std::min(std::max(v.x, lb.x), ub.x);
-    const auto y_clamped = std::min(std::max(v.y, lb.y), ub.y);
+    const double x_clamped = std::min(std::max(v.x, lb.x), ub.x);
+    const double y_clamped = std::min(std::max(v.y, lb.y), ub.y);
     return vec2(x_clamped, y_clamped);
 }
 

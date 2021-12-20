@@ -2,15 +2,19 @@
 
 namespace physical {
     State::State(const core::vec2 & velocity, const core::vec2 & acceleration, const double inverse_mass) :
-        velocity(velocity), acceleration(acceleration), inverse_mass(inverse_mass) {}
+        velocity(velocity),
+        acceleration(acceleration),
+        inverse_mass(inverse_mass) {}
 
-    State::State(const double inverse_mass) : inverse_mass(inverse_mass) {}
+    State::State(const double inverse_mass) :
+        inverse_mass(inverse_mass) {}
 
     PhysicalObject::PhysicalObject(const double inverse_mass) :
         state(State(inverse_mass)) {}
 
     PhysicalObject::PhysicalObject(const State & state, IShapeUPtr geometry) :
-        state(state), geometry(std::move(geometry)) {}
+        state(state),
+        geometry(std::move(geometry)) {}
 
     void PhysicalObject::update(const double dt) {
         state.velocity += state.acceleration * dt;
@@ -27,7 +31,7 @@ namespace physical {
 
     core::IShape & PhysicalObject::getGeometry() {
         if (not geometry) throw -1;  // just to make sure the caller will not casue segfault
-        return *geometry.get();
+        return *geometry;
         }
 
 
@@ -35,7 +39,7 @@ namespace physical {
         if (not geometry) return false;
         if (not other.geometry) return false;
 
-        return geometry->IntersectsWith(*other.geometry.get());
+        return geometry->IntersectsWith(*other.geometry);
     }
 
     const core::ContactPoint PhysicalObject::collide(PhysicalObject & a, PhysicalObject & b) {
