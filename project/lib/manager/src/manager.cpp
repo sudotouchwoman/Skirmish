@@ -9,7 +9,6 @@ void GameManager::Run(size_t port_client) {
     std::string name;
     int texture_id;
     menu.Load(name, texture_id);
-    std::cerr << texture_id << std::endl;
     size_t player_id = cc.registerPlayer(name.c_str(), texture_id);
     for (int i = 0; i < 10000000; ++i) {}
     cc.sendEvent();
@@ -25,10 +24,10 @@ void GameManager::Run(size_t port_client) {
         if (fps.Update() >= 1) {
             window.ClearSurface();
             inverseTimeSeconds = fps.InverseTimeCheck();
-            if (inverseTimeSeconds >= 0) {
+            if (inverseTimeSeconds >= 0)
                 menu.InverseTimer(inverseTimeSeconds);
+            else
                 enable = true;
-            }
             camera.Update(ge.getPlayers(), ge.getBullets());
             window.Render();
             fps.Release();
