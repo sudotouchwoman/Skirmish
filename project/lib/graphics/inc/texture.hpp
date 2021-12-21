@@ -15,6 +15,7 @@ namespace Tile {
         HERO_CPP, HERO_GIT, HERO_JAVA,
         BULLET_CPP, BULLET_GIT, BULLET_JAVA,
         ICON_OFF, ICON_ON, BUTTON_OFF, BUTTON_ON,
+        HEALTH_LINE, GREEN, ORANGE, RED,
 //        FLOOR,
 //        WALL,
         MENU_CURSOR, GAME_CURSOR};

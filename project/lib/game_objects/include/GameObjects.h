@@ -120,7 +120,7 @@ namespace GameEntities {
         int getPosition() { return 0; };
         void setVanity(const ClientServer::RegisterEvent &event);
 
-        int getHp() { return hp; };
+        int getHp() const { return hp; };
 
         void collisionHandler(Player const &other);
         void collisionHandler(GameEntities::Bullet const &other);

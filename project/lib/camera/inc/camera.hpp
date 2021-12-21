@@ -21,7 +21,7 @@ private:
     size_t player_id;
     const float scale = 40;
 
-    void SetRectangle(float x, float y, float size);
+    void SetRectangle(float x, float y, float width_, float height_);
     void Render(const GameEntities::Player& player);
     void Render(const GameEntities::Bullet& bullet);
 };
