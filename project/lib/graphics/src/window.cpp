@@ -33,10 +33,10 @@ void Window::Init() {
         std::cerr << "failed to create renderer: " << SDL_GetError() << std::endl;
         exit(EXIT_FAILURE);
     }
-    imageList = textures.PreLoadImageTextures(renderer);
+    imageList = PreLoadImageTextures();
 
     SDL_ShowCursor(SDL_ENABLE);
-    SetCursor(textures.textureImageMap[Tile::MENU_CURSOR]);
+    SetCursor(texture.textureImageMap[Tile::MENU_CURSOR]);
 
     if (!IMG_Init(IMG_INIT_JPG | IMG_INIT_PNG)) {
         std::cerr << "failed to image format initialization: " << IMG_GetError() << std::endl;
@@ -58,8 +58,63 @@ void Window::ClearSurface() {
     SDL_RenderClear(renderer);
 }
 
-void Window::DrawTexture(SDL_Texture *texture, SDL_FRect* rect, float angle, SDL_FPoint* center) {
-    SDL_RenderCopyExF(renderer, texture, nullptr, rect, angle, center, SDL_FLIP_NONE);
+void Window::DrawTexture(SDL_Texture *texture_, SDL_FRect* rect, float angle, SDL_FPoint* center) {
+    SDL_RenderCopyExF(renderer, texture_, nullptr, rect, angle, center, SDL_FLIP_NONE);
+}
+
+SDL_Texture* Window::LoadImageTexture(const std::string& path) {
+    SDL_Texture* texture_;
+    SDL_Surface* surface;
+
+    surface = IMG_Load(path.c_str());
+    if (surface == nullptr) {
+        std::cerr << "failed to load image from path " << path << ": " << IMG_GetError() << std::endl;
+        return texture_;
+    }
+
+    texture_ = SDL_CreateTextureFromSurface(renderer, surface);
+    if (texture_ == nullptr) {
+        std::cerr << "failed to create texture: " << SDL_GetError() << std::endl;
+        return texture_;
+    }
+    SDL_FreeSurface(surface);
+    return texture_;
+}
+
+std::map<size_t, SDL_Texture*> Window::PreLoadImageTextures() {
+    std::map<size_t, SDL_Texture*> textures;
+    for (auto& it : texture.textureImageMap) {
+        SDL_Texture* texture_ = LoadImageTexture(it.second);
+        size_t index = it.first;
+        std::cout << it.second << std::endl;
+        textures[index] = texture_;
+    }
+    return textures;
+}
+
+void Window::DrawText(const std::string& text, const std::string& path, SDL_Color color, int fontSize, float x_, float y_) {
+    TTF_Font *font = TTF_OpenFont(path.c_str(), fontSize);
+    if (font == nullptr) {
+        std::cerr << "failed to load font from path " << path << ": " << TTF_GetError() << std::endl;
+        exit(EXIT_FAILURE);
+    }
+
+    SDL_Surface *surface = TTF_RenderText_Solid(font, text.c_str(), color);
+    if (surface == nullptr) {
+        TTF_CloseFont(font);
+        std::cerr << "failed to create text surface: " << SDL_GetError() << std::endl;
+        exit(EXIT_FAILURE);
+    }
+
+    SDL_Texture *texture_ = SDL_CreateTextureFromSurface(renderer, surface);
+    if (texture_ == nullptr) {
+        std::cerr << "failed to create text texture: " << SDL_GetError() << std::endl;
+    }
+
+    SDL_FreeSurface(surface);
+    TTF_CloseFont(font);
+    SetRectangle(x_, y_, texture_);
+    DrawTexture(texture_, &rect, 0, {});
 }
 
 void Window::SetCursor(const std::string& path) {
@@ -71,4 +126,13 @@ void Window::SetCursor(const std::string& path) {
     }
     SDL_FreeSurface(surfaceCursor);
     SDL_SetCursor(cursor);
+}
+
+void Window::SetRectangle(float x, float y, SDL_Texture* texture_) {
+    int width_, height_;
+    SDL_QueryTexture(texture_, nullptr, nullptr, &width_, &height_);
+    rect.w = (float) width_;
+    rect.h = (float) height_;
+    rect.x = x - rect.w / 2;
+    rect.y = y - rect.h / 2;
 }

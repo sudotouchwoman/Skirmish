@@ -18,7 +18,7 @@ void GameManager::Run(size_t port_client) {
     fps.SetInverseTimer(inverseTimeSeconds);
     fps.Set(frames);
 
-    window.SetCursor(window.textures.textureImageMap[Tile::GAME_CURSOR]);
+    window.SetCursor(window.texture.textureImageMap[Tile::GAME_CURSOR]);
     fps.SetInverseTimer(inverseTimeSeconds);
     while (!command.HandleEvents(cc, ge, enable)) {
         if (fps.Update() >= 1) {

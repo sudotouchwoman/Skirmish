@@ -21,31 +21,20 @@ namespace Tile {
         MENU_CURSOR, GAME_CURSOR};
 }
 
-namespace Font {
-    enum Type {ABBIESHIRE, BIGHAUSTITUL, COLUMBIA, GASALT, OCTIN, SABRIL, SAMSON};
-}
-
 class Textures {
 public:
     std::vector<std::string> heroName = {"Cpp", "Git", "Java"};
     std::map<size_t, std::string> textureImageMap;
-    std::map<size_t, std::string> textureFontMap;
-    std::map<size_t, SDL_Texture*> PreLoadImageTextures(SDL_Renderer *renderer);
+    const std::string textFont = (std::string) SDL_GetBasePath() + "lib/ttf/Octin.ttf";
 
     Textures();
-    SDL_Texture* LoadTextTexture(SDL_Renderer *renderer, const std::string &text, const std::string &path, SDL_Color color, int fontSize);
-
     Textures(const Textures &other) = delete;
     Textures &operator=(const Textures &other) = delete;
 
 private:
     const std::string IMAGE_DIRECTORY_PATH = (std::string) SDL_GetBasePath() + "lib/textures/";
-    const std::string FONT_DIRECTORY_PATH = (std::string) SDL_GetBasePath() + "lib/ttf/";
 
     void AddImagePath(size_t index, const std::string &path);
-    void AddFontPath(size_t index, const std::string &path);
-
-    static SDL_Texture* LoadImageTexture(SDL_Renderer *renderer, const std::string &path);
 };
 
 #endif //TEXTURE_H

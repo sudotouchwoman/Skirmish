@@ -4,8 +4,8 @@ Menu::Menu(Window* window, int frames) {
     this->window = window;
     this->frames = frames;
     ready = false;
-    color = {216, 151, 70, 255};
-    font = Textures().textureFontMap[Font::OCTIN];
+    this->color = {216, 151, 70, 255};
+    this->font = window->texture.textFont;
 }
 
 void Menu::Load(std::string& name, int& texture_id) {
@@ -19,17 +19,15 @@ void Menu::Load(std::string& name, int& texture_id) {
     Button playButton;
     playButton.field = window->imageList[Tile::BUTTON_OFF];
     playButton.selected = window->imageList[Tile::BUTTON_ON];
-    playButton.text = window->textures.LoadTextTexture(window->renderer,"Play", font, color,36);
-    playButton.position.x = (float) window->width / 2;
-    playButton.position.y = window->height - 100;
+    playButton.position.x = window->width / 2;
+    playButton.position.y = window->height - window->height / 5;
+    playButton.text = "PLay";
 
     fps.Set(frames);
     fps.SetInverseTimer(1);
     while (fps.InverseTimeCheck() > 0) {
         window->ClearSurface();
-        texture = window->textures.LoadTextTexture(window->renderer,"Skirmish", font, color, 150);
-        GetTextureRectPosition(&rect, texture, (float) window->width / 2, (float) window->height / 2);
-        window->DrawTexture(texture, &rect, 0, {});
+        window->DrawText("Skirmish", font, color, 150, (float) window->width / 2, (float) window->height / 2);
         window->Render();
     }
 
@@ -37,18 +35,12 @@ void Menu::Load(std::string& name, int& texture_id) {
         if (fps.Update() >= 1) {
 
             window->ClearSurface();
-            texture = window->textures.LoadTextTexture(window->renderer,"Skirmish", font, color,104);
-            GetTextureRectPosition(&rect, texture, (float) window->width / 2, 50);
-            window->DrawTexture(texture, &rect, 0, {});
-            texture = window->textures.LoadTextTexture(window->renderer,"Select hero", font, color,28);
-            GetTextureRectPosition(&rect, texture, (float) window->width / 2, 150);
-            window->DrawTexture(texture, &rect, 0, {});
-
+            window->DrawText("Skirmish", font, color, 104, (float) window->width / 2, 50);
+            window->DrawText("Skirmish", font, color, 28, (float) window->width / 2, 150);
 
             GetTextureRectPosition(&playButton.rect, playButton.field, playButton.position.x, playButton.position.y);
             window->DrawTexture(playButton.field, &playButton.rect, 0, {});
-            GetTextureRectPosition(&playButton.rect, playButton.text, playButton.position.x, playButton.position.y);
-            window->DrawTexture(playButton.text, &playButton.rect, 0, {});
+            window->DrawText(playButton.text, font, color,36, playButton.position.x, playButton.position.y);
 
             for (auto& item: heroIcon) {
                 GetTextureRectPosition(&item.rect, item.field, item.position.x, item.position.y);
@@ -59,15 +51,12 @@ void Menu::Load(std::string& name, int& texture_id) {
 
                     GetTextureRectPosition(&playButton.rect, playButton.selected, playButton.position.x, playButton.position.y);
                     window->DrawTexture(playButton.selected, &playButton.rect, 0, {});
-                    GetTextureRectPosition(&playButton.rect, playButton.text, playButton.position.x, playButton.position.y);
-                    window->DrawTexture(playButton.text, &playButton.rect, 0, {});
+                    window->DrawText(playButton.text, font, color,36, playButton.position.x, playButton.position.y);
                 }
 
                 GetTextureRectPosition(&item.rect, item.heroIcon, item.position.x, item.position.y);
                 window->DrawTexture(item.heroIcon, &item.rect, 0, {});
-
-                GetTextureRectPosition(&item.rect, item.text, item.position.x, item.position.y + 75);
-                window->DrawTexture(item.text, &item.rect, 0, {});
+                window->DrawText(item.text, font, color,36, item.position.x, item.position.y + 75);
             }
 
             while (SDL_PollEvent(&menuEvent)) {
@@ -152,22 +141,15 @@ void Menu::HeroButtonLoad(std::vector<Button>& button) {
         button[i].position.y = start_y;
         button[i].field = window->imageList[Tile::ICON_OFF];
         button[i].selected = window->imageList[Tile::ICON_ON];
-        button[i].text = window->textures.LoadTextTexture(window->renderer,window->textures.heroName[i], font, color,24);
+        button[i].text = window->texture.heroName[i];
         button[i].heroIcon = window->imageList[i];
         button[i].texture_id = i;
     }
 }
 
 void Menu::InverseTimer(int second) {
-    SDL_Texture* texture;
-    SDL_FRect rect;
-    if (second > 0 && second < 4) {
-        texture = window->textures.LoadTextTexture(window->renderer,std::to_string(second), font, color, 104);
-        Menu::GetTextureRectPosition(&rect, texture, (float) window->width / 2, 150);
-        window->DrawTexture(texture, &rect, 0, {});
-    } else if (second == 0) {
-        texture = window->textures.LoadTextTexture(window->renderer,"Go!", font, color, 104);
-        Menu::GetTextureRectPosition(&rect, texture, (float) window->width / 2, 150);
-        window->DrawTexture(texture, &rect, 0, {});
-    }
+    if (second > 0 && second < 4)
+        window->DrawText(std::to_string(second), font, color, 104, (float) window->width / 2, 150);
+    else if (second == 0)
+        window->DrawText("Go!", font, color, 104, (float) window->width / 2, 150);
 }
