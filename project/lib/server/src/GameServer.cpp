@@ -1,83 +1,88 @@
 #include "GameServer.h"
+#include "GameLoop.h"
+#include "ConnectionServer.h"
 
 #include <thread>
 #include <iostream>
 
-using Server::GameServer;
+namespace Server {
 
-GameServer::GameServer() {
-};
+    GameServer::GameServer() {
+        GameEntities::GameObject::resetID();
+    };
 
-void GameServer::run() {
-    try {
-        Server::GameLoop gl(&_ge);
-        Server::ConnectionServer cs([this](const boost::asio::ip::udp::endpoint &endpoint,
-                                           const std::string &request) {
-            return this->requestHandler(endpoint,
-                                        request);
-        });
-        std::thread game_loop_thread(&Server::GameLoop::run, &gl);
-        cs.startReceive();
-        game_loop_thread.join();
-    }
-    catch (std::exception &e) {
-        std::cerr << e.what() << std::endl;
-    }
-}
-
-int onEvent(const ClientServer::MoveEvent &me) {
-    // change position of player
-}
-
-int onEvent(const ClientServer::ShootEvent &se) {
-    // make bullet
-}
-
-int onEvent(const ClientServer::InteractEvent &ie) {
-    //do some logic
-}
-
-std::string GameServer::requestHandler(const boost::asio::ip::udp::endpoint &endpoint, const std::string &request) {
-    _ge.getAccess();
-    // if player exist, than check events
-    if (std::any_of(endpoint_id.begin(),
-                    endpoint_id.end(),
-                    [&endpoint](auto elem) {
-                        if (get<0>(elem) == endpoint) return true;
-                        return false;
-                    }))
-
-        switch (request[0] - 'a') {
-            case ClientServer::Type::tCheck :break;
-            case ClientServer::Type::tWalk : {
-                // validate string
-                const ClientServer::MoveEvent
-                    *event = reinterpret_cast<const ClientServer::MoveEvent *>(request.data());
-                onEvent(*event);
-                break;
-            }
-            case ClientServer::Type::tShoot: {
-                // validate string
-                const ClientServer::ShootEvent
-                    *event = reinterpret_cast<const ClientServer::ShootEvent *>(request.data());
-                onEvent(*event);
-                break;
-            }
-            default: break;
+    void GameServer::run() {
+        try {
+            Server::GameLoop gl(&_ge);
+            Server::ConnectionServer cs;
+            cs.MessageRecieveCallbackSetter([this](const boost::asio::ip::udp::endpoint &endpoint,
+                                               const char *request) {
+                return this->requestHandler(endpoint,
+                                            request);
+            });
+            std::thread game_loop_thread(&Server::GameLoop::run, &gl);
+            cs.startReceive();
+            game_loop_thread.join();
+//            std::thread connectionServer(&Server::ConnectionServer::startReceive, &cs);
+//            gl.run();
+//            connectionServer.join();
         }
-        // if not and event register - register player ( else ignore request)
-    else if (request[0] - 'a' == ClientServer::Type::tRegister) {
-        GameEntities::Player pl;
-        auto model = std::make_unique<physical::PhysicalObject>();
-        auto default_player_geometry = physical::IShapeUPtr(new core::Circle());
-        model->setGeometry(std::move(default_player_geometry));
-        pl.setModel(std::move(model));
-
-        endpoint_id.emplace_back(endpoint, pl.getID());
-        _ge.addPlayer(pl);
+        catch (std::exception &e) {
+            std::cerr << e.what() << std::endl;
+        }
     }
 
-    _ge.finishAccess();
+    std::string GameServer::requestHandler(const boost::asio::ip::udp::endpoint &endpoint, const char *&request) {
+        size_t player_id = 0;
 
-    return _ge.getSnapshot();
-}
+        // if player exist, than check events
+        auto &endpoint_string = endpoint;//.address().to_string();
+        auto endpoint_id_element = endpoint_id.find(endpoint_string);
+        if (endpoint_id_element != endpoint_id.end()) {
+            player_id = endpoint_id_element->second;
+            // check events
+            switch (request[0]) {
+                case ClientServer::Type::CHECK :break;
+                case ClientServer::Type::WALK : {
+                    // validate string
+                    const ClientServer::MoveEvent
+                        *event = reinterpret_cast<const ClientServer::MoveEvent *>(request + 1);
+                    _ge.onEvent(player_id, *event);
+                    break;
+                }
+                case ClientServer::Type::ROTATE : {
+                    // validate string
+                    const ClientServer::RotateEvent
+                        *event = reinterpret_cast<const ClientServer::RotateEvent *>(request + 1);
+                    _ge.onEvent(player_id, *event);
+                    break;
+                }
+                case ClientServer::Type::SHOOT: {
+                    // validate string
+                    const ClientServer::ShootEvent
+                        *event = reinterpret_cast<const ClientServer::ShootEvent *>(request + 1);
+                    _ge.onEvent(player_id, *event);
+                    break;
+                }
+                case ClientServer::Type::REGISTER:return std::to_string(-1);
+                default: break;
+            }
+        }
+            // if not and event register - register player ( else send snapshot)
+        else if (request[0] == ClientServer::Type::REGISTER) {
+            const ClientServer::RegisterEvent
+                *event = reinterpret_cast<const ClientServer::RegisterEvent *>(request + 1);
+            size_t id = _ge.addPlayer(*event);
+            endpoint_id[endpoint_string] = id;
+
+            return std::to_string(id);
+        }
+        // not return value because there is need to
+        // do it in restrict access and not to copy
+        // value twice
+        std::string response;
+        _ge.getSnapshot(response);
+
+        return response;
+    }
+} // namespace Server

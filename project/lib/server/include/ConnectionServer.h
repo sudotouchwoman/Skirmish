@@ -1,5 +1,7 @@
 #pragma once
 
+#include "GameSettings.h"
+
 #include <boost/asio.hpp>
 #include <string>
 #include <vector>
@@ -8,25 +10,24 @@
 #include <boost/bind.hpp>
 #include <boost/array.hpp>
 
-using namespace boost::asio::ip;
-
 namespace Server {
     class ConnectionServer {
+        using OnMessageRecieveCallback = std::function <std::string(const boost::asio::ip::udp::endpoint &, const char *request)>;
     public:
-        ConnectionServer(std::function<std::string(const boost::asio::ip::udp::endpoint &, std::string)> handle_message_);
+        ConnectionServer(size_t port = std::stol(port_server));
         void startReceive();
+        void MessageRecieveCallbackSetter(OnMessageRecieveCallback handle_message_);
     private:
+        void asyncRecieve();
         void handleReceive(const boost::system::error_code &error,
-                           std::size_t /*bytes_transferred*/);
+                           std::size_t);
 
-        void handleSend(boost::shared_ptr<std::string> /*message*/,
-                        const boost::system::error_code & /*error*/,
-                        std::size_t /*bytes_transferred*/);
+        void handleSend(const boost::system::error_code &);
 
         boost::asio::io_context io_context_;
-        std::function<std::string(const boost::asio::ip::udp::endpoint &, std::string)> handle_message;
-        udp::socket socket_;
-        udp::endpoint remote_endpoint_;
-        boost::array<char, 1> recv_buffer_;
+        OnMessageRecieveCallback handle_message;
+        boost::asio::ip::udp::socket socket_;
+        boost::asio::ip::udp::endpoint remote_endpoint_;
+        boost::array<char, max_transfer_event_bytes> recv_buffer_;
     };
 }

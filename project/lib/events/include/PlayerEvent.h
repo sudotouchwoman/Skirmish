@@ -2,10 +2,16 @@
 
 namespace ClientServer {
     enum Type{
-        tCheck,
-        tWalk,
-        tShoot,
-        tRegister,
+        CHECK = 1, //for enumeration which can be passed by string (\000 == 0)
+        WALK,
+        SHOOT,
+        ROTATE,
+        REGISTER,
+    };
+
+    struct RegisterEvent{
+        char name[20];
+        int id_texture;
     };
 
     enum Movement{
@@ -13,8 +19,13 @@ namespace ClientServer {
     };
 
     struct ShootEvent{
-        int angle;
+        float x;
+        float y;
         int weapon;
+    };
+
+    struct RotateEvent{
+        float angle;
     };
 
     struct MoveEvent{
