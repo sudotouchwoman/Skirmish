@@ -12,6 +12,7 @@ void Camera::Update(const std::vector<GameEntities::Player>& Players, const std:
         if (player.getID() == player_id) {
             offset_x = player.getX() * scale - width / 2;
             offset_y = player.getY() * scale - height / 2;
+
         }
         if (player.getX() * scale >= offset_x && player.getX() * scale <= offset_x + width &&
                    player.getY() * scale >= offset_y  && player.getY() * scale <= offset_y + height)
@@ -31,13 +32,6 @@ void Camera::SetRectangle(float x, float y, float size) {
     rect.y = y - rect.h / 2;
 }
 
-void Camera::PlayerRender(const GameEntities::Player &player) {
-    SDL_Texture* texture = window->imageList[player.getTextureId()];
-    SetRectangle(player.getX() * scale - offset_x, player.getY() * scale - offset_y, size_of_player * scale * 2);
-    SDL_FPoint center = {rect.w / 2,rect.h / 2};
-    window->DrawTexture(texture, &rect, player.getAngle(), &center);
-}
-
 void Camera::Render(const GameEntities::Player& player) {
     SDL_Texture* texture = window->imageList[player.getTextureId()];
     SetRectangle(player.getX() * scale - offset_x, player.getY() * scale - offset_y, size_of_player * scale * 2);
@@ -47,7 +41,6 @@ void Camera::Render(const GameEntities::Player& player) {
 
 void Camera::Render(const GameEntities::Bullet& bullet) {
     SDL_Texture* texture = window->imageList[bullet.getTextureId() + textures_num];
-    std::cout << bullet.getTextureId() << std::endl;
     SetRectangle(bullet.getX() * scale - offset_x, bullet.getY() * scale - offset_y, size_of_bullet * scale);
     SDL_FPoint center = {rect.w / 2, rect.h / 2};
     window->DrawTexture(texture, &rect, 0, &center);

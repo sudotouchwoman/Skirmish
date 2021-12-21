@@ -22,7 +22,6 @@ private:
     const float scale = 40;
 
     void SetRectangle(float x, float y, float size);
-    void PlayerRender(const GameEntities::Player& player);
     void Render(const GameEntities::Player& player);
     void Render(const GameEntities::Bullet& bullet);
 };

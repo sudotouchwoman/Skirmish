@@ -28,11 +28,11 @@ bool EventManager::HandleEvents(Client::ConnectionClient& cc, GameEntities::Glob
                 quit = true;
                 break;
             case SDL_KEYDOWN:
-                if (!gameEvent.key.repeat && !enable)
+                if (!gameEvent.key.repeat && enable)
                     buttons[gameEvent.key.keysym.scancode] = true;
                 break;
             case SDL_KEYUP:
-                if (!gameEvent.key.repeat && !enable)
+                if (!gameEvent.key.repeat && enable)
                     buttons[gameEvent.key.keysym.scancode] = false;
                 break;
             case SDL_MOUSEMOTION: {
@@ -44,12 +44,14 @@ bool EventManager::HandleEvents(Client::ConnectionClient& cc, GameEntities::Glob
                 break;
             }
             case SDL_MOUSEBUTTONDOWN: {
-                SDL_GetMouseState(&x, &y);
-                GetCursorPosition();
-                NormalizeVector(x - window->width / 2, y - window->height / 2);
-                shootEvent.x = vector_x;
-                shootEvent.y = vector_y;
-                cc.sendEvent(shootEvent);
+                if (enable) {
+                    SDL_GetMouseState(&x, &y);
+                    GetCursorPosition();
+                    NormalizeVector(x - window->width / 2, y - window->height / 2);
+                    shootEvent.x = vector_x;
+                    shootEvent.y = vector_y;
+                    cc.sendEvent(shootEvent);
+                }
                 break;
             }
             default: break;
