@@ -16,6 +16,7 @@ namespace GameEntities{
         GlobalEnvironment & operator=(const GlobalEnvironment &) = delete;
         GlobalEnvironment & operator=(GlobalEnvironment &&) = delete;
 
+        // atomic functions for managing multithreading
         int getAccess();
         int finishAccess();
 
@@ -23,6 +24,7 @@ namespace GameEntities{
         template <class T1, class T2>
         int onCollision(T1 &go, T2 &go2, core::ContactPoint & cp);
 
+        // Server side methods
         void onEvent(const size_t player_id, const ClientServer::MoveEvent &);
         void onEvent(const size_t player_id, const ClientServer::ShootEvent &);
         void onEvent(const size_t player_id, const ClientServer::RotateEvent &);
@@ -33,9 +35,10 @@ namespace GameEntities{
 
         int generateSnapshot();
         void getSnapshot(std::string &);
-        void handleServerResponse(std::string &&);
-
         void tick();
+
+        // Client side methods
+        void handleServerResponse(std::string &&);
 
         Player &getPlayerById(size_t id) const;
         auto &getPlayers() const {return players;};
