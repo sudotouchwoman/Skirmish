@@ -193,12 +193,12 @@ namespace GameEntities {
         Message() = default;
 
         bool tick() {return ((ttl -= 1) != 0);}
-        const string &getMessage() const {return message; };
+        const std::string &getMessage() const {return message; };
         value serialize();
         void deserialize(value);
     private:
         int ttl = 0;
-        string message;
+        std::string message;
     };
 
 //    class Object : public GameObject {
