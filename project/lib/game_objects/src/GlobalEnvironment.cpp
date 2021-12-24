@@ -15,6 +15,10 @@ namespace GameEntities {
         return 0;
     }
 
+    void GlobalEnvironment::addObstacle(Terrain &&t){
+        terrain.push_back(std::move(t));
+    }
+
     void GlobalEnvironment::tick() {
         getAccess();
         // lambda for elements deletion
@@ -61,6 +65,8 @@ namespace GameEntities {
 
         collisionMaker(players, players);
         collisionFullMaker(players, bullets);
+        collisionFullMaker(players, terrain);
+        collisionFullMaker(bullets, terrain);
 
         // delete bullets outside range
         for (auto & bullet : bullets){
@@ -118,7 +124,7 @@ namespace GameEntities {
     size_t GlobalEnvironment::addPlayer(const ClientServer::RegisterEvent &event) {
         getAccess();
 
-        players.emplace_back(Player());
+        players.emplace_back(default_player_hp);
 
         size_t id = players[players.size() - 1].getID();
 
@@ -147,7 +153,7 @@ namespace GameEntities {
         value jv = {
             {"Players", vectorSerializer(players)},
             {"Bullets", vectorSerializer(bullets)},
-//        {"Terrain", vectorSerializer(Players)},
+            {"Terrain", vectorSerializer(terrain)},
 //        {"Objects", vectorSerializer(Players)},
         };
 
@@ -178,13 +184,15 @@ namespace GameEntities {
 
     int GlobalEnvironment::getObjectsFromSnapshot() {
         object objects = parse(snapshot_).as_object();
-        array bullets_, players_;
+        array bullets_, players_, terrain_;
         extract(objects, players_, "Players");
         extract(objects, bullets_, "Bullets");
+        extract(objects, terrain_, "Terrain");
 
         getAccess();
         bullets.resize(bullets_.size());
         players.resize(players_.size());
+        terrain.resize(terrain_.size());
 
         for (size_t i = 0; i < players.size(); ++i){
             players[i].deserialize(players_[i]);
@@ -192,6 +200,10 @@ namespace GameEntities {
         }
         for (size_t i = 0; i < bullets.size(); ++i)
             bullets[i].deserialize(bullets_[i]);
+        finishAccess();
+
+        for (size_t i = 0; i < terrain.size(); ++i)
+            terrain[i].deserialize(terrain_[i]);
         finishAccess();
         return 0;
     }
@@ -215,7 +227,7 @@ namespace GameEntities {
         // find player who school shooting
         auto &player = getPlayerById(player_id);
 
-        player.setAngle(ev.angle);
+        player.angle_ = ev.angle;
         finishAccess();
     }
 
@@ -227,7 +239,7 @@ namespace GameEntities {
         auto &player = getPlayerById(player_id);
 
         // model methods need to be in class constructor.
-        GameEntities::Bullet bullet;
+        GameEntities::Bullet bullet(default_bullet_damage);
         auto &model = bullet.getModel();
         model.getState().velocity = {se.x * bullet_speed * physics_tick, se.y * bullet_speed * physics_tick};
         auto shift_player = player.getModel().getGeometry().GetCenter() +
@@ -235,7 +247,7 @@ namespace GameEntities {
                        se.y * (default_player_radius + default_bullet_radius)};
 
         model.getGeometry().setCenter(shift_player);
-        bullet.setTextureId(player.getTextureId());
+        bullet.texture_id = player.texture_id;
 
         bullets.emplace_back(std::move(bullet));
 

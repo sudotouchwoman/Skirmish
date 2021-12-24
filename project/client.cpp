@@ -13,7 +13,7 @@ int main(){
     int ev;
     while(std::cin >> ev){
         switch (ev) {
-            case 1: cc.registerPlayer(); break;
+            case 1: cc.registerPlayer("aboba", 1); break;
             case 2: {// move
                 int type;
                 std::cin >> type;

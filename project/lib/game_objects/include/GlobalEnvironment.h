@@ -33,6 +33,8 @@ namespace GameEntities{
         int deleteObjects();
         size_t addPlayer(const ClientServer::RegisterEvent &event);
 
+        void addObstacle(Terrain &&t);
+
         int generateSnapshot();
         void getSnapshot(std::string &);
         void tick();
@@ -43,6 +45,7 @@ namespace GameEntities{
         Player &getPlayerById(size_t id) const;
         auto &getPlayers() const {return players;};
         auto &getBullets() const {return bullets;};
+        auto &getTerrain() const {return terrain;};
     private:
         int setSnapshot(std::string &&);
         int getObjectsFromSnapshot();
@@ -53,7 +56,7 @@ namespace GameEntities{
         std::unordered_map <size_t,  std::vector<GameEntities::Player>::iterator> id_to_players;
         std::vector <GameEntities::Player> players;
         std::vector <GameEntities::Bullet> bullets;
-//        std::vector <GameEntities::Terrain> Terrain;
+        std::vector <GameEntities::Terrain> terrain;
 //        std::vector <GameEntities::Object> Objects;
     };
 }
