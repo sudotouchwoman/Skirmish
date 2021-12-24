@@ -6,17 +6,17 @@
 
 #include "texture.hpp"
 
-class Menu;
 class Window {
 public:
     int width;
     int height;
-    Textures textures;
+    Textures texture;
     std::map<size_t, SDL_Texture*> imageList;
 
     void Render();
     void ClearSurface();
-    void DrawTexture(SDL_Texture *texture, SDL_FRect* rect, float angle, SDL_FPoint* center);
+    void DrawTexture(SDL_Texture *texture_, SDL_FRect* rect, float angle, SDL_FPoint* center);
+    void DrawText(const std::string &text, const std::string &path, SDL_Color color, int fontSize, float x_, float y_);
     void SetCursor(const std::string& path);
 
     Window(const Window &other) = delete;
@@ -25,11 +25,14 @@ public:
     ~Window();
 
 private:
-    friend class Menu;
+    SDL_FRect rect{};
     SDL_Window* window;
     SDL_Renderer* renderer;
 
     void Init();
+    SDL_Texture* LoadImageTexture(const std::string &path);
+    std::map<size_t, SDL_Texture*> PreLoadImageTextures();
+    void SetRectangle(float x, float y, SDL_Texture* texture_);
 };
 
 #endif // WINDOW_HPP

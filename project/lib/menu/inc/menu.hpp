@@ -18,18 +18,17 @@ public:
     SDL_FRect rect{};
     SDL_Texture* field;
     SDL_Texture* selected;
-    SDL_Texture* text;
+    std::string text;
     SDL_Texture* heroIcon;
     int texture_id;
 
-    Button() : status(false), field(nullptr), selected(nullptr), text(nullptr), heroIcon(nullptr), texture_id(0) {}
+    Button() : status(false), field(nullptr), selected(nullptr), heroIcon(nullptr), texture_id(0) {}
 };
 
 class Menu {
 public:
 
     void Load(std::string& name, int& texture_id);
-    void GetTextureRectPosition(SDL_FRect* rect, SDL_Texture* texture, float x, float y);
     void InverseTimer(int second);
 
     Menu(Window *window, int frames);
@@ -48,6 +47,7 @@ private:
     void HeroButtonLoad(std::vector<Button>& button);
     bool ButtonPressedCheck(std::vector<Button>& button);
     void GetCursorPosition(int& x, int& y);
+    void GetTextureRectPosition(SDL_FRect* rect, SDL_Texture* texture, float x, float y);
 };
 
 #endif //MENU_HPP
