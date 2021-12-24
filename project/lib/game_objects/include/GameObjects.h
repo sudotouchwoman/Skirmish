@@ -110,8 +110,8 @@ namespace GameEntities {
 
         void setVanity(const ClientServer::RegisterEvent &event);
 
-        int getHp() { return hp; };
-        bool isDead() {return dead; };
+        int getHp() const { return hp; };
+        bool isDead() const {return dead; };
 
         void collisionHandler(Player const &other);
         void collisionHandler(Bullet const &other);

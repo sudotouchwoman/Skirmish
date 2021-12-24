@@ -9,21 +9,29 @@ Camera::Camera(Window *window, size_t player_id) : offset_x(0), offset_y(0) {
     font = window->texture.textFont;
 }
 
-void Camera::Update(const std::vector<GameEntities::Player> &Players, const std::vector<GameEntities::Bullet> &Bullets){
+void Camera::Update(const std::vector<GameEntities::Player> &Players,
+                    const std::vector<GameEntities::Bullet> &Bullets,
+                    const std::vector<GameEntities::Terrain> &Terrain) {
     for (auto &player: Players) {
         if (player.getID() == player_id) {
-            offset_x = player.getX() * scale - width / 2;
-            offset_y = player.getY() * scale - height / 2;
-            WindowPlayerInformation(player);
+            offset_x = player.x_ * scale - width / 2;
+            offset_y = player.y_ * scale - height / 2;
         }
-        if (player.getX() * scale >= offset_x && player.getX() * scale <= offset_x + width &&
-            player.getY() * scale >= offset_y && player.getY() * scale <= offset_y + height)
+        if (player.x_ * scale >= offset_x && player.x_ * scale <= offset_x + width &&
+            player.y_ * scale >= offset_y && player.y_ * scale <= offset_y + height)
             Render(player);
     }
     for (auto &bullet: Bullets) {
-        if (bullet.getX() * scale >= offset_x && bullet.getX() * scale <= offset_x + width &&
-            bullet.getY() * scale >= offset_y && bullet.getY() * scale <= offset_y + height)
+        if (bullet.x_ * scale >= offset_x && bullet.x_ * scale <= offset_x + width &&
+            bullet.y_ * scale >= offset_y && bullet.y_ * scale <= offset_y + height)
             Render(bullet);
+    }
+    for (auto &terrain: Terrain) {
+            Render(terrain);
+    }
+    for (auto &player: Players) {
+        if (player.getID() == player_id)
+            WindowPlayerInformation(player);
     }
 }
 
@@ -35,11 +43,11 @@ void Camera::SetRectangle(float x, float y, float width_, float height_) {
 }
 
 void Camera::WindowPlayerInformation(const GameEntities::Player& player) {
-    position = "(" + boost::lexical_cast<std::string>(round(player.getX())) + "; "
-            + boost::lexical_cast<std::string>(round(player.getY())) + ")";
+    position = "(" + boost::lexical_cast<std::string>(round(player.x_)) + "; "
+            + boost::lexical_cast<std::string>(round(player.y_)) + ")";
     window->DrawText(position, font, color, 36, window->width / 2, 25);
-    window->DrawText("Kills: " + boost::lexical_cast<std::string>(player.getID()),
-            font, color, 36, window->width / 2, 60);
+//    window->DrawText("Kills: " + boost::lexical_cast<std::string>(player.getID()),
+//            font, color, 36, window->width / 2, 60);
 }
 
 SDL_Texture* Camera::GetHealthColor(float health) {
@@ -52,12 +60,12 @@ SDL_Texture* Camera::GetHealthColor(float health) {
 }
 
 void Camera::Render(const GameEntities::Player &player) {
-    SDL_Texture *texture = window->imageList[player.getTextureId()];
-    playerWindowPosition.x = player.getX() * scale - offset_x;
-    playerWindowPosition.y = player.getY() * scale - offset_y;
+    SDL_Texture *texture = window->imageList[player.texture_id];
+    playerWindowPosition.x = player.x_ * scale - offset_x;
+    playerWindowPosition.y = player.y_ * scale - offset_y;
     SetRectangle(playerWindowPosition.x, playerWindowPosition.y, playerTexture.width, playerTexture.height);
     SDL_FPoint center = {rect.w / 2, rect.h / 2};
-    window->DrawTexture(texture, &rect, player.getAngle(), &center);
+    window->DrawTexture(texture, &rect, player.angle_, &center);
 
     texture = window->imageList[Tile::HEALTH_LINE];
     SetRectangle(playerWindowPosition.x,playerWindowPosition.y - scale - 8,
@@ -73,9 +81,17 @@ void Camera::Render(const GameEntities::Player &player) {
 }
 
 void Camera::Render(const GameEntities::Bullet &bullet) {
-    SDL_Texture *texture = window->imageList[bullet.getTextureId() + textures_num];
-    SetRectangle(bullet.getX() * scale - offset_x, bullet.getY() * scale - offset_y,
+    SDL_Texture *texture = window->imageList[bullet.texture_id + textures_num];
+    SetRectangle(bullet.x_ * scale - offset_x, bullet.y_ * scale - offset_y,
                  size_of_bullet * scale,size_of_bullet * scale);
+    SDL_FPoint center = {rect.w / 2, rect.h / 2};
+    window->DrawTexture(texture, &rect, 0, &center);
+}
+
+void Camera::Render(const GameEntities::Terrain& terrain) {
+    SDL_Texture *texture = window->imageList[Tile::WALL];
+    SetRectangle(terrain.x_ * scale - offset_x, terrain.y_ * scale - offset_y,
+                 terrain.w_ * scale, terrain.h_ * scale);
     SDL_FPoint center = {rect.w / 2, rect.h / 2};
     window->DrawTexture(texture, &rect, 0, &center);
 }

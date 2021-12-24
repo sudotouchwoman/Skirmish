@@ -17,7 +17,7 @@ namespace Tile {
         ICON_OFF, ICON_ON, BUTTON_OFF, BUTTON_ON,
         HEALTH_LINE, GREEN, ORANGE, RED,
 //        FLOOR,
-//        WALL,
+        WALL,
         MENU_CURSOR, GAME_CURSOR};
 }
 
