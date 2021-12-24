@@ -20,7 +20,7 @@ Textures::Textures() {
     AddImagePath(Tile::RED, IMAGE_DIRECTORY_PATH + "health/red.png");
 
     //AddImagePath(Tile::FLOOR, IMAGE_DIRECTORY_PATH + "map/floor.png");
-    //AddImagePath(Tile::WALL, IMAGE_DIRECTORY_PATH + "map/wall.png");
+    AddImagePath(Tile::WALL, IMAGE_DIRECTORY_PATH + "map/wall.png");
 
     AddImagePath(Tile::MENU_CURSOR, IMAGE_DIRECTORY_PATH + "cursor/menu.png");
     AddImagePath(Tile::GAME_CURSOR, IMAGE_DIRECTORY_PATH + "cursor/game.png");

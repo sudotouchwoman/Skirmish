@@ -24,11 +24,11 @@ void GameManager::Run(size_t port_client) {
         if (fps.Update() >= 1) {
             window.ClearSurface();
             inverseTimeSeconds = fps.InverseTimeCheck();
+            camera.Update(ge.getPlayers(), ge.getBullets(), ge.getTerrain());
             if (inverseTimeSeconds >= 0)
                 menu.InverseTimer(inverseTimeSeconds);
             else
                 enable = true;
-            camera.Update(ge.getPlayers(), ge.getBullets());
             window.Render();
             fps.Release();
         }

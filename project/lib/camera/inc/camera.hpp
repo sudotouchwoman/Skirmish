@@ -9,7 +9,9 @@
 
 class Camera {
 public:
-    void Update(const std::vector <GameEntities::Player>& Players, const std::vector <GameEntities::Bullet>& Bullets);
+    void Update(const std::vector <GameEntities::Player>& Players,
+                const std::vector <GameEntities::Bullet>& Bullets,
+                const std::vector<GameEntities::Terrain>& Terrain);
     Camera(Window* window, size_t player_id);
 
     Camera(const Camera &other) = delete;
@@ -44,6 +46,7 @@ private:
     void SetRectangle(float x, float y, float width_, float height_);
     void Render(const GameEntities::Player& player);
     void Render(const GameEntities::Bullet& bullet);
+    void Render(const GameEntities::Terrain& terrain);
     void WindowPlayerInformation(const GameEntities::Player& player);
     SDL_Texture* GetHealthColor(float health);
 };

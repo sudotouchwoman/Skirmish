@@ -16,7 +16,7 @@ const float default_spawn_vx = 0;
 const float default_spawn_vy = 0;
 const float default_player_in_mass = 1;
 const float default_bullet_in_mass = 1;
-const float default_terrain_in_mass = 10000;
+const float default_terrain_in_mass = 0;
 
 const int default_bullet_damage = 10; // miliseconds
 const int default_player_hp = 100; // miliseconds
