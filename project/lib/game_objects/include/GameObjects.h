@@ -111,6 +111,7 @@ namespace GameEntities {
         void setVanity(const ClientServer::RegisterEvent &event);
 
         int getHp() { return hp; };
+        std::string getName() {return name; };
         bool isDead() {return dead; };
 
         void collisionHandler(Player const &other);
@@ -128,7 +129,7 @@ namespace GameEntities {
     class Bullet : public GameObject {
     public:
         // server side constructors
-        Bullet(int damage_, ObjectTypes type_ = ObjectTypes::T_BULLET,
+        Bullet(int damage_, size_t owner, int ttl_, ObjectTypes type_ = ObjectTypes::T_BULLET,
                const double inverse_mass = default_bullet_in_mass,
                const double x = default_spawn_x,
                const double y = default_spawn_y,
@@ -147,11 +148,14 @@ namespace GameEntities {
         void deserialize(value);
 
         int getDamage() const { return damage; };
+        int getIdOwner() const {return id_owner; };
 
         void collisionHandler(Player const &other);
         void collisionHandler(Terrain const &other);
         void collisionHandler(Bullet const &other);
     private:
+        size_t id_owner;
+        int ttl;
         int damage;
     };
 
@@ -183,7 +187,21 @@ namespace GameEntities {
         void collisionHandler(Terrain const &other);
     };
 
-    class Object : public GameObject {
+    class Message {
+    public:
+        Message(const std::string &message_, int ttl_) : message(message_), ttl(ttl_){};
+        Message() = default;
+
+        bool tick() {return ((ttl -= 1) != 0);}
+        const string &getMessage() const {return message; };
+        value serialize();
+        void deserialize(value);
+    private:
+        int ttl = 0;
+        string message;
+    };
+
+//    class Object : public GameObject {
 //    public:
 //        Object() = default;
 //        ~Object() = default;
@@ -199,5 +217,4 @@ namespace GameEntities {
 //    private:
 //        int hp;
 //        int type = ObjectTypes::tOther;
-    };
 }

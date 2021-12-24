@@ -21,6 +21,7 @@ const float default_terrain_in_mass = 10000;
 const int default_bullet_damage = 10; // miliseconds
 const int default_player_hp = 100; // miliseconds
 
+const int message_time_to_live = 100000;
 // main game parameters
 
 // client server settings

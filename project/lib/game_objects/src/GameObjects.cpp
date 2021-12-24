@@ -172,10 +172,14 @@ namespace GameEntities {
 
     Bullet::Bullet(Bullet &&other) : GameObject(std::move(other)) {
         damage = other.damage;
+        ttl = other.ttl;
+        id_owner = other.id_owner;
     }
 
     Bullet &Bullet::operator=(Bullet &&other) {
         damage = other.damage;
+        ttl = other.ttl;
+        id_owner = other.id_owner;
         GameObject::operator=(std::move(other));
         return *this;
     }
@@ -188,11 +192,11 @@ namespace GameEntities {
         return jv;
     }
 
-    Bullet::Bullet(int damage_, ObjectTypes type_,
+    Bullet::Bullet(int damage_, size_t owner, int ttl_, ObjectTypes type_,
     const double inverse_mass,
     const double x,
     const double y,
-    const double R) : damage(damage_), GameObject(type_) {
+    const double R) : damage(damage_), id_owner(owner), ttl(ttl_), GameObject(type_) {
         setDefaultModel(default_spawn_vx, default_spawn_vy, inverse_mass);
         setDefaultGeometry(x, y, R);
     }
@@ -202,7 +206,8 @@ namespace GameEntities {
     }
 
     void Bullet::collisionHandler(Terrain const &other) {
-        deleted = true;
+        if ((ttl -= 1) == 0)
+            deleted = true;
     }
 
     void Bullet::collisionHandler(GameEntities::Bullet const &other) {
@@ -256,4 +261,18 @@ namespace GameEntities {
     void Terrain::collisionHandler(const Terrain &other) {}
 
     void Terrain::collisionHandler(const GameEntities::Bullet &other) {}
+
+// Message #############################################################################################################
+
+    value Message::serialize(){
+        value jv = {
+            {"message", message}
+        };
+        return jv;
+    }
+
+    void Message::deserialize(value jv){
+        object const &obj = jv.as_object();
+        extract(obj, message, "message");
+    }
 } // namespace GameEntities

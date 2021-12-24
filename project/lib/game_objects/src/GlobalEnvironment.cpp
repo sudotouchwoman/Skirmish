@@ -80,18 +80,46 @@ namespace GameEntities {
                 bullet.deleted = true;
         }
 
+        // tick messages
+        for (auto iter = messages.begin(); iter < messages.end(); ++iter)
+            if (!iter->tick())
+                messages.erase(iter);
+
         finishAccess();
 
         deleteObjects();
     }
 
-    template<class T1, class T2>
-    int GlobalEnvironment::onCollision(T1 &go1, T2 &go2, core::ContactPoint &cp) {
+    int GlobalEnvironment::onCollision(Player &go1, Bullet &go2,  core::ContactPoint & cp){
+        go1.collisionHandler(go2);
+        go2.collisionHandler(go1);
 
-        // probably some game logic, moving objects
-        // like player to player collision need to be
-        // two players get back.
+        if (go1.isDead()){
+            std::string message;
+            message += getPlayerById(go2.getIdOwner()).getName() + " DRASTICLY MURDERED " + go1.getName() + "!!!!";
+            messages.emplace_back(message, message_time_to_live);
+        }
+        return 0;
+    }
+    int GlobalEnvironment::onCollision(Bullet &go1, Terrain &go2, core::ContactPoint & cp){
+        go1.collisionHandler(go2);
+        go2.collisionHandler(go1);
 
+        return 0;
+    }
+    int GlobalEnvironment::onCollision(Bullet &go1, Bullet &go2, core::ContactPoint & cp){
+        go1.collisionHandler(go2);
+        go2.collisionHandler(go1);
+
+        return 0;
+    }
+    int GlobalEnvironment::onCollision(Player &go1, Player &go2, core::ContactPoint & cp){
+        go1.collisionHandler(go2);
+        go2.collisionHandler(go1);
+
+        return 0;
+    }
+    int GlobalEnvironment::onCollision(Player &go1, Terrain &go2, core::ContactPoint & cp){
         go1.collisionHandler(go2);
         go2.collisionHandler(go1);
 
@@ -159,7 +187,7 @@ namespace GameEntities {
             {"Players", vectorSerializer(players)},
             {"Bullets", vectorSerializer(bullets)},
             {"Terrain", vectorSerializer(terrain)},
-//        {"Objects", vectorSerializer(Players)},
+            {"Messages", vectorSerializer(messages)},
         };
 
         snapshot_ = serialize(jv);
@@ -189,15 +217,17 @@ namespace GameEntities {
 
     int GlobalEnvironment::getObjectsFromSnapshot() {
         object objects = parse(snapshot_).as_object();
-        array bullets_, players_, terrain_;
+        array bullets_, players_, terrain_, messages_;
         extract(objects, players_, "Players");
         extract(objects, bullets_, "Bullets");
         extract(objects, terrain_, "Terrain");
+        extract(objects, messages_, "Messages");
 
         getAccess();
         bullets.resize(bullets_.size());
         players.resize(players_.size());
         terrain.resize(terrain_.size());
+        messages.resize(messages_.size());
 
         for (size_t i = 0; i < players.size(); ++i){
             players[i].deserialize(players_[i]);
@@ -206,7 +236,9 @@ namespace GameEntities {
         for (size_t i = 0; i < bullets.size(); ++i)
             bullets[i].deserialize(bullets_[i]);
         finishAccess();
-
+        for (size_t i = 0; i < messages.size(); ++i)
+            messages[i].deserialize(messages_[i]);
+        finishAccess();
         for (size_t i = 0; i < terrain.size(); ++i)
             terrain[i].deserialize(terrain_[i]);
         finishAccess();
@@ -244,7 +276,7 @@ namespace GameEntities {
         auto &player = getPlayerById(player_id);
 
         // model methods need to be in class constructor.
-        GameEntities::Bullet bullet(default_bullet_damage);
+        GameEntities::Bullet bullet(default_bullet_damage, player_id, 2 /*times ricochet*/ );
         auto &model = bullet.getModel();
         model.getState().velocity = {se.x * bullet_speed * physics_tick, se.y * bullet_speed * physics_tick};
         auto shift_player = player.getModel().getGeometry().GetCenter() +

@@ -21,8 +21,12 @@ namespace GameEntities{
         int finishAccess();
 
         // collision manager for game logic
-        template <class T1, class T2>
-        int onCollision(T1 &go, T2 &go2, core::ContactPoint & cp);
+        int onCollision(Player &go1, Bullet &go2, core::ContactPoint & cp);
+        int onCollision(Bullet &go1, Terrain &go2, core::ContactPoint & cp);
+        int onCollision(Bullet &go1, Bullet &go2, core::ContactPoint & cp);
+        int onCollision(Player &go1, Player &go2, core::ContactPoint & cp);
+        int onCollision(Player &go1, Terrain &go2, core::ContactPoint & cp);
+
 
         // Server side methods
         void onEvent(const size_t player_id, const ClientServer::MoveEvent &);
@@ -57,6 +61,7 @@ namespace GameEntities{
         std::vector <GameEntities::Player> players;
         std::vector <GameEntities::Bullet> bullets;
         std::vector <GameEntities::Terrain> terrain;
+        std::vector <GameEntities::Message> messages;
 //        std::vector <GameEntities::Object> Objects;
     };
 }
