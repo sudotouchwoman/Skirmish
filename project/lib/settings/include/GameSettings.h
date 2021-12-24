@@ -1,6 +1,7 @@
 #pragma once
 
 #include <string>
+#include <array>
 
 // main game parameters
 const int game_tick = 10; // miliseconds
@@ -40,4 +41,11 @@ const size_t textures_num = 3;
 
 // map settings
 const size_t map_size = 2000;
+
+// config in way: (x, y) of top left corner of obstacle, (x, y) of bottom right corner.
+const size_t num_of_obstacles__1 = 3;
+const std::array<std::array<float, 4>, num_of_obstacles__1> obstacle_config__1 =
+    {{{1, 4, 10, 8},
+      {12, 12, 14, 24},
+      {20, 20, 24, 24}}};
 // map settings

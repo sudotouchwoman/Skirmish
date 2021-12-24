@@ -15,8 +15,13 @@ namespace GameEntities {
         return 0;
     }
 
-    void GlobalEnvironment::addObstacle(Terrain &&t){
-        terrain.push_back(std::move(t));
+    void GlobalEnvironment::addObstacle(const float x_top_left, const float y_top_left,
+                                        const float x_bottom_right, const float y_bottom_right){
+
+        terrain.emplace_back((x_bottom_right - x_top_left) / 2  + x_top_left,
+                             (y_bottom_right - y_top_left) / 2  + y_top_left,
+                             (x_bottom_right - x_top_left),
+                             (y_bottom_right - y_top_left));
     }
 
     void GlobalEnvironment::tick() {

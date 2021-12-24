@@ -33,7 +33,7 @@ namespace GameEntities{
         int deleteObjects();
         size_t addPlayer(const ClientServer::RegisterEvent &event);
 
-        void addObstacle(Terrain &&t);
+        void addObstacle(const float x, const float y, const float w, const float h);
 
         int generateSnapshot();
         void getSnapshot(std::string &);
