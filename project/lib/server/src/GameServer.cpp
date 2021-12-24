@@ -46,6 +46,9 @@ namespace Server {
         auto endpoint_id_element = endpoint_id.find(endpoint_string);
         if (endpoint_id_element != endpoint_id.end()) {
             player_id = endpoint_id_element->second;
+
+            // if player not dead, than check events.
+            if (!_ge.getPlayerById(player_id).isDead())
             // check events
             switch (request[0]) {
                 case ClientServer::Type::CHECK :break;

@@ -86,6 +86,7 @@ namespace GameEntities {
         value jv = {
             {"hp", hp},
             {"name", name},
+            {"dead", dead},
             {"GameObject", GameObject::serialize()}
         };
         return jv;
@@ -107,6 +108,7 @@ namespace GameEntities {
         object const &obj = jv.as_object();
         extract(obj, hp, "hp");
         extract(obj, name, "name");
+        extract(obj, dead, "dead");
 
         extract(obj, jv, "GameObject");
         GameObject::deserialize(jv);
@@ -158,6 +160,8 @@ namespace GameEntities {
 
     void Player::collisionHandler(GameEntities::Bullet const &other) {
         hp -= other.getDamage();
+        if (hp <= 0)
+            dead = true;
     }
 
     void Player::eventHandler(const ClientServer::InteractEvent &ev) {

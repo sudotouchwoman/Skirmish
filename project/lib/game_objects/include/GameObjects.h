@@ -111,6 +111,7 @@ namespace GameEntities {
         void setVanity(const ClientServer::RegisterEvent &event);
 
         int getHp() { return hp; };
+        bool isDead() {return dead; };
 
         void collisionHandler(Player const &other);
         void collisionHandler(Bullet const &other);
@@ -120,6 +121,7 @@ namespace GameEntities {
         void eventHandler(const ClientServer::InteractEvent &ev);
     private:
         std::string name;
+        bool dead = false;
         int hp;
     };
 
