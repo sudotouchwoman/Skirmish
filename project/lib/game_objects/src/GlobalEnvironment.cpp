@@ -96,6 +96,8 @@ namespace GameEntities {
 
         if (go1.isDead()){
             std::string message;
+            go1.getModel().getState().velocity.x = 0;
+            go1.getModel().getState().velocity.y = 0;
             message += getPlayerById(go2.getIdOwner()).getName() + " DRASTICLY MURDERED " + go1.getName() + "!!!!";
             messages.emplace_back(message, message_time_to_live);
         }
