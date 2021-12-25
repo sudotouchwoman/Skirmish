@@ -10,9 +10,3 @@ target_link_libraries(main PRIVATE server)
 
 add_executable(client_ client.cpp)
 target_link_libraries(client_ PRIVATE events client)
-
-add_executable(graphics graphics.cpp)
-target_link_libraries(graphics PRIVATE manager)
-
-add_executable(graphics_1 graphics_1.cpp)
-target_link_libraries(graphics_1 PRIVATE manager)
