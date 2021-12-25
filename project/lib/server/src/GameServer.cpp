@@ -29,9 +29,6 @@ namespace Server {
             std::thread game_loop_thread(&Server::GameLoop::run, &gl);
             cs.startReceive();
             game_loop_thread.join();
-//            std::thread connectionServer(&Server::ConnectionServer::startReceive, &cs);
-//            gl.run();
-//            connectionServer.join();
         }
         catch (std::exception &e) {
             std::cerr << e.what() << std::endl;

@@ -48,6 +48,7 @@ private:
     bool ButtonPressedCheck(std::vector<Button>& button);
     void GetCursorPosition(int& x, int& y);
     void GetTextureRectPosition(SDL_FRect* rect, SDL_Texture* texture, float x, float y);
+    void GetTextInputFieldPosition(SDL_FRect* rect, SDL_Texture* texture, float x, float y, float width_, float height_);
 };
 
 #endif //MENU_HPP

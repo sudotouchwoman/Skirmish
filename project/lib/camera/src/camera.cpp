@@ -13,6 +13,9 @@ void Camera::Update(const std::vector<GameEntities::Player> &Players,
                     const std::vector<GameEntities::Bullet> &Bullets,
                     const std::vector<GameEntities::Terrain> &Terrain,
                     const std::vector<GameEntities::Message>& Message) {
+    for (auto &terrain: Terrain) {
+        Render(terrain);
+    }
     for (auto &player: Players) {
         if (player.getID() == player_id) {
             offset_x = player.x_ * scale - width / 2;
@@ -26,9 +29,6 @@ void Camera::Update(const std::vector<GameEntities::Player> &Players,
         if (bullet.x_ * scale >= offset_x && bullet.x_ * scale <= offset_x + width &&
             bullet.y_ * scale >= offset_y && bullet.y_ * scale <= offset_y + height)
             Render(bullet);
-    }
-    for (auto &terrain: Terrain) {
-        Render(terrain);
     }
     for (auto &message: Message) {
         Render(message);
@@ -80,6 +80,8 @@ void Camera::Render(const GameEntities::Player &player) {
                      healthPointTexture.width, healthPointTexture.height);
         window->DrawTexture(texture, &rect, 0, &center);
     }
+
+    window->DrawText(player.getName(), font, color, 24, playerWindowPosition.x, playerWindowPosition.y - 70);
 }
 
 void Camera::Render(const GameEntities::Bullet &bullet) {
@@ -99,5 +101,5 @@ void Camera::Render(const GameEntities::Terrain& terrain) {
 }
 
 void Camera::Render(const GameEntities::Message& message) {
-    window->DrawText(message.getMessage(), font, color, 150, window->width / 2, window->height / 2);
+    window->DrawText(message.getMessage(), font, color, 72, window->width / 2, window->height / 2);
 }

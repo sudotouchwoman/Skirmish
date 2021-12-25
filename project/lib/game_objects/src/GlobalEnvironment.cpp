@@ -95,6 +95,7 @@ namespace GameEntities {
         go2.collisionHandler(go1);
 
         if (go1.isDead()){
+            num_of_alive -= 1;
             std::string message;
             go1.getModel().getState().velocity.x = 0;
             go1.getModel().getState().velocity.y = 0;
@@ -169,6 +170,7 @@ namespace GameEntities {
         for (auto it = players.begin(); it < players.end(); ++it)
             id_to_players[it->getID()] = it;
 
+        num_of_alive += 1;
         finishAccess();
         return id;
     }

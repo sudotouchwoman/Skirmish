@@ -50,7 +50,18 @@ namespace GameEntities{
         auto &getPlayers() const {return players;};
         auto &getBullets() const {return bullets;};
         auto &getTerrain() const {return terrain;};
-        auto &getMessage() const {return messages;};
+        auto &getMessage() const {return messages;}
+
+        bool gameEnd() const {return num_of_alive == 1 && players.size() != 1; };
+        void finishGame() {
+            getAccess();
+            players.erase(players.begin(), players.end());
+            bullets.erase(bullets.begin(), bullets.end());
+            terrain.erase(terrain.begin(), terrain.end());
+            messages.erase(messages.begin(), messages.end());
+            messages.emplace_back("Game End", 1);
+            finishAccess();
+        }
     private:
         int setSnapshot(std::string &&);
         int getObjectsFromSnapshot();
@@ -63,6 +74,9 @@ namespace GameEntities{
         std::vector <GameEntities::Bullet> bullets;
         std::vector <GameEntities::Terrain> terrain;
         std::vector <GameEntities::Message> messages;
+
+        // gameover state
+        int num_of_alive = 0;
 //        std::vector <GameEntities::Object> Objects;
     };
 }
