@@ -110,9 +110,9 @@ namespace GameEntities {
 
         void setVanity(const ClientServer::RegisterEvent &event);
 
-        int getHp() { return hp; };
-        std::string getName() {return name; };
-        bool isDead() {return dead; };
+        int getHp() const { return hp; };
+        std::string getName() const {return name; };
+        bool isDead() const {return dead; };
 
         void collisionHandler(Player const &other);
         void collisionHandler(Bullet const &other);
@@ -193,12 +193,12 @@ namespace GameEntities {
         Message() = default;
 
         bool tick() {return ((ttl -= 1) != 0);}
-        const string &getMessage() const {return message; };
+        const std::string &getMessage() const {return message; };
         value serialize();
         void deserialize(value);
     private:
         int ttl = 0;
-        string message;
+        std::string message;
     };
 
 //    class Object : public GameObject {

@@ -11,7 +11,8 @@ Camera::Camera(Window *window, size_t player_id) : offset_x(0), offset_y(0) {
 
 void Camera::Update(const std::vector<GameEntities::Player> &Players,
                     const std::vector<GameEntities::Bullet> &Bullets,
-                    const std::vector<GameEntities::Terrain> &Terrain) {
+                    const std::vector<GameEntities::Terrain> &Terrain,
+                    const std::vector<GameEntities::Message>& Message) {
     for (auto &player: Players) {
         if (player.getID() == player_id) {
             offset_x = player.x_ * scale - width / 2;
@@ -27,7 +28,10 @@ void Camera::Update(const std::vector<GameEntities::Player> &Players,
             Render(bullet);
     }
     for (auto &terrain: Terrain) {
-            Render(terrain);
+        Render(terrain);
+    }
+    for (auto &message: Message) {
+        Render(message);
     }
     for (auto &player: Players) {
         if (player.getID() == player_id)
@@ -46,8 +50,6 @@ void Camera::WindowPlayerInformation(const GameEntities::Player& player) {
     position = "(" + boost::lexical_cast<std::string>(round(player.x_)) + "; "
             + boost::lexical_cast<std::string>(round(player.y_)) + ")";
     window->DrawText(position, font, color, 36, window->width / 2, 25);
-//    window->DrawText("Kills: " + boost::lexical_cast<std::string>(player.getID()),
-//            font, color, 36, window->width / 2, 60);
 }
 
 SDL_Texture* Camera::GetHealthColor(float health) {
@@ -74,7 +76,7 @@ void Camera::Render(const GameEntities::Player &player) {
 
     texture = GetHealthColor((float) player.getHp() / 100);
     for (int i = 0; i < player.getHp() / 10; ++i) {
-        SetRectangle(playerWindowPosition.x - scale - 5 + i * healthStep,playerWindowPosition.y - scale - 8,
+        SetRectangle(playerWindowPosition.x - scale - 5 + i * healthStep, playerWindowPosition.y - scale - 8,
                      healthPointTexture.width, healthPointTexture.height);
         window->DrawTexture(texture, &rect, 0, &center);
     }
@@ -94,4 +96,8 @@ void Camera::Render(const GameEntities::Terrain& terrain) {
                  terrain.w_ * scale, terrain.h_ * scale);
     SDL_FPoint center = {rect.w / 2, rect.h / 2};
     window->DrawTexture(texture, &rect, 0, &center);
+}
+
+void Camera::Render(const GameEntities::Message& message) {
+    window->DrawText(message.getMessage(), font, color, 150, window->width / 2, window->height / 2);
 }

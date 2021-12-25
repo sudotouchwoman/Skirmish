@@ -50,6 +50,7 @@ namespace GameEntities{
         auto &getPlayers() const {return players;};
         auto &getBullets() const {return bullets;};
         auto &getTerrain() const {return terrain;};
+        auto &getMessage() const {return messages;};
     private:
         int setSnapshot(std::string &&);
         int getObjectsFromSnapshot();

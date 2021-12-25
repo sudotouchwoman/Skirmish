@@ -24,7 +24,7 @@ void GameManager::Run(size_t port_client) {
         if (fps.Update() >= 1) {
             window.ClearSurface();
             inverseTimeSeconds = fps.InverseTimeCheck();
-            camera.Update(ge.getPlayers(), ge.getBullets(), ge.getTerrain());
+            camera.Update(ge.getPlayers(), ge.getBullets(), ge.getTerrain(), ge.getMessage());
             if (inverseTimeSeconds >= 0)
                 menu.InverseTimer(inverseTimeSeconds);
             else
