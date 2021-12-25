@@ -1,46 +1,31 @@
-<<<<<<< HEAD
-add_executable(shapes_test shapes-test.cpp)
-add_test(NAME shapes COMMAND shapes_test)
+if (GTEST_LOCAL)
+    find_package(GTest REQUIRED)
+    set(GTEST_LINK_LIBS GTest::gtest_main GTest::gtest)
+else ()
+    include(FetchContent)
+    FetchContent_Declare(
+            googletest
+            URL https://github.com/google/googletest/archive/609281088cfefc76f9d0ce82e1ff6c30cc3591e5.zip
+    )
+    set(gtest_force_shared_crt ON CACHE BOOL "" FORCE)
+    FetchContent_MakeAvailable(googletest)
+    set(GTEST_LINK_LIBS gtest_main gtest)
+endif ()
 
-target_include_directories(shapes_test PUBLIC ${shapes_HEADERS})
-target_link_libraries(shapes_test core)
-target_link_libraries(shapes_test gtest)
+# Create binaries of tests
 
+add_executable(game_objects-test game_objects-test.cpp)
+target_link_libraries(game_objects-test ${GTEST_LINK_LIBS} game_objects)
+add_test(NAME AllTestsGameObjects
+        WORKING_DIRECTORY ${DATA_FILES_PATH}
+        COMMAND valgrind --tool=memcheck --child-silent-after-fork=yes --leak-check=full --track-origins=yes  --show-leak-kinds=all $<TARGET_FILE:game_objects-test>)
 
-=======
->>>>>>> 2cb5d489be76079190caa65cc88f6a6f9f5bdfca
-add_executable(core_test core-test.cpp)
-add_test(NAME core COMMAND core_test)
+# код кавереж
+if (ENABLE_COVERAGE)
+    include(CodeCoverage)
 
-target_include_directories(core_test PUBLIC ${CORE_HEADERS})
-target_link_libraries(core_test core)
-target_link_libraries(core_test gtest)
-
-
-<<<<<<< HEAD
-=======
-add_executable(shapes_test shapes-test.cpp)
-add_test(NAME shapes COMMAND shapes_test)
-
-target_include_directories(shapes_test PUBLIC ${shapes_HEADERS})
-target_link_libraries(shapes_test core)
-target_link_libraries(shapes_test gtest)
-
-
->>>>>>> 2cb5d489be76079190caa65cc88f6a6f9f5bdfca
-add_executable(collision_test collision-test.cpp)
-add_test(NAME collision COMMAND collision_test)
-
-target_include_directories(collision_test PUBLIC ${CORE_HEADERS})
-target_link_libraries(collision_test core)
-target_link_libraries(collision_test gtest)
-
-
-add_executable(physics_test physics-test.cpp)
-add_test(NAME physics COMMAND physics_test)
-
-target_include_directories(physics_test PUBLIC ${CORE_HEADERS})
-target_include_directories(physics_test PUBLIC ${PHYSICS_HEADERS})
-target_link_libraries(physics_test core)
-target_link_libraries(physics_test physics)
-target_link_libraries(physics_test gtest)
+    setup_target_for_coverage_gcovr_xml(
+            NAME IZ2_coverage
+            EXECUTABLE ctest --verbose
+            BASE_DIRECTORY ${PROJECT_FOLDER}/lib)
+endif ()
