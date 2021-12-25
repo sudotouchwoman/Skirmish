@@ -9,6 +9,7 @@
 #include <boost/shared_ptr.hpp>
 #include <boost/bind.hpp>
 #include <boost/array.hpp>
+#include <boost/thread.hpp>
 
 namespace Server {
     class ConnectionServer {
@@ -16,9 +17,14 @@ namespace Server {
     public:
         ConnectionServer(size_t port = std::stol(port_server));
         void startReceive();
-        void stopReceive() {io_context_.stop(); };
+        void stopReceive() {io_context_.restart(); };
         void MessageRecieveCallbackSetter(OnMessageRecieveCallback handle_message_);
+
+        void sendMessage(const std::string &message, const boost::asio::ip::udp::endpoint &endpoint);
+        bool game_end = false;
+        std::condition_variable cond;
     private:
+        void waitForGameEnd();
         void asyncRecieve();
         void handleReceive(const boost::system::error_code &error,
                            std::size_t);

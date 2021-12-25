@@ -3,7 +3,7 @@
 #include "ConnectionClient.h"
 #include "GlobalEnvironment.h"
 
-int main(){
+int main(int argc, char *argv[]){
     std::ios_base::sync_with_stdio(false);
     GameEntities::GlobalEnvironment ge;
 

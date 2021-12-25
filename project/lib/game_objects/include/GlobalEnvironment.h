@@ -58,7 +58,7 @@ namespace GameEntities{
             bullets.erase(bullets.begin(), bullets.end());
             terrain.erase(terrain.begin(), terrain.end());
             messages.erase(messages.begin(), messages.end());
-            messages.emplace_back("Game End", 1);
+            setSnapshot("1");
             finishAccess();
         }
     private:

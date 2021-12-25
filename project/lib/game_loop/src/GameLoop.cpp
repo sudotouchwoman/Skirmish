@@ -23,5 +23,4 @@ void GameLoop::run() {
         _ge->generateSnapshot();
     }
     _ge->finishGame();
-    _ge->generateSnapshot();
 }
