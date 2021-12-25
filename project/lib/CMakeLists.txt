@@ -1,5 +1,6 @@
+add_subdirectory(settings)
 add_subdirectory(events)
 add_subdirectory(game_objects)
 add_subdirectory(game_loop)
 add_subdirectory(server)
-add_subdirectory(settings)
+add_subdirectory(client)

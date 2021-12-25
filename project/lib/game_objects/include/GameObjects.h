@@ -13,6 +13,7 @@ namespace GameEntities {
 
     class Bullet;
     class Player;
+    class Terrain;
 
     enum class ObjectTypes {
         T_PLAYER,
@@ -29,28 +30,15 @@ namespace GameEntities {
     // lightweight object for using on client side only
     class IRenderable {
     public:
-        IRenderable(float x_ = 0, float y_ = 0, float angle_ = 0, size_t id_ = 1) : x(x_), y(y_), angle(angle_), texture_id(id_){};
-        IRenderable(IRenderable &&);
-        IRenderable(const IRenderable &) = delete;
-        IRenderable &operator=(IRenderable &&);
-        IRenderable &operator=(const IRenderable &) = delete;
+        IRenderable() = default;
+        IRenderable(const IRenderable &) = default;
+        IRenderable &operator=(const IRenderable &) = default;
         virtual ~IRenderable() = default;
 
-
-        virtual int update() = 0;
-        virtual int render() = 0;
-        float getX() const { return x; };
-        float getY() const { return y; };
-        size_t getTextureId() const { return texture_id; };
-        float getAngle() const { return angle; };
-        void setX(float x_) {x = x_; };
-        void setY(float y_) {y = y_; };
-        void setAngle(float angle_) {angle = angle_; };
-        void setTextureId(size_t texture_id_) {texture_id = texture_id_; };
-    private:
-        float x;
-        float y;
-        float angle;
+        float x_;
+        float y_;
+        float w_, h_;
+        float angle_;
         size_t texture_id;
     };
 
@@ -69,11 +57,15 @@ namespace GameEntities {
         std::unique_ptr<physical::PhysicalObject> model;
 
         void setDefaultGeometry(const double x, const double y, const double R);
+        void setDefaultGeometry(const double x, const double y, const double w, const double h);
         void setDefaultModel(const double vx, const double vy, const double inverse_mass);
-
     public:
+        // only for client purposes
+        GameObject() = default;
+        // only for client purposes
+
         static void resetID() { global_id = 1; };
-        GameObject(ObjectTypes type, float x = 0, float y = 0) : type_(type), id(global_id++), IRenderable(x, y) {};
+        GameObject(ObjectTypes type) : type_(type), id(global_id++) {};
         GameObject(GameObject &&);
         GameObject(const GameObject &) = delete;
         GameObject &operator=(GameObject &&);
@@ -97,14 +89,15 @@ namespace GameEntities {
     class Player : public GameObject {
     public:
         // server side constructors
-        Player(int hp_, ObjectTypes type_) : hp(hp_), GameObject(type_) {}
-        Player(const double x = default_spawn_x,
+        Player(const int hp_,
+               ObjectTypes type_ = ObjectTypes::T_PLAYER,
+               const double x = default_spawn_x,
                const double y = default_spawn_y,
                const double R = default_player_radius,
-               const double inverse_mass = 1);
+               const double inverse_mass = default_player_in_mass);
 
         // client side constructors
-        Player(int hp_, ObjectTypes type_, std::string &&name_, float x, float y) : GameObject(type_, x, y), hp(hp_), name(std::move(name_)) {};
+        Player() = default;
 
         ~Player() = default;
         Player(const Player &other) = delete;
@@ -115,34 +108,35 @@ namespace GameEntities {
         value serialize();
         void deserialize(value);
 
-        int update() { return 0; };
-        int render() { return 0; };
-        int getPosition() { return 0; };
         void setVanity(const ClientServer::RegisterEvent &event);
 
         int getHp() { return hp; };
+        std::string getName() {return name; };
+        bool isDead() {return dead; };
 
         void collisionHandler(Player const &other);
-        void collisionHandler(GameEntities::Bullet const &other);
+        void collisionHandler(Bullet const &other);
+        void collisionHandler(Terrain const &other);
 
         void eventHandler(const ClientServer::MoveEvent &ev);
         void eventHandler(const ClientServer::InteractEvent &ev);
     private:
         std::string name;
+        bool dead = false;
         int hp;
     };
 
     class Bullet : public GameObject {
     public:
         // server side constructors
-        Bullet(int damage_, ObjectTypes type_) : damage(damage_), GameObject(type_) {}
-        Bullet(const double x = default_spawn_x,
+        Bullet(int damage_, size_t owner, int ttl_, ObjectTypes type_ = ObjectTypes::T_BULLET,
+               const double inverse_mass = default_bullet_in_mass,
+               const double x = default_spawn_x,
                const double y = default_spawn_y,
-               const double R = default_bullet_radius,
-               const double inverse_mass = 1);
+               const double R = default_bullet_radius);
 
         // client side constructors
-        Bullet(ObjectTypes type_, int damage_, float x, float y) : GameObject(type_, x, y), damage(damage_) {};
+        Bullet() = default;
 
         ~Bullet() = default;
         Bullet(const Bullet &other) = delete;
@@ -153,35 +147,61 @@ namespace GameEntities {
         value serialize();
         void deserialize(value);
 
-        int update() { return 0; };
-        int render() { return 0; };
-        int getPosition() { return 0; };
-
         int getDamage() const { return damage; };
+        int getIdOwner() const {return id_owner; };
 
         void collisionHandler(Player const &other);
-        void collisionHandler(GameEntities::Bullet const &other);
+        void collisionHandler(Terrain const &other);
+        void collisionHandler(Bullet const &other);
     private:
+        size_t id_owner;
+        int ttl;
         int damage;
     };
 
     class Terrain : public GameObject {
-//    public:
-//        Terrain() = default;
-//        ~Terrain() = default;
-//        value serialize();
-//        int deserialize(value);
-//        Terrain(const Terrain &other);
-//        Terrain &operator=(const Terrain &other);
-//        Terrain(Terrain &&other) = delete;
-//        Terrain &operator=(Terrain &&other) = delete;
-//
-//        void сollisionHandler(const std::shared_ptr<GameObject> &other);
-//        void eventHandler(const Event &ev);
-//    private:
+    public:
+        // server side constructors
+        Terrain(
+            const double x,
+            const double y,
+            const double w,
+            const double h,
+            ObjectTypes type_ = ObjectTypes::T_OBSTACLE,
+            const double inverse_mass = default_terrain_in_mass);
+
+        // client side constructors
+        Terrain() = default;
+
+        ~Terrain() = default;
+        Terrain(const Terrain &other) = delete;
+        Terrain &operator=(const Terrain &other) = delete;
+        Terrain(Terrain &&other);
+        Terrain &operator=(Terrain &&other);
+
+        value serialize();
+        void deserialize(value);
+
+        void collisionHandler(Player const &other);
+        void collisionHandler(GameEntities::Bullet const &other);
+        void collisionHandler(Terrain const &other);
     };
 
-    class Object : public GameObject {
+    class Message {
+    public:
+        Message(const std::string &message_, int ttl_) : message(message_), ttl(ttl_){};
+        Message() = default;
+
+        bool tick() {return ((ttl -= 1) != 0);}
+        const std::string &getMessage() const {return message; };
+        value serialize();
+        void deserialize(value);
+    private:
+        int ttl = 0;
+        std::string message;
+    };
+
+//    class Object : public GameObject {
 //    public:
 //        Object() = default;
 //        ~Object() = default;
@@ -197,5 +217,4 @@ namespace GameEntities {
 //    private:
 //        int hp;
 //        int type = ObjectTypes::tOther;
-    };
 }

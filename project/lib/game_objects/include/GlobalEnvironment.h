@@ -21,8 +21,12 @@ namespace GameEntities{
         int finishAccess();
 
         // collision manager for game logic
-        template <class T1, class T2>
-        int onCollision(T1 &go, T2 &go2, core::ContactPoint & cp);
+        int onCollision(Player &go1, Bullet &go2, core::ContactPoint & cp);
+        int onCollision(Bullet &go1, Terrain &go2, core::ContactPoint & cp);
+        int onCollision(Bullet &go1, Bullet &go2, core::ContactPoint & cp);
+        int onCollision(Player &go1, Player &go2, core::ContactPoint & cp);
+        int onCollision(Player &go1, Terrain &go2, core::ContactPoint & cp);
+
 
         // Server side methods
         void onEvent(const size_t player_id, const ClientServer::MoveEvent &);
@@ -32,6 +36,8 @@ namespace GameEntities{
 
         int deleteObjects();
         size_t addPlayer(const ClientServer::RegisterEvent &event);
+
+        void addObstacle(const float x, const float y, const float w, const float h);
 
         int generateSnapshot();
         void getSnapshot(std::string &);
@@ -43,6 +49,7 @@ namespace GameEntities{
         Player &getPlayerById(size_t id) const;
         auto &getPlayers() const {return players;};
         auto &getBullets() const {return bullets;};
+        auto &getTerrain() const {return terrain;};
     private:
         int setSnapshot(std::string &&);
         int getObjectsFromSnapshot();
@@ -53,7 +60,8 @@ namespace GameEntities{
         std::unordered_map <size_t,  std::vector<GameEntities::Player>::iterator> id_to_players;
         std::vector <GameEntities::Player> players;
         std::vector <GameEntities::Bullet> bullets;
-//        std::vector <GameEntities::Terrain> Terrain;
+        std::vector <GameEntities::Terrain> terrain;
+        std::vector <GameEntities::Message> messages;
 //        std::vector <GameEntities::Object> Objects;
     };
 }
