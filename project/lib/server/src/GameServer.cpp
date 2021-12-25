@@ -26,12 +26,14 @@ namespace Server {
             for (auto &obstacle: obstacle_config__1)
                 _ge.addObstacle(obstacle[0], obstacle[1], obstacle[2], obstacle[3]);
 
-            std::thread connection_server_thread(&Server::ConnectionServer::startReceive, &cs);
-            gl.run();
+//            std::thread connection_server_thread(&Server::ConnectionServer::startReceive, &cs);
+//            gl.run();
+            std::thread ge(&Server::GameLoop::run, &gl);
+            cs.startReceive();
 
-            cs.game_end = true;
-            cs.cond.notify_all();
-            connection_server_thread.join();
+//            cs.game_end = true;
+//            cs.cond.notify_all();
+//            connection_server_thread.join();
 
             // send all clients notifications, that game is over
             std::string game_over_message;

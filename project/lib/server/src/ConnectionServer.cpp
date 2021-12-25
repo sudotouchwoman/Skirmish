@@ -30,8 +30,8 @@ namespace Server {
     }
 
     void ConnectionServer::startReceive() {
+        std::thread ge(&ConnectionServer::waitForGameEnd, this);
         asyncRecieve();
-        waitForGameEnd();
         io_context_.run();
     }
 
