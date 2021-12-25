@@ -16,6 +16,7 @@ namespace Server {
     public:
         ConnectionServer(size_t port = std::stol(port_server));
         void startReceive();
+        void stopReceive() {io_context_.stop(); };
         void MessageRecieveCallbackSetter(OnMessageRecieveCallback handle_message_);
     private:
         void asyncRecieve();

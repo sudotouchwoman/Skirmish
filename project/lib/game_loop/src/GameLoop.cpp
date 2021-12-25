@@ -8,7 +8,7 @@
 using Server::GameLoop;
 
 bool GameLoop::gameEnd() {
-    return false;
+    return _ge->gameEnd();
 }
 
 GameLoop::GameLoop(GameEntities::GlobalEnvironment * ge) : _ge(ge){
@@ -22,4 +22,6 @@ void GameLoop::run() {
         _ge->tick();
         _ge->generateSnapshot();
     }
+    _ge->finishGame();
+    _ge->generateSnapshot();
 }
