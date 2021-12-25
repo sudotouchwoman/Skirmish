@@ -4,6 +4,7 @@ Menu::Menu(Window* window, int frames) {
     this->window = window;
     this->frames = frames;
     ready = false;
+    maxNameLength = 12;
     this->color = {216, 151, 70, 255};
     this->font = window->texture.textFont;
 }
@@ -11,7 +12,6 @@ Menu::Menu(Window* window, int frames) {
 void Menu::Load(std::string& name, int& texture_id) {
     FPS fps;
     SDL_FRect rect;
-    SDL_Texture *texture;
 
     std::vector<Button> heroIcon(textures_num);
     HeroButtonLoad(heroIcon);
@@ -31,7 +31,6 @@ void Menu::Load(std::string& name, int& texture_id) {
         window->Render();
     }
 
-    std::string name_;
     while (!ready) {
         if (fps.Update() >= 1) {
 
@@ -39,11 +38,10 @@ void Menu::Load(std::string& name, int& texture_id) {
             window->DrawText("Skirmish", font, color, 104, (float) window->width / 2, 50);
             window->DrawText("Enter your name and select hero", font, color, 28, (float) window->width / 2, 150);
 
-            GetTextInputFieldPosition(&rect, window->imageList[Tile::HEALTH_LINE], window->width / 2, 200, 300, 50);
+            GetTextInputFieldPosition(&rect, window->width / 2, 200, 300, 50);
             window->DrawTexture(window->imageList[Tile::HEALTH_LINE], &rect, 0, {});
-            //std::cerr << name << std::endl;
-            if (name_.length() > 0)
-                window->DrawText(name_, font, color, 36, window->width / 2, 200);
+            if (name.length() > 0)
+                window->DrawText(name, font, color, 36, window->width / 2, 200);
 
             GetTextureRectPosition(&playButton.rect, playButton.field, playButton.position.x, playButton.position.y);
             window->DrawTexture(playButton.field, &playButton.rect, 0, {});
@@ -74,12 +72,12 @@ void Menu::Load(std::string& name, int& texture_id) {
                         exit(EXIT_SUCCESS);
                         break;
                     case SDL_TEXTINPUT:
-                        if (name_.length() < 12)
-                            name_ += menuEvent.text.text;
+                        if (name.length() < maxNameLength)
+                            name += menuEvent.text.text;
                         break;
                     case SDL_KEYDOWN:
-                        if (menuEvent.key.keysym.scancode == SDL_SCANCODE_BACKSPACE && name_.length() > 0)
-                            name_ = name_.substr(0, name_.length() - 1);
+                        if (menuEvent.key.keysym.scancode == SDL_SCANCODE_BACKSPACE && name.length() > 0)
+                            name = name.substr(0, name.length() - 1);
                         break;
                     case SDL_MOUSEBUTTONDOWN:
                         GetCursorPosition(menuEvent.button.x, menuEvent.button.y);
@@ -121,7 +119,6 @@ void Menu::Load(std::string& name, int& texture_id) {
 
         for (auto& item: heroIcon) {
             if (item.status) {
-                name = name_;
                 texture_id = item.texture_id;
             }
         }
@@ -151,7 +148,7 @@ void Menu::GetTextureRectPosition(SDL_FRect* rect, SDL_Texture* texture, float x
     rect->y = y - (float) height / 2;
 }
 
-void Menu::GetTextInputFieldPosition(SDL_FRect *rect, SDL_Texture *texture, float x, float y, float width_, float height_) {
+void Menu::GetTextInputFieldPosition(SDL_FRect *rect, float x, float y, float width_, float height_) {
     rect->w = width_;
     rect->h = height_;
     rect->x = x - width_ / 2;

@@ -37,7 +37,7 @@ public:
 
 private:
     bool ready;
-    int frames;
+    int frames, maxNameLength;
     std::string font;
     Window* window;
 
@@ -48,7 +48,7 @@ private:
     bool ButtonPressedCheck(std::vector<Button>& button);
     void GetCursorPosition(int& x, int& y);
     void GetTextureRectPosition(SDL_FRect* rect, SDL_Texture* texture, float x, float y);
-    void GetTextInputFieldPosition(SDL_FRect* rect, SDL_Texture* texture, float x, float y, float width_, float height_);
+    void GetTextInputFieldPosition(SDL_FRect* rect, float x, float y, float width_, float height_);
 };
 
 #endif //MENU_HPP
