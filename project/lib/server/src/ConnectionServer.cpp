@@ -1,6 +1,8 @@
 #include "ConnectionServer.h"
 #include "GameSettings.h"
 
+#include <boost/thread.hpp>
+
 using namespace boost::asio::ip;
 
 namespace Server {
@@ -9,11 +11,26 @@ namespace Server {
           socket_(io_context_, udp::endpoint(udp::v4(), port)) {
     }
 
+    void ConnectionServer::waitForGameEnd() {
+        std::mutex mut;
+        std::unique_lock<std::mutex> lock(mut);
+        while(!game_end)
+        {
+            cond.wait(lock, [this]{return game_end;});
+        }
+        stopReceive();
+    }
+
+    void ConnectionServer::sendMessage(const std::string &message, const boost::asio::ip::udp::endpoint &endpoint){
+        socket_.send_to(boost::asio::buffer(message, message.length()), endpoint);
+    }
+
     void ConnectionServer::MessageRecieveCallbackSetter(OnMessageRecieveCallback handle_message_){
         handle_message = handle_message_;
     }
 
     void ConnectionServer::startReceive() {
+        std::thread ge(&ConnectionServer::waitForGameEnd, this);
         asyncRecieve();
         io_context_.run();
     }
