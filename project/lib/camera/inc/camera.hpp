@@ -1,9 +1,6 @@
 #ifndef CAMERA_HPP
 #define CAMERA_HPP
 
-#include "GameSettings.h"
-#include "GameObjects.h"
-#include "GlobalEnvironment.h"
 #include "window.hpp"
 #include "boost/lexical_cast.hpp"
 

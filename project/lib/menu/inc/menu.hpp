@@ -3,7 +3,6 @@
 
 #include "fps.hpp"
 #include "window.hpp"
-#include "GameSettings.h"
 
 class Button {
 public:

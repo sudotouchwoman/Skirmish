@@ -1,12 +1,6 @@
 #ifndef MANAGER_HPP
 #define MANAGER_HPP
 
-#include <memory>
-
-#include "GameObjects.h"
-#include "GlobalEnvironment.h"
-#include "ConnectionClient.h"
-
 #include "fps.hpp"
 #include "window.hpp"
 #include "camera.hpp"

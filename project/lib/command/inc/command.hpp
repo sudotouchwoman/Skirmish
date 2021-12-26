@@ -3,13 +3,8 @@
 
 #include <SDL.h>
 #include <iostream>
-#include <memory>
 
 #include "window.hpp"
-#include "PlayerEvent.h"
-#include "GameObjects.h"
-#include "GlobalEnvironment.h"
-#include "ConnectionClient.h"
 
 class EventManager {
 public:

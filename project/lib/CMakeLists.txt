@@ -1,13 +1,3 @@
-add_subdirectory(settings)
-add_subdirectory(events)
-add_subdirectory(game_objects)
-add_subdirectory(game_loop)
-add_subdirectory(server)
-add_subdirectory(core)
-add_subdirectory(physics)
-add_subdirectory(game)
-add_subdirectory(client)
-
 add_subdirectory(graphics)
 add_subdirectory(command)
 add_subdirectory(camera)

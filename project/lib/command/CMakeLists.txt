@@ -3,4 +3,4 @@ set(SOURCES src/command.cpp)
 
 add_library(command STATIC ${SOURCES})
 target_include_directories(command PUBLIC inc/ ${SDL2_INCLUDE_DIRS})
-target_link_libraries(command ${SDL2_LIBRARIES} window events client game_objects)
+target_link_libraries(command ${SDL2_LIBRARIES} window)
