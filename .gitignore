@@ -33,5 +33,4 @@
 
 # Intellisence
 **/.idea/
-**/build/
 **/cmake-build-debug/

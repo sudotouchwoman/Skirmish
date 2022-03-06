@@ -1,0 +1,6 @@
+add_subdirectory(graphics)
+add_subdirectory(command)
+add_subdirectory(camera)
+add_subdirectory(fps)
+add_subdirectory(menu)
+add_subdirectory(manager)
